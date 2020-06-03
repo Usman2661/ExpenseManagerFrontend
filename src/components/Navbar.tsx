@@ -38,8 +38,12 @@ export default function Navbar() {
           <Typography variant='h6' className={classes.title}>
             Expense Manager
           </Typography>
-          <Button color='inherit'>Login</Button>
-          <Button color='inherit'>Register</Button>
+          <Button color='inherit' component={Link} to='/'>
+            Login
+          </Button>
+          <Button color='inherit' component={Link} to='/register'>
+            Register
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
