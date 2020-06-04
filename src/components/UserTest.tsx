@@ -2,7 +2,6 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { IUser } from '../models/User';
-import { GET_USERS } from '../graphQL/query';
 
 interface UserData {
   allUsers: IUser[];

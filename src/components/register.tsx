@@ -14,7 +14,11 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import { useQuery, Query } from 'react-apollo';
-import { GET_USERS } from '../graphQL/query';
+import { useMutation } from '@apollo/react-hooks';
+import { IUser } from '../models/User';
+import { CREATE_USER } from '../graphQL/mutation/user.mutation';
+import { Link } from 'react-router-dom';
+import Alert from '@material-ui/lab/Alert';
 
 export function Register() {
   const [formData, setFormData] = useState({
@@ -27,13 +31,24 @@ export function Register() {
   });
   const { name, email, password, cfPassword, jobTitle, department } = formData;
 
-  const onChange = (e: any) =>
+  const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const registerUser = (e: any) => {
     e.preventDefault();
-    console.log(formData);
+
+    saveUser();
   };
+  const [saveUser, { error, data }] = useMutation(CREATE_USER, {
+    variables: {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      jobTitle: formData.jobTitle,
+      department: formData.department,
+    },
+  });
 
   return (
     <div>
@@ -49,6 +64,35 @@ export function Register() {
                       {/* <Avatar className='signUpIcon'>
                       <AccountBoxIcon />
                     </Avatar> */}
+                      {error ? (
+                        <Grid
+                          container
+                          spacing={2}
+                          justify='center'
+                          alignItems='center'
+                        >
+                          <Grid item xs={12} sm={12}>
+                            <Alert variant='filled' severity='error'>
+                              An error has occured {error.message}
+                            </Alert>
+                          </Grid>
+                        </Grid>
+                      ) : null}
+                      {data && data.createUser ? (
+                        <Grid
+                          container
+                          spacing={2}
+                          justify='center'
+                          alignItems='center'
+                        >
+                          <Grid item xs={12} sm={12}>
+                            <Alert variant='filled' severity='success'>
+                              Profile succesfully created for{' '}
+                              {data.createUser.name}
+                            </Alert>
+                          </Grid>
+                        </Grid>
+                      ) : null}
                       <h1> Sign Up </h1>
                     </div>
                     <form className='signUpForm'>
