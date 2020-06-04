@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   uri: 'http://localhost:4000/', //URL of the GraphQL server
 });
 

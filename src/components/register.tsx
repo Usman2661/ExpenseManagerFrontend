@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -12,109 +12,35 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
-import Avatar from '@material-ui/core/Avatar';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import { Link } from 'react-router-dom';
-import { IUser } from '../models/User';
 import axios from 'axios';
-import { gql } from 'apollo-boost';
-import { useQuery } from 'react-apollo';
+import { useQuery, Query } from 'react-apollo';
 import { GET_USERS } from '../graphQL/query';
 
-interface IRegisterState {
-  name: String;
-  email: String;
-  password: String;
-  cfPassword: String;
-  jobTitle: String;
-  department: String;
-}
+export function Register() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    cfPassword: '',
+    jobTitle: '',
+    department: '',
+  });
+  const { name, email, password, cfPassword, jobTitle, department } = formData;
 
-interface IRegisterProps {}
-export class Register extends React.Component<IRegisterProps, IRegisterState> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      name: '',
-      email: '',
-      password: '',
-      jobTitle: '',
-      department: '',
-      cfPassword: '',
-    };
-  }
+  const onChange = (e: any) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  componentDidMount() {
-    const { loading, error, data } = useQuery(GET_USERS);
-
-    console.log(data);
-  }
-  private registerUser = async (e: any) => {
-    const {
-      name,
-      email,
-      password,
-      jobTitle,
-      department,
-      cfPassword,
-    } = this.state;
-
+  const registerUser = (e: any) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        'http://localhost:4000/',
-        {
-          query: `mutation createUser($email: String!, $jobTitle: String! , $password:String! ,$name:String! , $department:String! ) {
-            createUser(email: $email, jobTitle: $jobTitle,password: $password, name: $name,department: $department){
-            id
-            name, 
-            email, 
-            department,
-            jobTitle,
-            department
-          }
-        }`,
-          variables: {
-            name,
-            email,
-            password,
-            jobTitle,
-            department,
-          },
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      console.log(response.data);
-      console.log(response.data.data.createUser);
-    } catch (error) {
-      console.error(error);
-    }
+    console.log(formData);
   };
 
-  private onChange = (e: any) => {
-    this.setState({
-      ...this.state,
-      [e.target.name]: e.target.value,
-    });
-  };
-  render() {
-    const {
-      name,
-      email,
-      password,
-      jobTitle,
-      department,
-      cfPassword,
-    } = this.state;
-    return (
+  return (
+    <div>
       <div>
         <div className='registerForm'>
           <Grid container justify='center' alignItems='center'>
-            <Grid item xs={12} sm={8} md={6}>
+            <Grid item xs={12} sm={8} md={6} lg={4}>
               <Paper className='registration'>
                 <Card className='registerCard '>
                   <CardContent>
@@ -137,7 +63,7 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
                             label='Name'
                             color='secondary'
                             value={name}
-                            onChange={this.onChange}
+                            onChange={(e) => onChange(e)}
                             autoFocus
                           />
                         </Grid>
@@ -151,7 +77,7 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
                             id='jobTitle'
                             color='secondary'
                             label='Job Title'
-                            onChange={this.onChange}
+                            onChange={(e) => onChange(e)}
                             value={jobTitle}
                             autoFocus
                           />
@@ -172,7 +98,7 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
                               id='demo-simple-select-filled'
                               name='department'
                               value={department}
-                              onChange={this.onChange}
+                              onChange={(e) => onChange(e)}
                               fullWidth
                               color='secondary'
                             >
@@ -196,7 +122,7 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
                             type='email'
                             color='secondary'
                             value={email}
-                            onChange={this.onChange}
+                            onChange={(e) => onChange(e)}
                             required
                             fullWidth
                           />
@@ -210,7 +136,7 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
                             type='password'
                             color='secondary'
                             value={password}
-                            onChange={this.onChange}
+                            onChange={(e) => onChange(e)}
                             required
                             fullWidth
                           />
@@ -224,7 +150,7 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
                             type='password'
                             color='secondary'
                             value={cfPassword}
-                            onChange={this.onChange}
+                            onChange={(e) => onChange(e)}
                             required
                             fullWidth
                           />
@@ -235,7 +161,7 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
                             color='secondary'
                             type='submit'
                             fullWidth
-                            onClick={this.registerUser}
+                            onClick={registerUser}
                           >
                             Sign Up
                           </Button>
@@ -253,8 +179,6 @@ export class Register extends React.Component<IRegisterProps, IRegisterState> {
           </Grid>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default Register;
