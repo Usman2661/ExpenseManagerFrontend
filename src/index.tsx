@@ -6,10 +6,22 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+
+const cache = new InMemoryCache();
 
 export const client = new ApolloClient({
+  cache,
   uri: 'http://localhost:4000/', //URL of the GraphQL server
 });
+
+const initialState = {
+  authenticated: false,
+  id: null,
+  email: null,
+  userType: null,
+};
+cache.writeData({ data: initialState });
 
 ReactDOM.render(
   <React.StrictMode>

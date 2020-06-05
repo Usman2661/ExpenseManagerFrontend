@@ -20,13 +20,19 @@ const GET_MY_USERS = gql`
   }
 `;
 
+const isAuthenticated = gql`
+  query getAuthenticated {
+    authenticated @client
+  }
+`;
+
 export function UserTest() {
-  const { loading, data } = useQuery<UserData, UserDataVars>(GET_MY_USERS, {});
+  const { loading, data } = useQuery<any, any>(isAuthenticated, {});
   console.log(data);
 
   return (
     <div>
-      <h3>Available Inventory</h3>
+      {/* <h3>Available Inventory</h3>
       {loading ? (
         <p>Loading ...</p>
       ) : (
@@ -47,7 +53,7 @@ export function UserTest() {
               ))}
           </tbody>
         </table>
-      )}
+      )} */}
     </div>
   );
 }

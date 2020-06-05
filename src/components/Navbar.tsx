@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,7 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Link } from 'react-router-dom';
+import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
+import { UserContext } from '../userContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,8 +21,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Navbar() {
+export function Navbar(props: any) {
   const classes = useStyles();
+
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  const logout = () => {
+    localStorage.clear();
+
+    setUserAuthData({
+      id: '',
+      auth: false,
+      name: '',
+      email: '',
+      userType: '',
+    });
+  };
 
   return (
     <div className={classes.root}>
@@ -38,12 +53,14 @@ export default function Navbar() {
           <Typography variant='h6' className={classes.title}>
             Expense Manager
           </Typography>
-          <Button color='inherit' component={Link} to='/'>
+          {/* <Button color='inherit' component={Link} to='/'>
             Login
-          </Button>
-          <Button color='inherit' component={Link} to='/register'>
-            Register
-          </Button>
+          </Button> */}
+          {userAuthData.auth ? (
+            <Button color='inherit' onClick={logout}>
+              {userAuthData.name} Logout
+            </Button>
+          ) : null}
         </Toolbar>
       </AppBar>
     </div>

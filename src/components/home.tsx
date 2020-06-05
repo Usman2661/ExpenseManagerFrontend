@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
+import { UserContext } from '../userContext';
 
-export class Home extends Component {
-  render() {
-    return <div></div>;
-  }
+export function Home() {
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
+  return (
+    <div>
+      <h1> Welcome to the homepage {userAuthData.name} </h1>
+    </div>
+  );
 }
-
-export default Home;

@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useContext } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -11,25 +11,57 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { useMutation } from '@apollo/react-hooks';
-import { CREATE_USER } from '../graphQL/mutation/user.mutation';
-import { Link } from 'react-router-dom';
+import { CREATE_USER, LOGIN_USER } from '../graphQL/mutation/user.mutation';
+import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
+import { UserContext } from '../userContext';
 
-export function Login() {
+export function Login(props: any) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
   const { email, password } = formData;
+
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const loginUser = (e: any) => {
+  const loginUser = async (e: any) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      const { data } = await login();
+
+      if (data.login.token) {
+        localStorage.setItem('id', data.login.user.id);
+        localStorage.setItem('auth', 'true');
+        localStorage.setItem('name', data.login.user.name);
+        localStorage.setItem('email', data.login.user.email);
+        localStorage.setItem('userType', data.login.user.userType);
+
+        setUserAuthData({
+          id: data.login.user.id,
+          auth: true,
+          name: data.login.user.name,
+          email: data.login.user.email,
+          userType: data.login.user.userType,
+        });
+        props.history.push('/home');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const [login, { error, data }] = useMutation(LOGIN_USER, {
+    variables: {
+      email: formData.email,
+      password: formData.password,
+    },
+  });
   return (
     <div>
       <div>
@@ -39,6 +71,11 @@ export function Login() {
               <Paper className='login'>
                 <Card className='loginCard '>
                   <CardContent>
+                    {error ? (
+                      <Alert variant='filled' severity='error'>
+                        An error has occured {error.message}
+                      </Alert>
+                    ) : null}
                     <div style={{ marginLeft: '40%' }}>
                       {' '}
                       <h1> Login </h1>

@@ -30,12 +30,16 @@ export function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const registerUser = (e: any) => {
+  const registerUser = async (e: any) => {
     e.preventDefault();
-
-    saveUser();
+    try {
+      const { data } = await saveUser();
+    } catch (e) {
+      console.log(e);
+    }
   };
   const [saveUser, { error, data }] = useMutation(CREATE_USER, {
+    errorPolicy: 'ignore',
     variables: {
       name: formData.name,
       email: formData.email,
@@ -54,40 +58,37 @@ export function Register() {
               <Paper className='registration'>
                 <Card className='registerCard '>
                   <CardContent>
+                    {error ? (
+                      <Grid
+                        container
+                        spacing={2}
+                        justify='center'
+                        alignItems='center'
+                      >
+                        <Grid item xs={12} sm={12}>
+                          <Alert variant='filled' severity='error'>
+                            An error has occured {error.message}
+                          </Alert>
+                        </Grid>
+                      </Grid>
+                    ) : null}
+                    {data && data.createUser ? (
+                      <Grid
+                        container
+                        spacing={2}
+                        justify='center'
+                        alignItems='center'
+                      >
+                        <Grid item xs={12} sm={12}>
+                          <Alert variant='filled' severity='success'>
+                            Profile succesfully created for{' '}
+                            {data.createUser.name}
+                          </Alert>
+                        </Grid>
+                      </Grid>
+                    ) : null}
                     <div style={{ marginLeft: '40%' }}>
                       {' '}
-                      {/* <Avatar className='signUpIcon'>
-                      <AccountBoxIcon />
-                    </Avatar> */}
-                      {error ? (
-                        <Grid
-                          container
-                          spacing={2}
-                          justify='center'
-                          alignItems='center'
-                        >
-                          <Grid item xs={12} sm={12}>
-                            <Alert variant='filled' severity='error'>
-                              An error has occured {error.message}
-                            </Alert>
-                          </Grid>
-                        </Grid>
-                      ) : null}
-                      {data && data.createUser ? (
-                        <Grid
-                          container
-                          spacing={2}
-                          justify='center'
-                          alignItems='center'
-                        >
-                          <Grid item xs={12} sm={12}>
-                            <Alert variant='filled' severity='success'>
-                              Profile succesfully created for{' '}
-                              {data.createUser.name}
-                            </Alert>
-                          </Grid>
-                        </Grid>
-                      ) : null}
                       <h1> Sign Up </h1>
                     </div>
                     <form className='signUpForm'>
