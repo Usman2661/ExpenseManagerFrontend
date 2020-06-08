@@ -19,32 +19,31 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { Alert, AlertTitle } from '@material-ui/lab';
+import { Icons } from 'material-table';
+
 import { IUser } from '../../models/User';
 import { useQuery } from 'react-apollo';
 import { GET_USERS } from '../../graphQL/query/query';
 
-const tableIcons = {
-  // Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-  // Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-  // Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  // Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-  // DetailPanel: forwardRef((props, ref) => (
-  //   <ChevronRight {...props} ref={ref} />
-  // )),
-  // Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-  // Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-  // Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-  // FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-  // LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-  // NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-  // PreviousPage: forwardRef((props, ref) => (
-  //   <ChevronLeft {...props} ref={ref} />
-  // )),
-  // ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  // Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-  // SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-  // ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-  // ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+const tableIcons: any = {
+  Add: () => <AddBox />,
+  Check: () => <Check />,
+  Clear: () => <Clear />,
+  Delete: () => <DeleteOutline />,
+  DetailPanel: () => <ChevronRight />,
+  Edit: () => <Edit />,
+  Export: () => <SaveAlt />,
+  Filter: () => <FilterList />,
+  FirstPage: () => <FirstPage />,
+  LastPage: () => <LastPage />,
+  NextPage: () => <ChevronRight />,
+  PreviousPage: () => <ChevronLeft />,
+  ResetSearch: () => <Clear />,
+  Search: () => <Search />,
+  SortArrow: () => <ArrowDownward />,
+  ThirdStateCheck: () => <Remove />,
+  ViewColumn: () => <ViewColumn />,
 };
 
 // interface TableState {
@@ -65,6 +64,21 @@ export function AccountTable() {
       { title: 'User Type', field: 'userType' },
       { title: 'Job Title', field: 'jobTitle' },
       { title: 'Department', field: 'department' },
+      {
+        field: 'status',
+        title: 'Status',
+        render: (rowData: any) => {
+          return rowData.userType ? (
+            <Alert variant='filled' severity='success'>
+              Approved
+            </Alert>
+          ) : (
+            <Alert variant='filled' severity='error'>
+              Pending
+            </Alert>
+          );
+        },
+      },
     ],
     data: [
       {
@@ -98,6 +112,10 @@ export function AccountTable() {
       title='Users'
       columns={state.columns}
       data={data?.allUsers}
+      icons={tableIcons}
+      options={{
+        actionsColumnIndex: -1,
+      }}
       editable={{
         onRowAdd: (newData) =>
           new Promise((resolve) => {
@@ -110,6 +128,7 @@ export function AccountTable() {
             //   });
             // }, 600);
             console.log(newData);
+            resolve();
           }),
         onRowUpdate: (newData, oldData) =>
           new Promise((resolve) => {
@@ -123,7 +142,9 @@ export function AccountTable() {
             //     });
             //   }
             // }, 600);
+
             console.log(oldData, newData);
+            resolve();
           }),
         onRowDelete: (oldData) =>
           new Promise((resolve) => {

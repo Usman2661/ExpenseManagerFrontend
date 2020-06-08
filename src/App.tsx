@@ -34,15 +34,20 @@ function App() {
       <UserContext.Provider value={{ userAuthData, setUserAuthData }}>
         <Navbar></Navbar>
         <Switch>
+          {/* 
+          Public Routes */}
           <Route path='/' component={Login} exact />
           <Route path='/register' component={Register} exact />
 
-          <SeniorPrivateRoute redirectPath='/' path='/account'>
-            <Account />
-          </SeniorPrivateRoute>
+          {/* Private Routes for Authenticated Users */}
           <PrivateRoute redirectPath='/' path='/home'>
             <Home />
           </PrivateRoute>
+
+          {/* Private Routes for only for UserType Senior Management */}
+          <SeniorPrivateRoute redirectPath='/' path='/account'>
+            <Account />
+          </SeniorPrivateRoute>
         </Switch>
       </UserContext.Provider>
     </main>
