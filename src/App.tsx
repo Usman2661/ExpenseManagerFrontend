@@ -36,7 +36,6 @@ function App() {
         <Switch>
           <Route path='/' component={Login} exact />
           <Route path='/register' component={Register} exact />
-          {/* <Route path='/users' component={UserTest} exact /> */}
 
           <SeniorPrivateRoute redirectPath='/' path='/account'>
             <Account />

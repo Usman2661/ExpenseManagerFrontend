@@ -1,9 +1,10 @@
 import React from 'react';
+import { AccountTable } from './accountTable';
 
 export function Account() {
   return (
     <div>
-      <h1>Welcome to account Management</h1>
+      <AccountTable />
     </div>
   );
 }

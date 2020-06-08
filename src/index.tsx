@@ -13,6 +13,14 @@ const cache = new InMemoryCache();
 export const client = new ApolloClient({
   cache,
   uri: 'http://localhost:4000/', //URL of the GraphQL server
+  request: (operation) => {
+    const token = localStorage.getItem('token');
+    operation.setContext({
+      headers: {
+        authorization: token ? `Bearer ${token}` : '',
+      },
+    });
+  },
 });
 
 const initialState = {
@@ -29,7 +37,6 @@ ReactDOM.render(
       <ApolloProvider client={client}>
         <App />
       </ApolloProvider>
-      ,
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
