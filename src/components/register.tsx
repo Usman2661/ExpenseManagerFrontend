@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -12,10 +12,11 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { useMutation } from '@apollo/react-hooks';
 import { CREATE_USER } from '../graphQL/mutation/user.mutation';
-import { Link } from 'react-router-dom';
+import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
+import { UserContext } from '../userContext';
 
-export function Register() {
+export function Register(props: any) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,6 +26,12 @@ export function Register() {
     department: '',
   });
   const { name, email, password, cfPassword, jobTitle, department } = formData;
+
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  if (userAuthData.auth) {
+    props.history.push('/home');
+  }
 
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

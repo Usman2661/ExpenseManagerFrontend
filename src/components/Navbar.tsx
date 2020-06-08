@@ -35,6 +35,7 @@ export function Navbar(props: any) {
       name: '',
       email: '',
       userType: '',
+      token: '',
     });
   };
 
@@ -53,12 +54,12 @@ export function Navbar(props: any) {
           <Typography variant='h6' className={classes.title}>
             Expense Manager
           </Typography>
-          {/* <Button color='inherit' component={Link} to='/'>
-            Login
-          </Button> */}
+          {userAuthData.userType === 'SeniorManagement' ? (
+            <Button color='inherit'>Accounts Approval</Button>
+          ) : null}
           {userAuthData.auth ? (
             <Button color='inherit' onClick={logout}>
-              {userAuthData.name} Logout
+              Logout
             </Button>
           ) : null}
         </Toolbar>

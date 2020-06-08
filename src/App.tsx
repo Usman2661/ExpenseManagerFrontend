@@ -15,30 +15,38 @@ import PublicRoute from './routing/PublicRoute';
 //   auth: false,
 //   userType: 'Staff',
 // };
-
 function App() {
+  var auth;
+  const authStore = localStorage.getItem('auth');
+  if (authStore) {
+    auth = true;
+  } else {
+    auth = false;
+  }
   const [userAuthData, setUserAuthData] = useState({
     id: localStorage.getItem('id'),
-    auth: localStorage.getItem('auth'),
     name: localStorage.getItem('name'),
+    auth: auth,
     email: localStorage.getItem('email'),
     userType: localStorage.getItem('userType'),
+    token: localStorage.getItem('token'),
   });
+
   return (
     <main>
       <UserContext.Provider value={{ userAuthData, setUserAuthData }}>
         <Navbar></Navbar>
         <Switch>
-          <PublicRoute redirectPath='/home' path='/'>
+          {/* <PublicRoute redirectPath='/home' path='/'>
             <Login />
           </PublicRoute>
           <PublicRoute redirectPath='/home' path='/register'>
             <Register />
-          </PublicRoute>
+          </PublicRoute> */}
 
-          {/* <Route path='/' component={Login} exact />
-          <Route path='/register' component={Register} exact /> */}
-          <Route path='/users' component={UserTest} exact />
+          <Route path='/' component={Login} exact />
+          <Route path='/register' component={Register} exact />
+          {/* <Route path='/users' component={UserTest} exact /> */}
           <PrivateRoute redirectPath='/' path='/home'>
             <Home />
           </PrivateRoute>

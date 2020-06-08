@@ -26,6 +26,10 @@ export function Login(props: any) {
 
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
+  if (userAuthData.auth) {
+    props.history.push('/home');
+  }
+
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -41,6 +45,7 @@ export function Login(props: any) {
         localStorage.setItem('name', data.login.user.name);
         localStorage.setItem('email', data.login.user.email);
         localStorage.setItem('userType', data.login.user.userType);
+        localStorage.setItem('token', data.login.token);
 
         setUserAuthData({
           id: data.login.user.id,
@@ -48,11 +53,13 @@ export function Login(props: any) {
           name: data.login.user.name,
           email: data.login.user.email,
           userType: data.login.user.userType,
+          token: data.login.token,
         });
+
         props.history.push('/home');
       }
     } catch (error) {
-      console.log(error);
+      return error;
     }
   };
 
