@@ -11,10 +11,10 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { useMutation } from '@apollo/react-hooks';
-import { CREATE_USER } from '../graphQL/mutation/user.mutation';
+import { CREATE_USER } from '../../graphQL/mutation/user.mutation';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
-import { UserContext } from '../userContext';
+import { UserContext } from '../../userContext';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
 export function Register(props: any) {

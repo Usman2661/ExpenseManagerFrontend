@@ -11,12 +11,12 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { useMutation } from '@apollo/react-hooks';
-import { CREATE_USER, LOGIN_USER } from '../graphQL/mutation/user.mutation';
+import { CREATE_USER, LOGIN_USER } from '../../graphQL/mutation/user.mutation';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
 import Alert from '@material-ui/lab/Alert';
-import { UserContext } from '../userContext';
+import { UserContext } from '../../userContext';
 
 export function Login(props: any) {
   const [formData, setFormData] = useState({
@@ -57,7 +57,6 @@ export function Login(props: any) {
           userType: data.login.user.userType,
           token: data.login.token,
         });
-
         props.history.push('/home');
       }
     } catch (error) {

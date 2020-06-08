@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
-import { UserContext } from '../userContext';
+import { UserContext } from '../../userContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,7 +54,9 @@ export function Navbar(props: any) {
             Expense Manager
           </Typography>
           {userAuthData.userType === 'SeniorManagement' ? (
-            <Button color='inherit'>Accounts Approval</Button>
+            <Button color='inherit' component={Link} to='/account'>
+              Account Management
+            </Button>
           ) : null}
           {userAuthData.auth ? (
             <Button color='inherit' onClick={logout}>

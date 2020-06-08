@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Route, Switch } from 'react-router-dom';
-import { Login } from './components/login';
-import { Navbar } from './components/Navbar';
-import { Register } from './components/register';
+import { Login } from './components/Auth/login';
+import { Navbar } from './components/Layout/Navbar';
+import { Register } from './components/Auth/register';
 import { UserTest } from './components/UserTest';
-import { Home } from './components/home';
+import { Home } from './components/Home/home';
 import PrivateRoute from './routing/PrivateRoute';
 import { UserContext } from './userContext';
 import PublicRoute from './routing/PublicRoute';
+import { Account } from './components/Account/account';
+import SeniorPrivateRoute from './routing/SeniorPrivateRoute';
 
 function App() {
   var auth;
@@ -34,6 +36,11 @@ function App() {
         <Switch>
           <Route path='/' component={Login} exact />
           <Route path='/register' component={Register} exact />
+          {/* <Route path='/users' component={UserTest} exact /> */}
+
+          <SeniorPrivateRoute redirectPath='/' path='/account'>
+            <Account />
+          </SeniorPrivateRoute>
           <PrivateRoute redirectPath='/' path='/home'>
             <Home />
           </PrivateRoute>
