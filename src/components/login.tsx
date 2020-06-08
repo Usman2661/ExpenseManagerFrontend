@@ -13,6 +13,8 @@ import TextField from '@material-ui/core/TextField';
 import { useMutation } from '@apollo/react-hooks';
 import { CREATE_USER, LOGIN_USER } from '../graphQL/mutation/user.mutation';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+
 import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../userContext';
 
@@ -87,44 +89,50 @@ export function Login(props: any) {
                       {' '}
                       <h1> Login </h1>
                     </div>
-                    <form className='loginForm'>
+                    <ValidatorForm className='loginForm' onSubmit={loginUser}>
                       <Grid container spacing={2}>
                         <Grid item xs={12} sm={12}>
-                          <TextField
+                          <TextValidator
                             id='email'
                             name='email'
                             label='Email'
                             variant='outlined'
-                            type='email'
-                            color='secondary'
+                            color='primary'
                             value={email}
-                            onChange={(e) => onChange(e)}
+                            onChange={(e: any) => onChange(e)}
+                            validators={['required', 'isEmail']}
+                            errorMessages={[
+                              'Email is required',
+                              'Email is not valid',
+                            ]}
                             required
                             fullWidth
                           />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                          <TextField
+                          <TextValidator
                             id='password'
                             name='password'
                             label='Password'
                             variant='outlined'
                             type='password'
-                            color='secondary'
+                            color='primary'
                             value={password}
                             onChange={(e) => onChange(e)}
-                            required
                             fullWidth
+                            validators={['required']}
+                            errorMessages={['Password is required']}
+                            required
                           />
                         </Grid>
 
                         <Grid item xs={12} sm={12}>
                           <Button
                             variant='contained'
-                            color='secondary'
+                            color='primary'
                             type='submit'
                             fullWidth
-                            onClick={loginUser}
+                            // onClick={loginUser}
                           >
                             Login
                           </Button>
@@ -135,7 +143,7 @@ export function Login(props: any) {
                           </Link>
                         </Grid>
                       </Grid>
-                    </form>
+                    </ValidatorForm>
                   </CardContent>
                   <CardActions></CardActions>
                 </Card>

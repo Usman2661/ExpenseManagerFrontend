@@ -15,6 +15,7 @@ import { CREATE_USER } from '../graphQL/mutation/user.mutation';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../userContext';
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
 export function Register(props: any) {
   const [formData, setFormData] = useState({
@@ -28,6 +29,13 @@ export function Register(props: any) {
   const { name, email, password, cfPassword, jobTitle, department } = formData;
 
   const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
+    if (value !== formData.password) {
+      return false;
+    }
+    return true;
+  });
 
   if (userAuthData.auth) {
     props.history.push('/home');
@@ -98,35 +106,40 @@ export function Register(props: any) {
                       {' '}
                       <h1> Sign Up </h1>
                     </div>
-                    <form className='signUpForm'>
+                    <ValidatorForm
+                      className='signUpForm'
+                      onSubmit={registerUser}
+                    >
                       <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
-                          <TextField
+                          <TextValidator
                             name='name'
                             variant='outlined'
                             required
                             fullWidth
                             id='name'
                             label='Name'
-                            color='secondary'
+                            color='primary '
                             value={name}
                             onChange={(e) => onChange(e)}
-                            autoFocus
+                            validators={['required']}
+                            errorMessages={['Name is required']}
                           />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
-                          <TextField
+                          <TextValidator
                             name='jobTitle'
                             variant='outlined'
                             required
                             fullWidth
                             id='jobTitle'
-                            color='secondary'
+                            color='primary '
                             label='Job Title'
                             onChange={(e) => onChange(e)}
                             value={jobTitle}
-                            autoFocus
+                            validators={['required']}
+                            errorMessages={['Job Title is required']}
                           />
                         </Grid>
 
@@ -134,8 +147,9 @@ export function Register(props: any) {
                           <FormControl
                             variant='filled'
                             className='deparment'
-                            color='secondary'
+                            color='primary'
                             fullWidth
+                            required
                           >
                             <InputLabel id='demo-simple-select-filled-label'>
                               Department
@@ -147,7 +161,8 @@ export function Register(props: any) {
                               value={department}
                               onChange={(e) => onChange(e)}
                               fullWidth
-                              color='secondary'
+                              required
+                              color='primary'
                             >
                               <MenuItem value=''>
                                 <em>None</em>
@@ -161,43 +176,55 @@ export function Register(props: any) {
                         </Grid>
 
                         <Grid item xs={12} sm={12}>
-                          <TextField
+                          <TextValidator
                             id='email'
                             name='email'
                             label='Email'
                             variant='outlined'
                             type='email'
-                            color='secondary'
+                            color='primary '
                             value={email}
                             onChange={(e) => onChange(e)}
                             required
+                            validators={['required', 'isEmail']}
+                            errorMessages={[
+                              'Email is required',
+                              'Email is not valid',
+                            ]}
                             fullWidth
                           />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                          <TextField
+                          <TextValidator
                             id='password'
                             name='password'
                             label='Password'
                             variant='outlined'
                             type='password'
-                            color='secondary'
+                            color='primary '
                             value={password}
                             onChange={(e) => onChange(e)}
+                            validators={['required']}
+                            errorMessages={['Password is required']}
                             required
                             fullWidth
                           />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                          <TextField
+                          <TextValidator
                             id='cfPassword'
                             name='cfPassword'
                             label='Confirm Password'
                             variant='outlined'
                             type='password'
-                            color='secondary'
+                            color='primary '
                             value={cfPassword}
                             onChange={(e) => onChange(e)}
+                            validators={['isPasswordMatch', 'required']}
+                            errorMessages={[
+                              'Passwords do not match',
+                              'Confirm Password is required',
+                            ]}
                             required
                             fullWidth
                           />
@@ -205,10 +232,9 @@ export function Register(props: any) {
                         <Grid item xs={12} sm={12}>
                           <Button
                             variant='contained'
-                            color='secondary'
+                            color='primary'
                             type='submit'
                             fullWidth
-                            onClick={registerUser}
                           >
                             Sign Up
                           </Button>
@@ -217,7 +243,7 @@ export function Register(props: any) {
                           <Link to='/'>Already have an account? Sign in</Link>
                         </Grid>
                       </Grid>
-                    </form>
+                    </ValidatorForm>
                   </CardContent>
                   <CardActions></CardActions>
                 </Card>

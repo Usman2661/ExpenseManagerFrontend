@@ -10,11 +10,6 @@ import PrivateRoute from './routing/PrivateRoute';
 import { UserContext } from './userContext';
 import PublicRoute from './routing/PublicRoute';
 
-// const sampleUserContext: UserContextInterface = {
-//   name: 'Using React Context in a Typescript App',
-//   auth: false,
-//   userType: 'Staff',
-// };
 function App() {
   var auth;
   const authStore = localStorage.getItem('auth');
@@ -37,16 +32,8 @@ function App() {
       <UserContext.Provider value={{ userAuthData, setUserAuthData }}>
         <Navbar></Navbar>
         <Switch>
-          {/* <PublicRoute redirectPath='/home' path='/'>
-            <Login />
-          </PublicRoute>
-          <PublicRoute redirectPath='/home' path='/register'>
-            <Register />
-          </PublicRoute> */}
-
           <Route path='/' component={Login} exact />
           <Route path='/register' component={Register} exact />
-          {/* <Route path='/users' component={UserTest} exact /> */}
           <PrivateRoute redirectPath='/' path='/home'>
             <Home />
           </PrivateRoute>

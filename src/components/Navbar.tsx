@@ -28,7 +28,6 @@ export function Navbar(props: any) {
 
   const logout = () => {
     localStorage.clear();
-
     setUserAuthData({
       id: '',
       auth: false,
@@ -41,7 +40,7 @@ export function Navbar(props: any) {
 
   return (
     <div className={classes.root}>
-      <AppBar position='static' color='secondary'>
+      <AppBar position='static' color='primary'>
         <Toolbar>
           <IconButton
             edge='start'
