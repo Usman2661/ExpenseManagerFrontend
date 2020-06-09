@@ -18,6 +18,7 @@ import { UserContext } from '../../userContext';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
 export function Register(props: any) {
+  // Using the variables for storing registration details
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,10 +27,14 @@ export function Register(props: any) {
     jobTitle: '',
     department: '',
   });
+
+  // Destructuring
   const { name, email, password, cfPassword, jobTitle, department } = formData;
 
+  //Fetching the userContext data
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
+  //Adding is password match validation rule
   ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
     if (value !== formData.password) {
       return false;
@@ -37,14 +42,17 @@ export function Register(props: any) {
     return true;
   });
 
+  //If the user is authenticated redirect to the home page
   if (userAuthData.auth) {
     props.history.push('/home');
   }
 
+  //When data in the form is changed map values to the state
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  //Call the register user action
   const registerUser = async (e: any) => {
     e.preventDefault();
     try {
