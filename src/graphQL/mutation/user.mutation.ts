@@ -48,22 +48,49 @@ export const DELETE_USER = gql`
   }
 `;
 
-export const UPDATE_USER = gql`
+// export const UPDATE_USER = gql`
+//   mutation updateUser(
+//     $id: Int!
+//     $name: String!
+//     $email: String!
+//     $password: String!
+//     $jobTitle: String!
+//     $department: String!
+//   ) {
+//     updateUser(
+//       id: $id
+//       name: $name
+//       email: $email
+//       password: $password
+//       jobTitle: $jobTitle
+//       department: $department
+//     ) {
+//       id
+//       name
+//       email
+//       department
+//       jobTitle
+//       userType
+//     }
+//   }
+// `;
+
+export const UPDATE_USER = `
   mutation updateUser(
     $id: Int!
     $name: String!
     $email: String!
-    $password: String!
     $jobTitle: String!
     $department: String!
+    $userType: String!
   ) {
     updateUser(
       id: $id
       name: $name
       email: $email
-      password: $password
       jobTitle: $jobTitle
       department: $department
+      userType: $userType
     ) {
       id
       name

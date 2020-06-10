@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Stepper from '@material-ui/core/Stepper';
@@ -12,6 +12,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import TextField from '@material-ui/core/TextField';
+import { useLazyQuery } from '@apollo/react-hooks';
+import { request, GraphQLClient } from 'graphql-request';
+import { GET_USER } from '../../graphQL/query/query';
+import { graphQLClient } from '../../graphQL/graphqlconfig';
+import { UPDATE_USER } from '../../graphQL/mutation/user.mutation';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,11 +38,35 @@ function getSteps() {
   return ['User Details', 'Asign a User Type', 'Assign Manager'];
 }
 
-export function UpdateAccount() {
+export function UpdateAccount(props: any) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const steps = getSteps();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const userID = urlParams.get('id');
+
+  const id = parseInt(userID || '0');
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  const [formData, setFormData] = useState({
+    id: '',
+    name: '',
+    email: '',
+    jobTitle: '',
+    department: '',
+    userType: '',
+  });
+
+  const { name, email, jobTitle, department, userType } = formData;
+
+  const onChange = (e: any) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const isStepOptional = (step: number) => {
     return null;
@@ -57,8 +86,8 @@ export function UpdateAccount() {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
 
-    if (activeStep === 3) {
-      console.log('process is finished');
+    if (activeStep === 2) {
+      updateUser();
     }
   };
 
@@ -83,6 +112,51 @@ export function UpdateAccount() {
 
   const handleReset = () => {
     setActiveStep(0);
+  };
+
+  // const [loadUser, { loading, data }] = useLazyQuery(GET_USER, {
+  //   errorPolicy: 'ignore',
+  //   variables: {
+  //     id: id,
+  //   },
+  // });
+
+  const updateUser = async () => {
+    try {
+      const variables = {
+        id: formData.id,
+        name: formData.name,
+        email: formData.email,
+        department: formData.department,
+        jobTitle: formData.jobTitle,
+        userType: formData.userType,
+      };
+      const data = await graphQLClient.request(UPDATE_USER, variables);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const loadUser = async () => {
+    try {
+      const variables = {
+        id: id,
+      };
+
+      const data = await graphQLClient.request(GET_USER, variables);
+
+      setFormData({
+        id: data?.user.id,
+        name: data?.user.name,
+        email: data?.user.email,
+        userType: data?.user.userType,
+        jobTitle: data?.user.jobTitle,
+        department: data?.user.department,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -132,9 +206,9 @@ export function UpdateAccount() {
                           id='name'
                           label='Name'
                           color='primary'
-                          value='Name'
-                          // value={name}
-                          // onChange={(e) => onChange(e)}
+                          value={name}
+                          onChange={(e) => onChange(e)}
+                          autoFocus
                           //   validators={['required']}
                           //   errorMessages={['Name is required']}
                         />
@@ -149,9 +223,9 @@ export function UpdateAccount() {
                           id='jobTitle'
                           color='primary'
                           label='Job Title'
-                          // onChange={(e) => onChange(e)}
-                          // value={jobTitle}
-                          value='Job Title'
+                          onChange={(e) => onChange(e)}
+                          value={jobTitle}
+                          autoFocus
                           //   validators={['required']}
                           //   errorMessages={['Job Title is required']}
                         />
@@ -172,9 +246,8 @@ export function UpdateAccount() {
                             labelId='demo-simple-select-filled-label'
                             id='demo-simple-select-filled'
                             name='department'
-                            //   value={department}
-                            value=''
-                            //   onChange={(e) => onChange(e)}
+                            value={department}
+                            onChange={(e) => onChange(e)}
                             fullWidth
                             required
                             color='primary'
@@ -198,13 +271,13 @@ export function UpdateAccount() {
                           variant='outlined'
                           type='email'
                           color='primary'
-                          value='email'
-                          // value={email}
-                          // onChange={(e) => onChange(e)}
+                          value={email}
+                          onChange={(e) => onChange(e)}
                           required
                           //   validators={['required', 'isEmail']}
                           //   errorMessages={['Email is required', 'Email is not valid']}
                           fullWidth
+                          autoFocus
                         />
                       </Grid>
                     </Grid>
@@ -225,9 +298,9 @@ export function UpdateAccount() {
                         <Select
                           labelId='demo-simple-select-filled-label'
                           id='demo-simple-select-filled'
-                          name='department'
-                          //   value={department}
-                          //   onChange={(e) => onChange(e)}
+                          name='userType'
+                          value={userType}
+                          onChange={(e) => onChange(e)}
                           fullWidth
                           required
                           color='primary'

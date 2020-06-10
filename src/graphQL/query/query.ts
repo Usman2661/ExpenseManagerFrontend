@@ -13,15 +13,26 @@ export const GET_USERS = gql`
   }
 `;
 
-export const GET_USER = gql`
-  query user($id: Int!) {
-    allUsers(id: $id) {
-      id
-      name
-      email
-      department
-      userType
-      jobTitle
-    }
+// export const GET_USER = gql`
+//   query user($id: Int!) {
+//     user(id: $id) {
+//       id
+//       name
+//       email
+//       department
+//       userType
+//       jobTitle
+//     }
+//   }
+// `;
+
+export const GET_USER = `query user($id: Int!) {
+  user(id: $id) {
+    id
+    name
+    email
+    department
+    userType
+    jobTitle
   }
-`;
+}`;
