@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Stepper from '@material-ui/core/Stepper';
@@ -14,9 +14,15 @@ import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import TextField from '@material-ui/core/TextField';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { request, GraphQLClient } from 'graphql-request';
+import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 import { GET_USER } from '../../graphQL/query/query';
 import { graphQLClient } from '../../graphQL/graphqlconfig';
 import { UPDATE_USER } from '../../graphQL/mutation/user.mutation';
+import { UserContext } from '../../userContext';
+import { format } from 'util';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -60,9 +66,16 @@ export function UpdateAccount(props: any) {
     jobTitle: '',
     department: '',
     userType: '',
+    managerId: '',
   });
 
-  const { name, email, jobTitle, department, userType } = formData;
+  const { name, email, jobTitle, department, userType, managerId } = formData;
+
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  const managersList = userAuthData.allUsers.filter((user: any) => {
+    return user.id != id;
+  });
 
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -97,8 +110,6 @@ export function UpdateAccount(props: any) {
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 
@@ -114,13 +125,6 @@ export function UpdateAccount(props: any) {
     setActiveStep(0);
   };
 
-  // const [loadUser, { loading, data }] = useLazyQuery(GET_USER, {
-  //   errorPolicy: 'ignore',
-  //   variables: {
-  //     id: id,
-  //   },
-  // });
-
   const updateUser = async () => {
     try {
       const variables = {
@@ -130,6 +134,7 @@ export function UpdateAccount(props: any) {
         department: formData.department,
         jobTitle: formData.jobTitle,
         userType: formData.userType,
+        managerId: formData.managerId,
       };
       const data = await graphQLClient.request(UPDATE_USER, variables);
       console.log(data);
@@ -146,13 +151,17 @@ export function UpdateAccount(props: any) {
 
       const data = await graphQLClient.request(GET_USER, variables);
 
+      console.log(data);
+
       setFormData({
+        ...formData,
         id: data?.user.id,
         name: data?.user.name,
         email: data?.user.email,
         userType: data?.user.userType,
         jobTitle: data?.user.jobTitle,
         department: data?.user.department,
+        managerId: data?.user.managerId,
       });
     } catch (error) {
       console.error(error);
@@ -161,197 +170,244 @@ export function UpdateAccount(props: any) {
 
   return (
     <div className={classes.root}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps: { completed?: boolean } = {};
-          const labelProps: { optional?: React.ReactNode } = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant='caption'>Optional</Typography>
-            );
-          }
-          if (isStepSkipped(index)) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div>
-        {activeStep === steps.length ? (
-          <div>
-            <Typography className={classes.instructions}>
-              All steps completed - you&apos;re finished
-            </Typography>
-            <Button onClick={handleReset} className={classes.button}>
-              Reset
-            </Button>
-          </div>
-        ) : (
-          <div>
-            <Typography className={classes.instructions}>
-              {(() => {
-                if (activeStep === 0)
-                  return (
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          name='name'
-                          variant='outlined'
-                          required
-                          fullWidth
-                          id='name'
-                          label='Name'
-                          color='primary'
-                          value={name}
-                          onChange={(e) => onChange(e)}
-                          autoFocus
-                          //   validators={['required']}
-                          //   errorMessages={['Name is required']}
-                        />
-                      </Grid>
+      <Grid container justify='center' alignItems='center'>
+        <Grid item xs={12} sm={8} md={6} lg={4}>
+          <Paper className='registration'>
+            <Card className='registerCard '>
+              <CardContent>
+                <Stepper activeStep={activeStep}>
+                  {steps.map((label, index) => {
+                    const stepProps: { completed?: boolean } = {};
+                    const labelProps: { optional?: React.ReactNode } = {};
+                    if (isStepOptional(index)) {
+                      labelProps.optional = (
+                        <Typography variant='caption'>Optional</Typography>
+                      );
+                    }
+                    if (isStepSkipped(index)) {
+                      stepProps.completed = false;
+                    }
+                    return (
+                      <Step key={label} {...stepProps}>
+                        <StepLabel {...labelProps}>{label}</StepLabel>
+                      </Step>
+                    );
+                  })}
+                </Stepper>
+                <div>
+                  {activeStep === steps.length ? (
+                    <div>
+                      <Typography className={classes.instructions}>
+                        All steps completed - you&apos;re finished
+                      </Typography>
+                      <Button onClick={handleReset} className={classes.button}>
+                        Reset
+                      </Button>
+                    </div>
+                  ) : (
+                    <div>
+                      <Typography className={classes.instructions}>
+                        {(() => {
+                          if (activeStep === 0)
+                            return (
+                              <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    name='name'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    id='name'
+                                    label='Name'
+                                    color='primary'
+                                    value={name}
+                                    onChange={(e) => onChange(e)}
+                                    autoFocus
+                                    //   validators={['required']}
+                                    //   errorMessages={['Name is required']}
+                                  />
+                                </Grid>
 
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          name='jobTitle'
-                          variant='outlined'
-                          required
-                          fullWidth
-                          id='jobTitle'
-                          color='primary'
-                          label='Job Title'
-                          onChange={(e) => onChange(e)}
-                          value={jobTitle}
-                          autoFocus
-                          //   validators={['required']}
-                          //   errorMessages={['Job Title is required']}
-                        />
-                      </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    name='jobTitle'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    id='jobTitle'
+                                    color='primary'
+                                    label='Job Title'
+                                    onChange={(e) => onChange(e)}
+                                    value={jobTitle}
+                                    autoFocus
+                                    //   validators={['required']}
+                                    //   errorMessages={['Job Title is required']}
+                                  />
+                                </Grid>
 
-                      <Grid item xs={12} sm={12}>
-                        <FormControl
-                          variant='filled'
-                          className='deparment'
-                          color='primary'
-                          fullWidth
-                          required
+                                <Grid item xs={12} sm={12}>
+                                  <FormControl
+                                    variant='filled'
+                                    className='deparment'
+                                    color='primary'
+                                    fullWidth
+                                    required
+                                  >
+                                    <InputLabel id='demo-simple-select-filled-label'>
+                                      Department
+                                    </InputLabel>
+                                    <Select
+                                      labelId='demo-simple-select-filled-label'
+                                      id='demo-simple-select-filled'
+                                      name='department'
+                                      value={department}
+                                      onChange={(e) => onChange(e)}
+                                      fullWidth
+                                      required
+                                      color='primary'
+                                    >
+                                      <MenuItem value=''>
+                                        <em>None</em>
+                                      </MenuItem>
+                                      <MenuItem value='Sales'>Sales</MenuItem>
+                                      <MenuItem value='Technology'>
+                                        Technology
+                                      </MenuItem>
+                                      <MenuItem value='Management'>
+                                        Management
+                                      </MenuItem>
+                                      <MenuItem value='HR'>HR</MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </Grid>
+
+                                <Grid item xs={12} sm={12}>
+                                  <TextField
+                                    id='email'
+                                    name='email'
+                                    label='Email'
+                                    variant='outlined'
+                                    type='email'
+                                    color='primary'
+                                    value={email}
+                                    onChange={(e) => onChange(e)}
+                                    required
+                                    fullWidth
+                                    autoFocus
+                                  />
+                                </Grid>
+                              </Grid>
+                            );
+                          if (activeStep === 1)
+                            return (
+                              <Grid item xs={12} sm={12}>
+                                <FormControl
+                                  variant='filled'
+                                  className='deparment'
+                                  color='primary'
+                                  fullWidth
+                                  required
+                                >
+                                  <InputLabel id='demo-simple-select-filled-label'>
+                                    User Type
+                                  </InputLabel>
+                                  <Select
+                                    labelId='demo-simple-select-filled-label'
+                                    id='demo-simple-select-filled'
+                                    name='userType'
+                                    value={userType}
+                                    onChange={(e) => onChange(e)}
+                                    fullWidth
+                                    required
+                                    color='primary'
+                                  >
+                                    <MenuItem value=''>
+                                      <em>None</em>
+                                    </MenuItem>
+                                    <MenuItem value='Staff'>Staff</MenuItem>
+                                    <MenuItem value='Manager'>Manager</MenuItem>
+                                    <MenuItem value='SeniorManagement'>
+                                      Senior Management
+                                    </MenuItem>
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                            );
+                          if (activeStep === 2)
+                            return (
+                              <Grid item xs={12} sm={12}>
+                                <FormControl
+                                  variant='filled'
+                                  className='deparment'
+                                  color='primary'
+                                  fullWidth
+                                  required
+                                >
+                                  <InputLabel id='demo-simple-select-filled-label'>
+                                    Manager
+                                  </InputLabel>
+                                  <Select
+                                    labelId='demo-simple-select-filled-label'
+                                    id='demo-simple-select-filled'
+                                    name='managerId'
+                                    value=''
+                                    onChange={(e) => onChange(e)}
+                                    fullWidth
+                                    required
+                                    color='primary'
+                                  >
+                                    <MenuItem value=''>
+                                      <em>None</em>
+                                    </MenuItem>
+                                    {managersList.map((manager: any) => (
+                                      <MenuItem value={manager.id}>
+                                        {manager.name}
+                                      </MenuItem>
+                                    ))}{' '}
+                                    ;
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                            );
+                          else;
+                          return <span>Unknown Step</span>;
+                        })()}
+                      </Typography>
+                      <div>
+                        <Button
+                          disabled={activeStep === 0}
+                          onClick={handleBack}
+                          className={classes.button}
                         >
-                          <InputLabel id='demo-simple-select-filled-label'>
-                            Department
-                          </InputLabel>
-                          <Select
-                            labelId='demo-simple-select-filled-label'
-                            id='demo-simple-select-filled'
-                            name='department'
-                            value={department}
-                            onChange={(e) => onChange(e)}
-                            fullWidth
-                            required
+                          Back
+                        </Button>
+                        {isStepOptional(activeStep) && (
+                          <Button
+                            variant='contained'
                             color='primary'
+                            onClick={handleSkip}
+                            className={classes.button}
                           >
-                            <MenuItem value=''>
-                              <em>None</em>
-                            </MenuItem>
-                            <MenuItem value='Sales'>Sales</MenuItem>
-                            <MenuItem value='Technology'>Technology</MenuItem>
-                            <MenuItem value='Management'>Management</MenuItem>
-                            <MenuItem value='HR'>HR</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item xs={12} sm={12}>
-                        <TextField
-                          id='email'
-                          name='email'
-                          label='Email'
-                          variant='outlined'
-                          type='email'
+                            Skip
+                          </Button>
+                        )}
+                        <Button
+                          variant='contained'
                           color='primary'
-                          value={email}
-                          onChange={(e) => onChange(e)}
-                          required
-                          //   validators={['required', 'isEmail']}
-                          //   errorMessages={['Email is required', 'Email is not valid']}
-                          fullWidth
-                          autoFocus
-                        />
-                      </Grid>
-                    </Grid>
-                  );
-                if (activeStep === 1)
-                  return (
-                    <Grid item xs={12} sm={12}>
-                      <FormControl
-                        variant='filled'
-                        className='deparment'
-                        color='primary'
-                        fullWidth
-                        required
-                      >
-                        <InputLabel id='demo-simple-select-filled-label'>
-                          User Type
-                        </InputLabel>
-                        <Select
-                          labelId='demo-simple-select-filled-label'
-                          id='demo-simple-select-filled'
-                          name='userType'
-                          value={userType}
-                          onChange={(e) => onChange(e)}
-                          fullWidth
-                          required
-                          color='primary'
+                          onClick={handleNext}
+                          className={classes.button}
                         >
-                          <MenuItem value=''>
-                            <em>None</em>
-                          </MenuItem>
-                          <MenuItem value='Staff'>Staff</MenuItem>
-                          <MenuItem value='Manager'>Manager</MenuItem>
-                          <MenuItem value='SeniorManagement'>
-                            Senior Management
-                          </MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  );
-                if (activeStep === 2) return <span>Setp 3</span>;
-                else;
-                return <span>Unknown Step</span>;
-              })()}
-            </Typography>
-            <div>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className={classes.button}
-              >
-                Back
-              </Button>
-              {isStepOptional(activeStep) && (
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={handleSkip}
-                  className={classes.button}
-                >
-                  Skip
-                </Button>
-              )}
-              <Button
-                variant='contained'
-                color='primary'
-                onClick={handleNext}
-                className={classes.button}
-              >
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+                          {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </Paper>
+        </Grid>
+      </Grid>
     </div>
   );
 }

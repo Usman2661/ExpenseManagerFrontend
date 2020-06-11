@@ -21,6 +21,7 @@ function App() {
   } else {
     auth = false;
   }
+
   const [userAuthData, setUserAuthData] = useState({
     id: localStorage.getItem('id'),
     name: localStorage.getItem('name'),
@@ -28,6 +29,7 @@ function App() {
     email: localStorage.getItem('email'),
     userType: localStorage.getItem('userType'),
     token: localStorage.getItem('token'),
+    allUsers: [],
   });
 
   return (

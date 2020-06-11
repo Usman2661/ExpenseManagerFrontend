@@ -83,6 +83,7 @@ export const UPDATE_USER = `
     $jobTitle: String!
     $department: String!
     $userType: String!
+    $managerId: Int
   ) {
     updateUser(
       id: $id
@@ -91,6 +92,7 @@ export const UPDATE_USER = `
       jobTitle: $jobTitle
       department: $department
       userType: $userType
+      managerId: $managerId
     ) {
       id
       name

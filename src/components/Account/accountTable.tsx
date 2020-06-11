@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import MaterialTable, { Column } from 'material-table';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -29,10 +29,12 @@ import { useHistory } from 'react-router-dom';
 
 import { IUser } from '../../models/User';
 import { useQuery } from 'react-apollo';
-import { GET_USERS } from '../../graphQL/query/query';
+import { GET_USERS, GET_USER } from '../../graphQL/query/query';
 import { DELETE_USER } from '../../graphQL/mutation/user.mutation';
 import { useMutation } from '@apollo/react-hooks';
 import { UpdateAccount } from './UpdateAccount';
+import { graphQLClient } from '../../graphQL/graphqlconfig';
+import { UserContext } from '../../userContext';
 
 const tableIcons: any = {
   Add: () => <AddBox />,
@@ -89,9 +91,11 @@ export function AccountTable(props: any) {
     ],
   });
 
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
+
   const [tableData, setTableData] = useState({
     currentRecord: 0,
-    edit: false,
+    data: [],
   });
 
   useEffect(() => {
@@ -102,6 +106,7 @@ export function AccountTable(props: any) {
     await setTableData({ ...tableData, currentRecord: oldData });
     try {
       const { data } = await deleteUser();
+      loadUsers();
     } catch (e) {
       console.error(e);
     }
@@ -114,62 +119,34 @@ export function AccountTable(props: any) {
     },
   });
 
-  const [loadUsers, { loading: usersLoading, data: usersData }] = useLazyQuery(
-    GET_USERS
-  );
+  const loadUsers = async () => {
+    try {
+      const data = await graphQLClient.request(GET_USERS);
+      setTableData({ ...tableData, data: data.allUsers });
+      localStorage.setItem('allUsers', data.allUsers);
+
+      setUserAuthData({
+        ...userAuthData,
+        allUsers: data.allUsers,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div>
-      {tableData.edit ? <UpdateAccount /> : null}
       <MaterialTable
         title='Users'
         columns={state.columns}
-        data={usersData?.allUsers}
+        data={tableData.data}
         icons={tableIcons}
         options={{
           actionsColumnIndex: -1,
         }}
         editable={{
-          // onRowAdd: (newData) =>
-          //   new Promise((resolve) => {
-          //     // setTimeout(() => {
-          //     //   resolve();
-          //     //   setState((prevState) => {
-          //     //     const data = [...prevState.data];
-          //     //     data.push(newData);
-          //     //     return { ...prevState, data };
-          //     //   });
-          //     // }, 600);
-          //     console.log(newData);
-          //     resolve();
-          //   }),
-          // onRowUpdate: (newData, oldData) =>
-          //   new Promise((resolve) => {
-          //     // setTimeout(() => {
-          //     //   resolve();
-          //     //   if (oldData) {
-          //     //     setState((prevState) => {
-          //     //       const data = [...prevState.data];
-          //     //       data[data.indexOf(oldData)] = newData;
-          //     //       return { ...prevState, data };
-          //     //     });
-          //     //   }
-          //     // }, 600);
-          //     // loadUsers();
-          //     console.log(oldData, newData);
-          //     resolve();
-          //   }),
           onRowDelete: (oldData) =>
             new Promise((resolve) => {
-              // setTimeout(() => {
-              //   resolve();
-              //   setState((prevState) => {
-              //     const data = [...prevState.data];
-              //     data.splice(data.indexOf(oldData), 1);
-              //     return { ...prevState, data };
-              //   });
-              // }, 600);
-              // usersData.allUsers.filter((user: any) => user.id !== oldData.id);
               onDeleteUser(oldData.id);
               resolve();
             }),

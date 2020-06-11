@@ -1,6 +1,19 @@
 import { gql } from 'apollo-boost';
 
-export const GET_USERS = gql`
+// export const GET_USERS = gql`
+//   query allUsers {
+//     allUsers {
+//       id
+//       name
+//       email
+//       department
+//       userType
+//       jobTitle
+//     }
+//   }
+// `;
+
+export const GET_USERS = `
   query allUsers {
     allUsers {
       id
@@ -34,5 +47,6 @@ export const GET_USER = `query user($id: Int!) {
     department
     userType
     jobTitle
+    managerId
   }
 }`;
