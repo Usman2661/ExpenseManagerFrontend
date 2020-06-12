@@ -67,18 +67,43 @@ export function UpdateAccount(props: any) {
     department: '',
     userType: '',
     managerId: '',
+    managersList: [],
   });
 
-  const { name, email, jobTitle, department, userType, managerId } = formData;
+  const {
+    name,
+    email,
+    jobTitle,
+    department,
+    userType,
+    managerId,
+    managersList,
+  } = formData;
 
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
-  const managersList = userAuthData.allUsers.filter((user: any) => {
-    return user.id != id;
+  let managerList;
+
+  managerList = userAuthData.allUsers.filter((user: any) => {
+    return (
+      user.id !== id && user.userType !== 'Staff' && user.userType !== null
+    );
   });
+
+  if (formData.userType === 'SeniorManagement') {
+    managerList = userAuthData.allUsers.filter((user: any) => {
+      return user.id !== id && user.userType === 'SeniorManagement';
+    });
+  }
 
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    if (formData.userType === 'SeniorManagement') {
+      managerList = userAuthData.allUsers.filter((user: any) => {
+        return user.id !== id && user.userType === 'SeniorManagement';
+      });
+    }
   };
 
   const isStepOptional = (step: number) => {
@@ -150,9 +175,6 @@ export function UpdateAccount(props: any) {
       };
 
       const data = await graphQLClient.request(GET_USER, variables);
-
-      console.log(data);
-
       setFormData({
         ...formData,
         id: data?.user.id,
@@ -223,8 +245,6 @@ export function UpdateAccount(props: any) {
                                     value={name}
                                     onChange={(e) => onChange(e)}
                                     autoFocus
-                                    //   validators={['required']}
-                                    //   errorMessages={['Name is required']}
                                   />
                                 </Grid>
 
@@ -303,7 +323,7 @@ export function UpdateAccount(props: any) {
                               <Grid item xs={12} sm={12}>
                                 <FormControl
                                   variant='filled'
-                                  className='deparment'
+                                  className='userType'
                                   color='primary'
                                   fullWidth
                                   required
@@ -338,7 +358,7 @@ export function UpdateAccount(props: any) {
                               <Grid item xs={12} sm={12}>
                                 <FormControl
                                   variant='filled'
-                                  className='deparment'
+                                  className='managerid'
                                   color='primary'
                                   fullWidth
                                   required
@@ -350,6 +370,7 @@ export function UpdateAccount(props: any) {
                                     labelId='demo-simple-select-filled-label'
                                     id='demo-simple-select-filled'
                                     name='managerId'
+                                    // value={managerId}
                                     value=''
                                     onChange={(e) => onChange(e)}
                                     fullWidth
@@ -359,9 +380,10 @@ export function UpdateAccount(props: any) {
                                     <MenuItem value=''>
                                       <em>None</em>
                                     </MenuItem>
-                                    {managersList.map((manager: any) => (
+                                    {managerList.map((manager: any) => (
                                       <MenuItem value={manager.id}>
                                         {manager.name}
+                                        {'-'} {manager.jobTitle}
                                       </MenuItem>
                                     ))}{' '}
                                     ;

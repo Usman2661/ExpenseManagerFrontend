@@ -66,38 +66,12 @@ interface UserDataVars {}
 export function AccountTable(props: any) {
   const history = useHistory();
 
-  const [state, setState] = useState({
-    columns: [
-      { title: 'Name', field: 'name' },
-      { title: 'Email', field: 'email' },
-      { title: 'User Type', field: 'userType' },
-      { title: 'Job Title', field: 'jobTitle' },
-      { title: 'Department', field: 'department' },
-      {
-        field: 'status',
-        title: 'Status',
-        render: (rowData: any) => {
-          return rowData.userType ? (
-            <Alert variant='filled' severity='success'>
-              Approved
-            </Alert>
-          ) : (
-            <Alert variant='filled' severity='error'>
-              Pending
-            </Alert>
-          );
-        },
-      },
-    ],
-  });
-
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const [tableData, setTableData] = useState({
     currentRecord: 0,
     data: [],
   });
-
   useEffect(() => {
     loadUsers();
   }, []);
@@ -123,7 +97,6 @@ export function AccountTable(props: any) {
     try {
       const data = await graphQLClient.request(GET_USERS);
       setTableData({ ...tableData, data: data.allUsers });
-      localStorage.setItem('allUsers', data.allUsers);
 
       setUserAuthData({
         ...userAuthData,
@@ -133,6 +106,44 @@ export function AccountTable(props: any) {
       console.error(error);
     }
   };
+
+  const [state, setState] = useState({
+    columns: [
+      { title: 'Name', field: 'name' },
+      { title: 'Email', field: 'email' },
+      { title: 'User Type', field: 'userType' },
+      { title: 'Job Title', field: 'jobTitle' },
+      { title: 'Department', field: 'department' },
+      // {
+      //   field: 'Manager',
+      //   title: 'Manager',
+      //   render: (rowData: any) => {
+      //     const myManager: any = tableData.data.find(
+      //       (x: any) => x.id === rowData.managerId
+      //     );
+      //     console.log(tableData.data);
+      //     console.log(myManager);
+
+      //     return myManager?.name;
+      //   },
+      // },
+      {
+        field: 'status',
+        title: 'Status',
+        render: (rowData: any) => {
+          return rowData.userType && rowData.managerId ? (
+            <Alert variant='filled' severity='success'>
+              Approved
+            </Alert>
+          ) : (
+            <Alert variant='filled' severity='error'>
+              Pending
+            </Alert>
+          );
+        },
+      },
+    ],
+  });
 
   return (
     <div>

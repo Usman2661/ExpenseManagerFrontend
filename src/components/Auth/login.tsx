@@ -74,7 +74,12 @@ export function Login(props: any) {
     <div>
       <div>
         <div className='loginForm'>
-          <Grid container justify='center' alignItems='center'>
+          <Grid
+            container
+            direction='column'
+            justify='center'
+            alignItems='center'
+          >
             <Grid item xs={12} sm={8} md={6} lg={4}>
               <Paper className='login'>
                 <Card className='loginCard '>
