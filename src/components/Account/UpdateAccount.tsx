@@ -189,11 +189,15 @@ export function UpdateAccount(props: any) {
       console.error(error);
     }
   };
-
   return (
     <div className={classes.root}>
-      <Grid container justify='center' alignItems='center'>
-        <Grid item xs={12} sm={8} md={6} lg={4}>
+      <Grid
+        container
+        justify='center'
+        alignItems='center'
+        className='updateAccountContainer'
+      >
+        <Grid item xs={12} sm={8} md={6} lg={6}>
           <Paper className='registration'>
             <Card className='registerCard '>
               <CardContent>

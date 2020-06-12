@@ -12,3 +12,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@media only screen and (min-width: 600px) {
+  .loginContainer {
+    margin-top: 7%;
+  }
+  .registerContainer {
+    margin-top: 2%;
+  }
+  .updateAccountContainer {
+    margin-top: 7%;
+  }
+}

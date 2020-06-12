@@ -76,7 +76,12 @@ export function Register(props: any) {
     <div>
       <div>
         <div className='registerForm'>
-          <Grid container justify='center' alignItems='center'>
+          <Grid
+            container
+            justify='center'
+            alignItems='center'
+            className='registerContainer'
+          >
             <Grid item xs={12} sm={8} md={6} lg={4}>
               <Paper className='registration'>
                 <Card className='registerCard '>

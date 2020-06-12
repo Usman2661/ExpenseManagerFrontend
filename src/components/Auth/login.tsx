@@ -14,7 +14,6 @@ import { useMutation } from '@apollo/react-hooks';
 import { CREATE_USER, LOGIN_USER } from '../../graphQL/mutation/user.mutation';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-
 import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../../userContext';
 
@@ -75,6 +74,7 @@ export function Login(props: any) {
       <div>
         <div className='loginForm'>
           <Grid
+            className='loginContainer'
             container
             direction='column'
             justify='center'
