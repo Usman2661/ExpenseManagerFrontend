@@ -7,6 +7,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import AssessmentIcon from '@material-ui/icons/Assessment';
+import '../../../css/StatCards.css';
 
 export function StatCards() {
   return (
@@ -18,9 +19,10 @@ export function StatCards() {
         justify='center'
         alignItems='center'
         spacing={2}
+        style={{ margin: 0, width: '100%' }}
       >
-        <Grid item xs={12} sm={8} md={6} lg={3}>
-          <Card variant='outlined'>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Card variant='outlined' className='amountClaimed'>
             <CardContent>
               <Grid className='statCard1' container direction='row'>
                 <Grid item xs={6} style={{ marginTop: '4%' }}>
@@ -39,8 +41,8 @@ export function StatCards() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={8} md={6} lg={3}>
-          <Card variant='outlined'>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Card variant='outlined' className='amountPending'>
             <CardContent>
               <Grid className='statCard2' container direction='row'>
                 <Grid item xs={6} style={{ marginTop: '4%' }}>
@@ -59,8 +61,8 @@ export function StatCards() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={8} md={6} lg={3}>
-          <Card variant='outlined'>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Card variant='outlined' className='totalClaims'>
             <CardContent>
               <Grid className='statCard3' container direction='row'>
                 <Grid item xs={6} style={{ marginTop: '4%' }}>

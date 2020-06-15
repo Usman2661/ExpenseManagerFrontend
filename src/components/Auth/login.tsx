@@ -16,6 +16,7 @@ import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../../userContext';
+import { setHeaders } from '../../graphQL/graphqlconfig';
 
 export function Login(props: any) {
   const [formData, setFormData] = useState({
@@ -56,6 +57,7 @@ export function Login(props: any) {
           userType: data.login.user.userType,
           token: data.login.token,
         });
+        setHeaders();
         props.history.push('/home');
       }
     } catch (error) {

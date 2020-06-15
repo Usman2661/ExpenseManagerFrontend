@@ -19,10 +19,10 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { GET_USER } from '../../graphQL/query/query';
-import { graphQLClient } from '../../graphQL/graphqlconfig';
 import { UPDATE_USER } from '../../graphQL/mutation/user.mutation';
 import { UserContext } from '../../userContext';
 import { format } from 'util';
+import { setHeaders } from '../../graphQL/graphqlconfig';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,6 +81,8 @@ export function UpdateAccount(props: any) {
   } = formData;
 
   const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  const graphQLClient = setHeaders();
 
   let managerList;
 

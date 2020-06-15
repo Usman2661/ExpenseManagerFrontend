@@ -33,7 +33,7 @@ import { GET_USERS, GET_USER } from '../../graphQL/query/query';
 import { DELETE_USER } from '../../graphQL/mutation/user.mutation';
 import { useMutation } from '@apollo/react-hooks';
 import { UpdateAccount } from './UpdateAccount';
-import { graphQLClient } from '../../graphQL/graphqlconfig';
+import { setHeaders } from '../../graphQL/graphqlconfig';
 import { UserContext } from '../../userContext';
 
 const tableIcons: any = {
@@ -95,6 +95,7 @@ export function AccountTable(props: any) {
 
   const loadUsers = async () => {
     try {
+      const graphQLClient = setHeaders();
       const data = await graphQLClient.request(GET_USERS);
       setTableData({ ...tableData, data: data.allUsers });
 
@@ -114,19 +115,7 @@ export function AccountTable(props: any) {
       { title: 'User Type', field: 'userType' },
       { title: 'Job Title', field: 'jobTitle' },
       { title: 'Department', field: 'department' },
-      // {
-      //   field: 'Manager',
-      //   title: 'Manager',
-      //   render: (rowData: any) => {
-      //     const myManager: any = tableData.data.find(
-      //       (x: any) => x.id === rowData.managerId
-      //     );
-      //     console.log(tableData.data);
-      //     console.log(myManager);
 
-      //     return myManager?.name;
-      //   },
-      // },
       {
         field: 'status',
         title: 'Status',
