@@ -68,40 +68,34 @@ function UpdateAccount(props: any) {
 
   useEffect(() => {
     async function loadData() {
-      const myusers = await getUsers();
+      await getUsers();
       const myuser = await getUser(id);
-
-      if (usersLoading) {
-      }
+      setFormData({
+        ...formData,
+        id: myuser.id,
+        name: myuser.name,
+        email: myuser.email,
+        userType: myuser.userType,
+        jobTitle: myuser.jobTitle,
+        department: myuser.department,
+        managerId: myuser.managerId,
+      });
     }
 
     loadData();
   }, []);
 
   const [formData, setFormData] = useState({
-    id: '',
+    id: 0,
     name: '',
     email: '',
     jobTitle: '',
     department: '',
     userType: '',
-    managerId: '',
-    managersList: [],
+    managerId: 0,
   });
 
-  const {
-    name,
-    email,
-    jobTitle,
-    department,
-    userType,
-    managerId,
-    managersList,
-  } = formData;
-
-  const { userAuthData, setUserAuthData } = useContext(UserContext);
-
-  const graphQLClient = setHeaders();
+  const { name, email, jobTitle, department, userType, managerId } = formData;
 
   let managerList;
 
@@ -146,7 +140,7 @@ function UpdateAccount(props: any) {
     setSkipped(newSkipped);
 
     if (activeStep === 2) {
-      updateUser(2);
+      updateUser(formData);
     }
   };
 
@@ -207,6 +201,7 @@ function UpdateAccount(props: any) {
       console.error(error);
     }
   };
+
   return (
     <div className={classes.root}>
       <Grid

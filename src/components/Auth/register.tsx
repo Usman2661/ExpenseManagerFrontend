@@ -16,8 +16,10 @@ import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../../userContext';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import { observer } from 'mobx-react-lite';
+import UserStore from '../../MobX/store/UserStore';
 
-export function Register(props: any) {
+function Register(props: any) {
   // Using the variables for storing registration details
   const [formData, setFormData] = useState({
     name: '',
@@ -33,6 +35,9 @@ export function Register(props: any) {
 
   //Fetching the userContext data
   const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  const userStore = useContext(UserStore);
+  const { createUser } = userStore;
 
   //Adding is password match validation rule
   ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
@@ -56,21 +61,11 @@ export function Register(props: any) {
   const registerUser = async (e: any) => {
     e.preventDefault();
     try {
-      const { data } = await saveUser();
+      await createUser(formData);
     } catch (e) {
       console.log(e);
     }
   };
-  const [saveUser, { error, data }] = useMutation(CREATE_USER, {
-    errorPolicy: 'ignore',
-    variables: {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      jobTitle: formData.jobTitle,
-      department: formData.department,
-    },
-  });
 
   return (
     <div>
@@ -86,35 +81,6 @@ export function Register(props: any) {
               <Paper className='registration'>
                 <Card className='registerCard '>
                   <CardContent>
-                    {error ? (
-                      <Grid
-                        container
-                        spacing={2}
-                        justify='center'
-                        alignItems='center'
-                      >
-                        <Grid item xs={12} sm={12}>
-                          <Alert variant='filled' severity='error'>
-                            An error has occured {error.message}
-                          </Alert>
-                        </Grid>
-                      </Grid>
-                    ) : null}
-                    {data && data.createUser ? (
-                      <Grid
-                        container
-                        spacing={2}
-                        justify='center'
-                        alignItems='center'
-                      >
-                        <Grid item xs={12} sm={12}>
-                          <Alert variant='filled' severity='success'>
-                            Profile succesfully created for{' '}
-                            {data.createUser.name}
-                          </Alert>
-                        </Grid>
-                      </Grid>
-                    ) : null}
                     <div style={{ marginLeft: '40%' }}>
                       {' '}
                       <h1> Sign Up </h1>
@@ -268,3 +234,5 @@ export function Register(props: any) {
     </div>
   );
 }
+
+export default observer(Register);

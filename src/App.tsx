@@ -3,7 +3,7 @@ import './App.css';
 import { Route, Switch } from 'react-router-dom';
 import { Login } from './components/Auth/login';
 import { Navbar } from './components/Layout/Navbar';
-import { Register } from './components/Auth/register';
+import Register from './components/Auth/register';
 import { UserTest } from './components/UserTest';
 import { Home } from './components/Home/home';
 import PrivateRoute from './routing/PrivateRoute';

@@ -17,6 +17,8 @@ import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../../userContext';
 import { setHeaders } from '../../graphQL/graphqlconfig';
+import { observer } from 'mobx-react-lite';
+import UserStore from '../../MobX/store/UserStore';
 
 export function Login(props: any) {
   const [formData, setFormData] = useState({
@@ -27,6 +29,9 @@ export function Login(props: any) {
   const { email, password } = formData;
 
   const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  const userStore = useContext(UserStore);
+  const { login } = userStore;
 
   if (userAuthData.auth) {
     props.history.push('/home');
@@ -39,25 +44,17 @@ export function Login(props: any) {
   const loginUser = async (e: any) => {
     e.preventDefault();
     try {
-      const { data } = await login();
+      const data = await login(formData.email, formData.password);
 
-      if (data.login.token) {
-        localStorage.setItem('id', data.login.user.id);
-        localStorage.setItem('auth', 'true');
-        localStorage.setItem('name', data.login.user.name);
-        localStorage.setItem('email', data.login.user.email);
-        localStorage.setItem('userType', data.login.user.userType);
-        localStorage.setItem('token', data.login.token);
-
+      if (data.token) {
         setUserAuthData({
-          id: data.login.user.id,
+          id: data.user.id,
           auth: true,
-          name: data.login.user.name,
-          email: data.login.user.email,
-          userType: data.login.user.userType,
-          token: data.login.token,
+          name: data.user.name,
+          email: data.user.email,
+          userType: data.user.userType,
+          token: data.token,
         });
-        setHeaders();
         props.history.push('/home');
       }
     } catch (error) {
@@ -65,12 +62,6 @@ export function Login(props: any) {
     }
   };
 
-  const [login, { error, data }] = useMutation(LOGIN_USER, {
-    variables: {
-      email: formData.email,
-      password: formData.password,
-    },
-  });
   return (
     <div>
       <div>
@@ -86,11 +77,6 @@ export function Login(props: any) {
               <Paper className='login'>
                 <Card className='loginCard '>
                   <CardContent>
-                    {error ? (
-                      <Alert variant='filled' severity='error'>
-                        An error has occured {error.message}
-                      </Alert>
-                    ) : null}
                     <div style={{ marginLeft: '40%' }}>
                       {' '}
                       <h1> Login </h1>
