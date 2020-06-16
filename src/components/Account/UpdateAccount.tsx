@@ -23,6 +23,8 @@ import { UPDATE_USER } from '../../graphQL/mutation/user.mutation';
 import { UserContext } from '../../userContext';
 import { format } from 'util';
 import { setHeaders } from '../../graphQL/graphqlconfig';
+import { observer } from 'mobx-react-lite';
+import UserStore from '../../MobX/store/UserStore';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,7 +33,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     button: {
       marginRight: theme.spacing(1),
-      //   float: 'right',
     },
     instructions: {
       marginTop: theme.spacing(1),
@@ -44,7 +45,7 @@ function getSteps() {
   return ['User Details', 'Asign a User Type', 'Assign Manager'];
 }
 
-export function UpdateAccount(props: any) {
+function UpdateAccount(props: any) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
@@ -55,8 +56,26 @@ export function UpdateAccount(props: any) {
 
   const id = parseInt(userID || '0');
 
+  const userStore = useContext(UserStore);
+  const {
+    user,
+    users,
+    usersLoading,
+    updateUser,
+    getUser,
+    getUsers,
+  } = userStore;
+
   useEffect(() => {
-    loadUser();
+    async function loadData() {
+      const myusers = await getUsers();
+      const myuser = await getUser(id);
+
+      if (usersLoading) {
+      }
+    }
+
+    loadData();
   }, []);
 
   const [formData, setFormData] = useState({
@@ -86,14 +105,14 @@ export function UpdateAccount(props: any) {
 
   let managerList;
 
-  managerList = userAuthData.allUsers.filter((user: any) => {
+  managerList = users.filter((user: any) => {
     return (
       user.id !== id && user.userType !== 'Staff' && user.userType !== null
     );
   });
 
   if (formData.userType === 'SeniorManagement') {
-    managerList = userAuthData.allUsers.filter((user: any) => {
+    managerList = users.filter((user: any) => {
       return user.id !== id && user.userType === 'SeniorManagement';
     });
   }
@@ -102,7 +121,7 @@ export function UpdateAccount(props: any) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
     if (formData.userType === 'SeniorManagement') {
-      managerList = userAuthData.allUsers.filter((user: any) => {
+      managerList = users.filter((user: any) => {
         return user.id !== id && user.userType === 'SeniorManagement';
       });
     }
@@ -127,7 +146,7 @@ export function UpdateAccount(props: any) {
     setSkipped(newSkipped);
 
     if (activeStep === 2) {
-      updateUser();
+      updateUser(2);
     }
   };
 
@@ -152,40 +171,37 @@ export function UpdateAccount(props: any) {
     setActiveStep(0);
   };
 
-  const updateUser = async () => {
-    try {
-      const variables = {
-        id: formData.id,
-        name: formData.name,
-        email: formData.email,
-        department: formData.department,
-        jobTitle: formData.jobTitle,
-        userType: formData.userType,
-        managerId: formData.managerId,
-      };
-      const data = await graphQLClient.request(UPDATE_USER, variables);
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const updateUser = async () => {
+  //   try {
+  //     const variables = {
+  //       id: formData.id,
+  //       name: formData.name,
+  //       email: formData.email,
+  //       department: formData.department,
+  //       jobTitle: formData.jobTitle,
+  //       userType: formData.userType,
+  //       managerId: formData.managerId,
+  //     };
+  //     const data = await graphQLClient.request(UPDATE_USER, variables);
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const loadUser = async () => {
     try {
-      const variables = {
-        id: id,
-      };
-
-      const data = await graphQLClient.request(GET_USER, variables);
+      console.log(user);
+      console.log(users);
       setFormData({
         ...formData,
-        id: data?.user.id,
-        name: data?.user.name,
-        email: data?.user.email,
-        userType: data?.user.userType,
-        jobTitle: data?.user.jobTitle,
-        department: data?.user.department,
-        managerId: data?.user.managerId,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        userType: user.userType,
+        jobTitle: user.jobTitle,
+        department: user.department,
+        managerId: user.managerId,
       });
     } catch (error) {
       console.error(error);
@@ -439,3 +455,5 @@ export function UpdateAccount(props: any) {
     </div>
   );
 }
+
+export default observer(UpdateAccount);

@@ -1,9 +1,9 @@
 import { observable, action, computed, reaction } from 'mobx';
 import { createContext } from 'react';
-import axios from 'axios';
 import { IUser } from '../../models/User';
-import { GET_USER, GET_USERS } from '../../graphQL/query/query';
+import { GET_USERS, GET_USER } from '../../graphQL/query/query';
 import { setHeaders } from '../../graphQL/graphqlconfig';
+import { DELETE_USER } from '../../graphQL/mutation/user.mutation';
 
 class UserStore {
   constructor() {
@@ -14,9 +14,24 @@ class UserStore {
   }
 
   @observable users: IUser[] = [];
+  @observable user: any = {};
+  @observable usersLoading: boolean = false;
 
   @action addUser = async (user: IUser) => {
     // this.todos.push({ ...todo, id: 111 });
+  };
+
+  @action getUser = async (id: number) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        id: id,
+      };
+      const data = await graphQLClient.request(GET_USER, variables);
+      this.user = data.user;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   @action getUsers = async () => {
@@ -24,6 +39,7 @@ class UserStore {
       const graphQLClient = setHeaders();
       const data = await graphQLClient.request(GET_USERS);
       this.users = data.allUsers;
+      this.usersLoading = true;
     } catch (error) {
       console.error(error);
     }
@@ -41,16 +57,17 @@ class UserStore {
     // });
   };
 
-  @action deleteUser = async (id: number) => {
-    // try {
-    //   //   const todo = await axios.delete(
-    //   //     `https://jsonplaceholder.typicode.com/todos/${id}`
-    //   //   );
-    //   //   console.log(todo.data);
-    //   this.todos = this.todos.filter((todo) => todo.id !== id);
-    // } catch (error) {
-    //   console.error(error);
-    // }
+  @action deleteUser = async (id?: number) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        id,
+      };
+      const data = await graphQLClient.request(DELETE_USER, variables);
+      this.users = this.users.filter((user) => user.id !== data.deleteUser.id);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   @computed get info() {
