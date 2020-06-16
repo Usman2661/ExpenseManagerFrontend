@@ -6,4 +6,5 @@ export interface IUser {
   jobTitle: String;
   userType?: String;
   department: String;
+  managerId?: number;
 }

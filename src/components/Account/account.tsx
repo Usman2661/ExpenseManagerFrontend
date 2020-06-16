@@ -1,5 +1,5 @@
 import React from 'react';
-import { AccountTable } from './accountTable';
+import AccountTable from './accountTable';
 
 export function Account() {
   return (

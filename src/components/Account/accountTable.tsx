@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import MaterialTable, { Column } from 'material-table';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import { forwardRef } from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { useLazyQuery } from '@apollo/react-hooks';
-import Button from '@material-ui/core/Button';
+
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -26,7 +21,7 @@ import { Alert, AlertTitle } from '@material-ui/lab';
 import { Icons } from 'material-table';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-
+import { observer } from 'mobx-react-lite';
 import { IUser } from '../../models/User';
 import { useQuery } from 'react-apollo';
 import { GET_USERS, GET_USER } from '../../graphQL/query/query';
@@ -35,6 +30,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { UpdateAccount } from './UpdateAccount';
 import { setHeaders } from '../../graphQL/graphqlconfig';
 import { UserContext } from '../../userContext';
+import UserStore from '../../MobX/store/UserStore';
 
 const tableIcons: any = {
   Add: () => <AddBox />,
@@ -63,50 +59,54 @@ interface UserData {
 
 interface UserDataVars {}
 
-export function AccountTable(props: any) {
+function AccountTable(props: any) {
   const history = useHistory();
-
   const { userAuthData, setUserAuthData } = useContext(UserContext);
+  const userStore = useContext(UserStore);
+
+  const { users, getUsers, deleteUser } = userStore;
 
   const [tableData, setTableData] = useState({
     currentRecord: 0,
     data: [],
   });
+
   useEffect(() => {
-    loadUsers();
+    getUsers();
+    // loadUsers();
   }, []);
 
-  const onDeleteUser = async (oldData: number) => {
-    await setTableData({ ...tableData, currentRecord: oldData });
-    try {
-      const { data } = await deleteUser();
-      loadUsers();
-    } catch (e) {
-      console.error(e);
-    }
+  const onDeleteUser = async (oldData?: number) => {
+    // await setTableData({ ...tableData, currentRecord: oldData });
+    // try {
+    // const { data } = await deleteUser();
+    // loadUsers();
+    // } catch (e) {
+    //   console.error(e);
+    // }
   };
 
-  const [deleteUser, { error, data: deletedUser }] = useMutation(DELETE_USER, {
-    errorPolicy: 'ignore',
-    variables: {
-      id: tableData.currentRecord,
-    },
-  });
+  // const [deleteUser, { error, data: deletedUser }] = useMutation(DELETE_USER, {
+  //   errorPolicy: 'ignore',
+  //   variables: {
+  //     id: tableData.currentRecord,
+  //   },
+  // });
 
-  const loadUsers = async () => {
-    try {
-      const graphQLClient = setHeaders();
-      const data = await graphQLClient.request(GET_USERS);
-      setTableData({ ...tableData, data: data.allUsers });
+  // const loadUsers = async () => {
+  //   try {
+  //     const graphQLClient = setHeaders();
+  //     const data = await graphQLClient.request(GET_USERS);
+  //     setTableData({ ...tableData, data: data.allUsers });
 
-      setUserAuthData({
-        ...userAuthData,
-        allUsers: data.allUsers,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     setUserAuthData({
+  //       ...userAuthData,
+  //       allUsers: data.allUsers,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const [state, setState] = useState({
     columns: [
@@ -139,7 +139,7 @@ export function AccountTable(props: any) {
       <MaterialTable
         title='Users'
         columns={state.columns}
-        data={tableData.data}
+        data={users}
         icons={tableIcons}
         options={{
           actionsColumnIndex: -1,
@@ -155,7 +155,7 @@ export function AccountTable(props: any) {
           {
             icon: () => <AccountCircleIcon />,
             tooltip: 'Approve User',
-            onClick: (event, rowData) =>
+            onClick: (event, rowData: any) =>
               history.push(`/accountupdate?id=${rowData.id}`),
           },
         ]}
@@ -163,3 +163,5 @@ export function AccountTable(props: any) {
     </div>
   );
 }
+
+export default observer(AccountTable);
