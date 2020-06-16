@@ -3,6 +3,7 @@ import './App.css';
 import { Route, Switch } from 'react-router-dom';
 import { Login } from './components/Auth/login';
 import { Navbar } from './components/Layout/Navbar';
+import UserAlerts from './components/Layout/UserAlerts';
 import Register from './components/Auth/register';
 import { UserTest } from './components/UserTest';
 import { Home } from './components/Home/home';
@@ -36,6 +37,7 @@ function App() {
     <main>
       <UserContext.Provider value={{ userAuthData, setUserAuthData }}>
         <Navbar></Navbar>
+        <UserAlerts />
         <Switch>
           {/* 
           Public Routes */}

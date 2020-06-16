@@ -1,6 +1,7 @@
 import { observable, action, computed, reaction } from 'mobx';
 import { createContext } from 'react';
 import { IUser } from '../../models/User';
+import { v4 as uuid } from 'uuid';
 import { GET_USERS, GET_USER } from '../../graphQL/query/query';
 import { setHeaders } from '../../graphQL/graphqlconfig';
 import { LOGIN_USER } from '../../graphQL/mutation/user.mutation';
@@ -9,6 +10,8 @@ import {
   UPDATE_USER,
   CREATE_USER,
 } from '../../graphQL/mutation/user.mutation';
+import AlertStore from './AlertStore';
+import { AlertTypes } from '../../models/Alert';
 
 class UserStore {
   constructor() {
@@ -35,8 +38,39 @@ class UserStore {
       const data = await graphQLClient.request(CREATE_USER, variables);
 
       this.users = [data.createUser, ...this.users];
+
+      const myMsg = `Profile Succesfully Created for ${data.createUser.name}`;
+      const id = uuid();
+      const alert = {
+        id,
+        msg: `${myMsg}`,
+        type: AlertTypes.success,
+        title: 'RegisterSuccess',
+      };
+
+      AlertStore.setAlert(alert);
+
+      setTimeout(function () {
+        AlertStore.removeAlert(id);
+      }, 5000);
     } catch (error) {
       console.error(error);
+
+      const myMsg = error.message.split(':')[0];
+
+      const id = uuid();
+      const alert = {
+        id,
+        msg: `An Error has occured: ${myMsg}`,
+        type: AlertTypes.error,
+        title: 'RegisterError',
+      };
+
+      AlertStore.setAlert(alert);
+
+      setTimeout(function () {
+        AlertStore.removeAlert(id);
+      }, 5000);
     }
   };
 
@@ -99,6 +133,21 @@ class UserStore {
       };
       const data = await graphQLClient.request(DELETE_USER, variables);
       this.users = this.users.filter((user) => user.id !== data.deleteUser.id);
+
+      const myMsg = `User has been removed`;
+      const alertId = uuid();
+      const alert = {
+        id: alertId,
+        msg: `${myMsg}`,
+        type: AlertTypes.warning,
+        title: 'DeleteWarning',
+      };
+
+      AlertStore.setAlert(alert);
+
+      setTimeout(function () {
+        AlertStore.removeAlert(alertId);
+      }, 5000);
     } catch (error) {
       console.error(error);
     }
@@ -125,6 +174,22 @@ class UserStore {
       }
     } catch (error) {
       console.error(error);
+
+      const myMsg = error.message.split(':')[0];
+
+      const id = uuid();
+      const alert = {
+        id,
+        msg: `An Error has occured: ${myMsg}`,
+        type: AlertTypes.error,
+        title: 'LoginError',
+      };
+
+      AlertStore.setAlert(alert);
+
+      setTimeout(function () {
+        AlertStore.removeAlert(id);
+      }, 5000);
     }
   };
 
