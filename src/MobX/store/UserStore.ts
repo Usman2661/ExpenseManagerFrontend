@@ -12,6 +12,7 @@ import {
 } from '../../graphQL/mutation/user.mutation';
 import AlertStore from './AlertStore';
 import { AlertTypes } from '../../models/Alert';
+import { getAlert } from './Alert';
 
 class UserStore {
   constructor() {
@@ -39,38 +40,15 @@ class UserStore {
 
       this.users = [data.createUser, ...this.users];
 
-      const myMsg = `Profile Succesfully Created for ${data.createUser.name}`;
-      const id = uuid();
-      const alert = {
-        id,
-        msg: `${myMsg}`,
-        type: AlertTypes.success,
-        title: 'RegisterSuccess',
-      };
-
+      const msg = `Profile Succesfully Created for ${data.createUser.name}`;
+      const alert = await getAlert(msg, '', AlertTypes.success);
       AlertStore.setAlert(alert);
-
-      setTimeout(function () {
-        AlertStore.removeAlert(id);
-      }, 5000);
     } catch (error) {
       console.error(error);
 
-      const myMsg = error.message.split(':')[0];
-
-      const id = uuid();
-      const alert = {
-        id,
-        msg: `An Error has occured: ${myMsg}`,
-        type: AlertTypes.error,
-        title: 'RegisterError',
-      };
-
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'CreateUserError', AlertTypes.error);
       AlertStore.setAlert(alert);
-
-      setTimeout(function () {
-        AlertStore.removeAlert(id);
-      }, 5000);
     }
   };
 
@@ -86,6 +64,10 @@ class UserStore {
       return data.user;
     } catch (error) {
       console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'FetchUserError', AlertTypes.error);
+      AlertStore.setAlert(alert);
     }
   };
 
@@ -97,6 +79,10 @@ class UserStore {
       this.usersLoading = true;
     } catch (error) {
       console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'FetchUsersError', AlertTypes.error);
+      AlertStore.setAlert(alert);
     }
   };
 
@@ -114,14 +100,22 @@ class UserStore {
       };
       const data = await graphQLClient.request(UPDATE_USER, variables);
 
-      this.users = this.users.map((user) => {
+      this.users = this.users.map((user: IUser) => {
         if (user.id === data.updateUser.id) {
           return data.updateUser;
         }
         return user;
       });
+
+      const msg = `Profile Updated for ${data.updateUser.name}`;
+      const alert = await getAlert(msg, '', AlertTypes.success);
+      AlertStore.setAlert(alert);
     } catch (error) {
       console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'UpdateUserError', AlertTypes.error);
+      AlertStore.setAlert(alert);
     }
   };
 
@@ -134,22 +128,15 @@ class UserStore {
       const data = await graphQLClient.request(DELETE_USER, variables);
       this.users = this.users.filter((user) => user.id !== data.deleteUser.id);
 
-      const myMsg = `User has been removed`;
-      const alertId = uuid();
-      const alert = {
-        id: alertId,
-        msg: `${myMsg}`,
-        type: AlertTypes.warning,
-        title: 'DeleteWarning',
-      };
-
+      const msg = `User deleted succesfully`;
+      const alert = await getAlert(msg, '', AlertTypes.warning);
       AlertStore.setAlert(alert);
-
-      setTimeout(function () {
-        AlertStore.removeAlert(alertId);
-      }, 5000);
     } catch (error) {
       console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'DeleteUserError', AlertTypes.error);
+      AlertStore.setAlert(alert);
     }
   };
 
@@ -175,21 +162,9 @@ class UserStore {
     } catch (error) {
       console.error(error);
 
-      const myMsg = error.message.split(':')[0];
-
-      const id = uuid();
-      const alert = {
-        id,
-        msg: `An Error has occured: ${myMsg}`,
-        type: AlertTypes.error,
-        title: 'LoginError',
-      };
-
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'LoginError', AlertTypes.error);
       AlertStore.setAlert(alert);
-
-      setTimeout(function () {
-        AlertStore.removeAlert(id);
-      }, 5000);
     }
   };
 

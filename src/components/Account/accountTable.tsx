@@ -90,7 +90,7 @@ function AccountTable(props: any) {
   });
 
   return (
-    <div>
+    <div style={{ marginTop: '2%' }}>
       {usersLoading ? (
         <MaterialTable
           title='Users'
