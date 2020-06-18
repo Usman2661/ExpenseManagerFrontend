@@ -2,6 +2,7 @@ import React, { Component, useContext } from 'react';
 import { UserContext } from '../../userContext';
 import StatCards from './Staff/StatCards';
 import ExpenseList from './Staff/ExpenseList';
+import Company from '../Company/Company';
 
 export function Home() {
   const { userAuthData, setUserAuthData } = useContext(UserContext);
@@ -11,6 +12,12 @@ export function Home() {
       {userAuthData.userType === 'Staff' ? (
         <div>
           <StatCards /> <ExpenseList />{' '}
+        </div>
+      ) : null}
+
+      {userAuthData.userType === 'Admin' ? (
+        <div>
+          <Company />
         </div>
       ) : null}
     </div>

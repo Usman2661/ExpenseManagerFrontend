@@ -55,7 +55,7 @@ export function Navbar(props: any) {
           </Typography>
           {userAuthData.userType === 'SeniorManagement' ? (
             <Button color='inherit' component={Link} to='/account'>
-              Account Management
+              Users
             </Button>
           ) : null}
           {userAuthData.auth ? (
