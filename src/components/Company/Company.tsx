@@ -24,6 +24,14 @@ import { UserContext } from '../../userContext';
 import UserStore from '../../MobX/store/UserStore';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CompanyStore from '../../MobX/store/CompanyStore';
+import CompanyModal from './CompanyModal';
+import { ICompany } from '../../models/Company';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/Add';
+import Fab from '@material-ui/core/Fab';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const tableIcons: any = {
   Add: () => <AddBox />,
@@ -46,8 +54,36 @@ const tableIcons: any = {
   ViewColumn: () => <ViewColumn />,
 };
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    fab: {
+      margin: theme.spacing(2),
+    },
+    absolute: {
+      position: 'absolute',
+      bottom: theme.spacing(2),
+      right: theme.spacing(3),
+    },
+  })
+);
+
 function Company(props: any) {
-  const history = useHistory();
+  const classes = useStyles();
+
+  const [companyModalData, setCompanyModalData] = useState({
+    showCompanyModal: false,
+    editCompany: false,
+    company: {
+      name: '',
+      addressFirstLine: '',
+      postcode: '',
+      phone: 0,
+      businessArea: '',
+      registerYear: 0,
+    },
+  });
+
+  const { showCompanyModal, editCompany, company } = companyModalData;
 
   const companyStore = useContext(CompanyStore);
   const {
@@ -61,8 +97,24 @@ function Company(props: any) {
     getCompanies();
   }, []);
 
+  const closeCompanyModal = () => {
+    setCompanyModalData({
+      ...companyModalData,
+      editCompany: false,
+      showCompanyModal: false,
+    });
+  };
+
   const onDeleteCompany = async (id?: number) => {
     deleteCompany(id);
+  };
+
+  const onEditCompany = async (company: ICompany) => {
+    setCompanyModalData({
+      ...companyModalData,
+      editCompany: true,
+      showCompanyModal: true,
+    });
   };
 
   const [state, setState] = useState({
@@ -78,6 +130,13 @@ function Company(props: any) {
 
   return (
     <div style={{ marginTop: '2%' }}>
+      {showCompanyModal ? (
+        <CompanyModal
+          edit={editCompany}
+          company={company}
+          onCancel={closeCompanyModal}
+        />
+      ) : null}
       {companiesLoaded ? (
         <MaterialTable
           title='Companies'
@@ -94,18 +153,23 @@ function Company(props: any) {
                 resolve();
               }),
           }}
-          // actions={[
-          //   {
-          //     icon: () => <AccountCircleIcon />,
-          //     tooltip: 'Approve User',
-          //     onClick: (event, rowData: any) =>
-          //       history.push(`/accountupdate?id=${rowData.id}`),
-          //   },
-          // ]}
+          actions={[
+            {
+              icon: () => <Edit />,
+              tooltip: 'Edit Company',
+              onClick: (event, rowData: any) => onEditCompany(rowData),
+            },
+          ]}
         />
       ) : (
         <CircularProgress style={{ marginLeft: '45%' }} />
       )}
+
+      <Tooltip title='Add' aria-label='add'>
+        <Fab color='secondary' className={classes.absolute}>
+          <AddIcon />
+        </Fab>
+      </Tooltip>
     </div>
   );
 }

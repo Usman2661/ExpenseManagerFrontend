@@ -81,10 +81,7 @@ function Register(props: any) {
               <Paper className='registration'>
                 <Card className='registerCard '>
                   <CardContent>
-                    <div style={{ marginLeft: '40%' }}>
-                      {' '}
-                      <h1> Sign Up </h1>
-                    </div>
+                    <h1 style={{ textAlign: 'center' }}> Sign Up </h1>
                     <ValidatorForm
                       className='signUpForm'
                       onSubmit={registerUser}

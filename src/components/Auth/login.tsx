@@ -77,10 +77,8 @@ export function Login(props: any) {
               <Paper className='login'>
                 <Card className='loginCard '>
                   <CardContent>
-                    <div style={{ marginLeft: '40%' }}>
-                      {' '}
-                      <h1> Login </h1>
-                    </div>
+                    <h1 style={{ textAlign: 'center' }}> Login </h1>
+
                     <ValidatorForm className='loginForm' onSubmit={loginUser}>
                       <Grid container spacing={2}>
                         <Grid item xs={12} sm={12}>
