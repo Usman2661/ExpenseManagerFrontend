@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -8,8 +8,13 @@ import CardContent from '@material-ui/core/CardContent';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import '../../../css/StatCards.css';
+import ExpenseStore from '../../../MobX/store/ExpenseStore';
+import { observer } from 'mobx-react-lite';
 
-export function StatCards() {
+function StatCards() {
+  const expenseStore = useContext(ExpenseStore);
+  const { getExpenses, info } = expenseStore;
+
   return (
     <div>
       <Grid
@@ -29,7 +34,7 @@ export function StatCards() {
                   <Typography style={{ color: 'grey' }}>
                     Amount Claimed
                   </Typography>
-                  <h1 style={{ marginTop: 'auto' }}>£ 34,00</h1>
+                  <h1 style={{ marginTop: 'auto' }}>£ {info.totalClaimed}</h1>
                 </Grid>
                 <Grid item xs={6}>
                   <MonetizationOnIcon
@@ -49,7 +54,7 @@ export function StatCards() {
                   <Typography style={{ color: 'grey' }}>
                     Amount Pending
                   </Typography>
-                  <h1 style={{ marginTop: 'auto' }}>£ 34,00</h1>
+                  <h1 style={{ marginTop: 'auto' }}>£ {info.totalPending}</h1>
                 </Grid>
                 <Grid item xs={6}>
                   <MonetizationOnIcon
@@ -69,7 +74,7 @@ export function StatCards() {
                   <Typography style={{ color: 'grey' }}>
                     Total Claims
                   </Typography>
-                  <h1 style={{ marginTop: 'auto' }}>1</h1>
+                  <h1 style={{ marginTop: 'auto' }}>{info.total}</h1>
                 </Grid>
                 <Grid item xs={6}>
                   <AssessmentIcon
@@ -85,3 +90,5 @@ export function StatCards() {
     </div>
   );
 }
+
+export default observer(StatCards);

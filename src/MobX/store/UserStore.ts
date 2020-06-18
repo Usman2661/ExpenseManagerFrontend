@@ -2,7 +2,7 @@ import { observable, action, computed, reaction } from 'mobx';
 import { createContext } from 'react';
 import { IUser } from '../../models/User';
 import { v4 as uuid } from 'uuid';
-import { GET_USERS, GET_USER } from '../../graphQL/query/query';
+import { GET_USERS, GET_USER } from '../../graphQL/query/user.query';
 import { setHeaders } from '../../graphQL/graphqlconfig';
 import { LOGIN_USER } from '../../graphQL/mutation/user.mutation';
 import {

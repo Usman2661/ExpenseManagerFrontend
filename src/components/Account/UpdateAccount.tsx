@@ -18,7 +18,7 @@ import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import { GET_USER } from '../../graphQL/query/query';
+import { GET_USER } from '../../graphQL/query/user.query';
 import { UPDATE_USER } from '../../graphQL/mutation/user.mutation';
 import { UserContext } from '../../userContext';
 import { format } from 'util';
