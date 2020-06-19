@@ -5,7 +5,7 @@ export interface ICompany {
   addressSecondLine?: String;
   addressThirdLine?: String;
   postcode: String;
-  phone: number;
+  phone: String;
   businessArea: String;
   registerYear: number;
 }

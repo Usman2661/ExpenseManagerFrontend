@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { ICompany } from '../../models/Company';
 import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
@@ -8,8 +8,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
+import CompanyStore from '../../MobX/store/CompanyStore';
 
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { register } from '../../serviceWorker';
 
 interface CompanyModalProps {
   company?: ICompany;
@@ -30,15 +32,20 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CompanyModal(props: CompanyModalProps) {
   const classes = useStyles();
 
+  const companyStore = useContext(CompanyStore);
+  const { createCompany, updateCompany } = companyStore;
+  const { edit, company, onCancel } = props;
+
   const [companyData, setCompanyData] = useState({
+    id: 0,
     name: '',
     addressFirstLine: '',
     addressSecondLine: '',
     addressThirdLine: '',
     postcode: '',
-    phone: null,
+    phone: '',
     businessArea: '',
-    registerYear: null,
+    registerYear: 0,
   });
 
   // Destructuring
@@ -54,13 +61,24 @@ export default function CompanyModal(props: CompanyModalProps) {
   } = companyData;
 
   const onChange = (e: any) => {
-    setCompanyData({ ...companyData, [e.target.name]: e.target.value });
+    setCompanyData({
+      ...companyData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const onNumberChange = (e: any) => {
+    setCompanyData({
+      ...companyData,
+      [e.target.name]:
+        e.target.type === 'number' ? parseInt(e.target.value) : e.target.value,
+    });
   };
 
   const saveCompany = async (e: any) => {
     e.preventDefault();
+    await createCompany(companyData);
   };
-  const { edit, company, onCancel } = props;
   return (
     <div>
       <Modal
@@ -91,7 +109,8 @@ export default function CompanyModal(props: CompanyModalProps) {
                       fullWidth
                       id='name'
                       label='Name'
-                      color='primary '
+                      color='primary'
+                      required
                       value={name}
                       onChange={(e) => onChange(e)}
                       validators={['required']}
@@ -103,6 +122,7 @@ export default function CompanyModal(props: CompanyModalProps) {
                     <TextValidator
                       name='businessArea'
                       variant='outlined'
+                      required
                       fullWidth
                       id='jobTitle'
                       color='primary '
@@ -120,7 +140,8 @@ export default function CompanyModal(props: CompanyModalProps) {
                       name='addressFirstLine'
                       label='Address First Line'
                       variant='outlined'
-                      color='primary '
+                      color='primary'
+                      required
                       value={addressFirstLine}
                       onChange={(e) => onChange(e)}
                       validators={['required']}
@@ -160,7 +181,8 @@ export default function CompanyModal(props: CompanyModalProps) {
                       name='postcode'
                       label='Postcode'
                       variant='outlined'
-                      color='primary '
+                      color='primary'
+                      required
                       value={postcode}
                       onChange={(e) => onChange(e)}
                       validators={['required']}
@@ -175,7 +197,9 @@ export default function CompanyModal(props: CompanyModalProps) {
                       name='phone'
                       label='Phone'
                       variant='outlined'
-                      color='primary '
+                      color='primary'
+                      type='number'
+                      required
                       value={phone}
                       onChange={(e) => onChange(e)}
                       validators={['required']}
@@ -190,9 +214,11 @@ export default function CompanyModal(props: CompanyModalProps) {
                       name='registerYear'
                       label='Company Registration Year'
                       variant='outlined'
-                      color='primary '
+                      type='number'
+                      color='primary'
+                      required
                       value={registerYear}
-                      onChange={(e) => onChange(e)}
+                      onChange={(e) => onNumberChange(e)}
                       validators={['required']}
                       errorMessages={['Registeration Year is required']}
                       fullWidth

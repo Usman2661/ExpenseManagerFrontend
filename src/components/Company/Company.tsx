@@ -20,8 +20,6 @@ import { Alert } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { IUser } from '../../models/User';
-import { UserContext } from '../../userContext';
-import UserStore from '../../MobX/store/UserStore';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CompanyStore from '../../MobX/store/CompanyStore';
 import CompanyModal from './CompanyModal';
@@ -77,13 +75,13 @@ function Company(props: any) {
       name: '',
       addressFirstLine: '',
       postcode: '',
-      phone: 0,
+      phone: '',
       businessArea: '',
       registerYear: 0,
     },
   });
 
-  const { showCompanyModal, editCompany, company } = companyModalData;
+  const { showCompanyModal, editCompany } = companyModalData;
 
   const companyStore = useContext(CompanyStore);
   const {
@@ -109,11 +107,21 @@ function Company(props: any) {
     deleteCompany(id);
   };
 
-  const onEditCompany = async (company: ICompany) => {
+  const onCreateCompany = async () => {
+    setCompanyModalData({
+      ...companyModalData,
+      editCompany: false,
+      showCompanyModal: true,
+    });
+  };
+
+  const onEditCompany = async (myCompany: ICompany) => {
+    console.log(myCompany);
+
     setCompanyModalData({
       ...companyModalData,
       editCompany: true,
-      showCompanyModal: true,
+      showCompanyModal: false,
     });
   };
 
@@ -133,7 +141,7 @@ function Company(props: any) {
       {showCompanyModal ? (
         <CompanyModal
           edit={editCompany}
-          company={company}
+          company={companyModalData.company}
           onCancel={closeCompanyModal}
         />
       ) : null}
@@ -165,8 +173,12 @@ function Company(props: any) {
         <CircularProgress style={{ marginLeft: '45%' }} />
       )}
 
-      <Tooltip title='Add' aria-label='add'>
-        <Fab color='secondary' className={classes.absolute}>
+      <Tooltip title='Add Company' aria-label='Add Company'>
+        <Fab
+          color='primary'
+          className={classes.absolute}
+          onClick={onCreateCompany}
+        >
           <AddIcon />
         </Fab>
       </Tooltip>

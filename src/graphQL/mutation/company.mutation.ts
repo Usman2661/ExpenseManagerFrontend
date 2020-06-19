@@ -8,7 +8,7 @@ export const CREATE_COMPANY = `
     $addressThirdLine: String
     $postcode: String!
     $businessArea: String!
-    $phone: Int!
+    $phone: String!
     $registerYear: Int!
   ) {
     createCompany(
@@ -51,7 +51,7 @@ export const UPDATE_COMPANY = `
     $addressThirdLine: String
     $postcode: String!
     $businessArea: String!
-    $phone: Int!
+    $phone: String!
     $registerYear: Int!
   ) {
     updateCompany(

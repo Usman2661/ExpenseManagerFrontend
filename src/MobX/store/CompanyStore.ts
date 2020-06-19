@@ -27,6 +27,7 @@ class CompanyStore {
   @action createCompany = async (company: ICompany) => {
     try {
       const graphQLClient = setHeaders();
+
       const variables = {
         name: company.name,
         addressFirstLine: company.addressFirstLine,
