@@ -57,14 +57,7 @@ function UpdateAccount(props: any) {
   const id = parseInt(userID || '0');
 
   const userStore = useContext(UserStore);
-  const {
-    user,
-    users,
-    usersLoading,
-    updateUser,
-    getUser,
-    getUsers,
-  } = userStore;
+  const { user, users, updateUser, getUser, getUsers } = userStore;
 
   useEffect(() => {
     async function loadData() {

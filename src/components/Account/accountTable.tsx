@@ -54,7 +54,7 @@ function AccountTable(props: any) {
   const history = useHistory();
 
   const userStore = useContext(UserStore);
-  const { users, usersLoading, getUsers, deleteUser } = userStore;
+  const { users, usersLoaded, getUsers, deleteUser } = userStore;
 
   useEffect(() => {
     getUsers();
@@ -91,7 +91,7 @@ function AccountTable(props: any) {
 
   return (
     <div style={{ marginTop: '2%' }}>
-      {usersLoading ? (
+      {usersLoaded ? (
         <MaterialTable
           title='Users'
           columns={state.columns}

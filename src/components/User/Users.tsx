@@ -23,7 +23,6 @@ import { observer } from 'mobx-react-lite';
 import { IUser } from '../../models/User';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CompanyStore from '../../MobX/store/CompanyStore';
-import CompanyModal from './CompanyModal';
 import { ICompany } from '../../models/Company';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
@@ -31,6 +30,8 @@ import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import UserStore from '../../MobX/store/UserStore';
+import UsersModal from './UsersModal';
 
 const tableIcons: any = {
   Add: () => <AddBox />,
@@ -65,90 +66,82 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export interface ICompanyModalDataState {
-  showCompanyModal: boolean;
-  editCompany: boolean;
-  company?: ICompany;
+export interface IUserModalDataState {
+  showUserModal: boolean;
+  editUser: boolean;
+  user?: IUser;
 }
-function Company(props: any) {
+function Users(props: any) {
   const classes = useStyles();
 
-  const [companyModalData, setCompanyModalData] = useState<
-    ICompanyModalDataState
-  >({
-    showCompanyModal: false,
-    editCompany: false,
+  const [userModalData, setUserModalData] = useState<IUserModalDataState>({
+    showUserModal: false,
+    editUser: false,
   });
 
-  const { showCompanyModal, editCompany } = companyModalData;
+  const { showUserModal, editUser } = userModalData;
 
-  const companyStore = useContext(CompanyStore);
-  const {
-    companies,
-    companiesLoaded,
-    getCompanies,
-    deleteCompany,
-  } = companyStore;
+  const userStore = useContext(UserStore);
+  const { users, usersLoaded, getUsers, deleteUser } = userStore;
 
   useEffect(() => {
-    getCompanies();
+    getUsers();
   }, []);
 
-  const closeCompanyModal = () => {
-    setCompanyModalData({
-      ...companyModalData,
-      editCompany: false,
-      showCompanyModal: false,
+  const closeUsermodal = () => {
+    setUserModalData({
+      ...userModalData,
+      editUser: false,
+      showUserModal: false,
     });
   };
 
-  const onDeleteCompany = async (id?: number) => {
-    deleteCompany(id);
+  const onDeleteUser = async (id?: number) => {
+    deleteUser(id);
   };
 
-  const onCreateCompany = async () => {
-    setCompanyModalData({
-      ...companyModalData,
-      company: undefined,
-      editCompany: false,
-      showCompanyModal: true,
+  const onCreateUser = async () => {
+    setUserModalData({
+      ...userModalData,
+      user: undefined,
+      editUser: false,
+      showUserModal: true,
     });
   };
 
-  const onEditCompany = async (myCompany: ICompany) => {
-    setCompanyModalData({
-      ...companyModalData,
-      company: myCompany,
-      editCompany: true,
-      showCompanyModal: true,
+  const onEditUser = async (myUser: IUser) => {
+    setUserModalData({
+      ...userModalData,
+      user: myUser,
+      editUser: true,
+      showUserModal: true,
     });
   };
 
   const [state, setState] = useState({
     columns: [
       { title: 'Name', field: 'name' },
-      { title: 'Adress Line 1', field: 'addressFirstLine' },
-      { title: 'Post Code', field: 'postcode' },
-      { title: 'Phone', field: 'phone' },
-      { title: 'Business Area', field: 'businessArea' },
-      { title: 'Register Year', field: 'registerYear' },
+      { title: 'Email', field: 'email' },
+      { title: 'User Type', field: 'userType' },
+      { title: 'Job Title', field: 'jobTitle' },
+      { title: 'Department', field: 'department' },
     ],
   });
 
   return (
     <div>
-      {showCompanyModal ? (
-        <CompanyModal
-          edit={editCompany}
-          company={companyModalData.company}
-          onCancel={closeCompanyModal}
+      {showUserModal ? (
+        <UsersModal
+          edit={editUser}
+          user={userModalData.user}
+          onCancel={closeUsermodal}
         />
       ) : null}
-      {companiesLoaded ? (
+      {usersLoaded ? (
         <MaterialTable
-          title='Companies'
+          title='Users'
           columns={state.columns}
-          data={companies}
+          data={users}
           icons={tableIcons}
           options={{
             actionsColumnIndex: -1,
@@ -157,28 +150,26 @@ function Company(props: any) {
             onRowDelete: (oldData) =>
               new Promise((resolve) => {
                 console.log(oldData);
-                onDeleteCompany(oldData.id);
+                onDeleteUser(oldData.id);
                 resolve();
               }),
           }}
           actions={[
             {
               icon: () => <Edit />,
-              tooltip: 'Edit Company',
+              tooltip: 'Edit User',
               onClick: (event, rowData: any) => {
-                const myCompany: ICompany = {
+                const myUser: IUser = {
                   id: rowData.id,
                   name: rowData.name,
-                  addressFirstLine: rowData.addressFirstLine,
-                  addressSecondLine: rowData.addressSecondLine,
-                  addressThirdLine: rowData.addressThirdLine,
-                  postcode: rowData.postcode,
-                  registerYear: rowData.registerYear,
-                  phone: rowData.phone,
-                  businessArea: rowData.businessArea,
+                  email: rowData.email,
+                  userType: rowData.userType,
+                  department: rowData.department,
+                  managerId: rowData.managerId,
+                  jobTitle: rowData.jobTitle,
+                  companyId: rowData.companyId,
                 };
-
-                onEditCompany(myCompany);
+                onEditUser(myUser);
               },
             },
           ]}
@@ -190,7 +181,7 @@ function Company(props: any) {
       <Tooltip title='Add Company' aria-label='Add Company'>
         <Fab
           color='primary'
-          onClick={onCreateCompany}
+          onClick={onCreateUser}
           style={{ float: 'right', marginTop: '1%' }}
         >
           <AddIcon />
@@ -200,4 +191,4 @@ function Company(props: any) {
   );
 }
 
-export default observer(Company);
+export default observer(Users);

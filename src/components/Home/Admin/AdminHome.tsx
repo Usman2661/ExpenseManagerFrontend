@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Company from '../../Company/Company';
+import Users from '../../User/Users';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -24,6 +25,7 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`full-width-tabpanel-${index}`}
       aria-labelledby={`full-width-tab-${index}`}
+      style={{ color: '#e5e7e9', backgroundColor: '#e5e7e9' }}
       {...other}
     >
       {value === index && (
@@ -80,12 +82,13 @@ export default function AdminHome() {
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={value}
         onChangeIndex={handleChangeIndex}
+        style={{ backgroundColor: '#e5e7e9' }}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
           <Company />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          Item Two
+          <Users />
         </TabPanel>
       </SwipeableViews>
     </div>

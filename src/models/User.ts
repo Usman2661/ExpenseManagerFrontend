@@ -8,5 +8,6 @@ export interface IUser {
   userType?: String;
   department: String;
   managerId?: number;
+  companyId?: number;
   Expenses?: IExpense[];
 }

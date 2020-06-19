@@ -24,7 +24,7 @@ class UserStore {
 
   @observable users: IUser[] = [];
   @observable user: any = {};
-  @observable usersLoading: boolean = false;
+  @observable usersLoaded: boolean = false;
 
   @action createUser = async (user: IUser) => {
     try {
@@ -76,7 +76,7 @@ class UserStore {
       const graphQLClient = setHeaders();
       const data = await graphQLClient.request(GET_USERS);
       this.users = data.allUsers;
-      this.usersLoading = true;
+      this.usersLoaded = true;
     } catch (error) {
       console.error(error);
 
