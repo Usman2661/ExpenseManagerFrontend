@@ -8,6 +8,7 @@ import ChevronLeft from '@material-ui/icons/ChevronLeft';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import Clear from '@material-ui/icons/Clear';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import { toJS } from 'mobx';
 import Edit from '@material-ui/icons/Edit';
 import FilterList from '@material-ui/icons/FilterList';
 import FirstPage from '@material-ui/icons/FirstPage';
@@ -64,21 +65,19 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
+export interface ICompanyModalDataState {
+  showCompanyModal: boolean;
+  editCompany: boolean;
+  company?: ICompany;
+}
 function Company(props: any) {
   const classes = useStyles();
 
-  const [companyModalData, setCompanyModalData] = useState({
+  const [companyModalData, setCompanyModalData] = useState<
+    ICompanyModalDataState
+  >({
     showCompanyModal: false,
     editCompany: false,
-    company: {
-      name: '',
-      addressFirstLine: '',
-      postcode: '',
-      phone: '',
-      businessArea: '',
-      registerYear: 0,
-    },
   });
 
   const { showCompanyModal, editCompany } = companyModalData;
@@ -110,18 +109,18 @@ function Company(props: any) {
   const onCreateCompany = async () => {
     setCompanyModalData({
       ...companyModalData,
+      company: undefined,
       editCompany: false,
       showCompanyModal: true,
     });
   };
 
   const onEditCompany = async (myCompany: ICompany) => {
-    console.log(myCompany);
-
     setCompanyModalData({
       ...companyModalData,
+      company: myCompany,
       editCompany: true,
-      showCompanyModal: false,
+      showCompanyModal: true,
     });
   };
 
@@ -157,6 +156,7 @@ function Company(props: any) {
           editable={{
             onRowDelete: (oldData) =>
               new Promise((resolve) => {
+                console.log(oldData);
                 onDeleteCompany(oldData.id);
                 resolve();
               }),
@@ -165,7 +165,21 @@ function Company(props: any) {
             {
               icon: () => <Edit />,
               tooltip: 'Edit Company',
-              onClick: (event, rowData: any) => onEditCompany(rowData),
+              onClick: (event, rowData: any) => {
+                const myCompany: ICompany = {
+                  id: rowData.id,
+                  name: rowData.name,
+                  addressFirstLine: rowData.addressFirstLine,
+                  addressSecondLine: rowData.addressSecondLine,
+                  addressThirdLine: rowData.addressThirdLine,
+                  postcode: rowData.postcode,
+                  registerYear: rowData.registerYear,
+                  phone: rowData.phone,
+                  businessArea: rowData.businessArea,
+                };
+
+                onEditCompany(myCompany);
+              },
             },
           ]}
         />

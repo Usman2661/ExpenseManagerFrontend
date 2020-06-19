@@ -29,6 +29,17 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+export interface ICompanyModalState {
+  id?: number;
+  name: String;
+  addressFirstLine: String;
+  addressSecondLine?: String;
+  addressThirdLine?: String;
+  postcode: String;
+  phone: String;
+  businessArea: String;
+  registerYear: number;
+}
 export default function CompanyModal(props: CompanyModalProps) {
   const classes = useStyles();
 
@@ -36,16 +47,16 @@ export default function CompanyModal(props: CompanyModalProps) {
   const { createCompany, updateCompany } = companyStore;
   const { edit, company, onCancel } = props;
 
-  const [companyData, setCompanyData] = useState({
-    id: 0,
-    name: '',
-    addressFirstLine: '',
-    addressSecondLine: '',
-    addressThirdLine: '',
-    postcode: '',
-    phone: '',
-    businessArea: '',
-    registerYear: 0,
+  const [companyData, setCompanyData] = useState<ICompanyModalState>({
+    id: company?.id || 0,
+    name: company?.name || '',
+    addressFirstLine: company?.addressFirstLine || '',
+    addressSecondLine: company?.addressSecondLine || '',
+    addressThirdLine: company?.addressThirdLine || '',
+    postcode: company?.postcode || '',
+    phone: company?.phone || '',
+    businessArea: company?.businessArea || '',
+    registerYear: company?.registerYear || 0,
   });
 
   // Destructuring
@@ -77,7 +88,14 @@ export default function CompanyModal(props: CompanyModalProps) {
 
   const saveCompany = async (e: any) => {
     e.preventDefault();
-    await createCompany(companyData);
+
+    if (edit) {
+      await updateCompany(companyData);
+      onCancel();
+    } else {
+      await createCompany(companyData);
+      onCancel();
+    }
   };
   return (
     <div>
