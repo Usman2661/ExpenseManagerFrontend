@@ -12,6 +12,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { observer } from 'mobx-react-lite';
 
 interface UserModalProps {
   user?: IUser;
@@ -41,7 +42,7 @@ export interface IUserModalState {
   managerId?: number;
   companyId?: number;
 }
-export default function UsersModal(props: UserModalProps) {
+function UsersModal(props: UserModalProps) {
   const classes = useStyles();
 
   ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
@@ -50,6 +51,9 @@ export default function UsersModal(props: UserModalProps) {
     }
     return true;
   });
+
+  const companyStore = useContext(CompanyStore);
+  const { companies } = companyStore;
 
   const userStore = useContext(UserStore);
   const { createUser, updateUser } = userStore;
@@ -236,6 +240,35 @@ export default function UsersModal(props: UserModalProps) {
                   </Grid>
 
                   <Grid item xs={12} sm={12}>
+                    <FormControl
+                      variant='filled'
+                      className='company'
+                      color='primary'
+                      fullWidth
+                      required
+                    >
+                      <InputLabel id='demo-simple-select-filled-label'>
+                        Company
+                      </InputLabel>
+                      <Select
+                        labelId='demo-simple-select-filled-label'
+                        id='demo-simple-select-filled'
+                        name='companyId'
+                        value={companyId}
+                        onChange={(e) => onChange(e)}
+                        fullWidth
+                        required
+                        color='primary'
+                      >
+                        {companies.map((company: ICompany) => (
+                          <MenuItem value={company.id}>{company.name}</MenuItem>
+                        ))}{' '}
+                        ;
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12} sm={12}>
                     <TextValidator
                       id='email'
                       name='email'
@@ -319,3 +352,5 @@ export default function UsersModal(props: UserModalProps) {
     </div>
   );
 }
+
+export default observer(UsersModal);
