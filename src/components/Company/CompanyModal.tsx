@@ -1,17 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { ICompany } from '../../models/Company';
-import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
-import Select from '@material-ui/core/Select';
 import CompanyStore from '../../MobX/store/CompanyStore';
-
+import Dialog from '@material-ui/core/Dialog';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { register } from '../../serviceWorker';
 
 interface CompanyModalProps {
   company?: ICompany;
@@ -99,25 +93,25 @@ export default function CompanyModal(props: CompanyModalProps) {
   };
   return (
     <div>
-      <Modal
-        open={true}
-        onClose={onCancel}
-        aria-labelledby='simple-modal-title'
-        aria-describedby='simple-modal-description'
+      <Grid
+        className='companyModalGrid'
+        container
+        direction='row'
+        justify='center'
+        alignItems='center'
+        style={{ margin: 0, width: '100%' }}
       >
-        <Grid
-          className='companyModalGrid'
-          container
-          direction='row'
-          justify='center'
-          alignItems='center'
-          style={{ margin: 0, width: '100%' }}
-        >
-          <Grid item xs={12} sm={10} md={8} lg={6}>
+        <Grid item xs={12} sm={10} md={8} lg={6}>
+          <Dialog
+            onClose={onCancel}
+            aria-labelledby='simple-dialog-title'
+            open={true}
+          >
             <div className={classes.paper}>
               <h2 id='simple-modal-title' style={{ textAlign: 'center' }}>
-                Company
+                {edit ? 'Edit Company' : 'New Company'}
               </h2>
+
               <ValidatorForm className='signUpForm' onSubmit={saveCompany}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12}>
@@ -267,9 +261,9 @@ export default function CompanyModal(props: CompanyModalProps) {
                 </Grid>
               </ValidatorForm>
             </div>
-          </Grid>
+          </Dialog>
         </Grid>
-      </Modal>
+      </Grid>
     </div>
   );
 }
