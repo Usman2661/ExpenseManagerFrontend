@@ -136,7 +136,7 @@ function Company(props: any) {
   });
 
   return (
-    <div style={{ marginTop: '2%' }}>
+    <div>
       {showCompanyModal ? (
         <CompanyModal
           edit={editCompany}
