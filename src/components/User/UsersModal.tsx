@@ -289,20 +289,18 @@ function UsersModal(props: UserModalProps) {
                         <InputLabel id='demo-simple-select-filled-label'>
                           Company
                         </InputLabel>
-                        {managerList.length > 0 ? (
-                          <Select
-                            labelId='demo-simple-select-filled-label'
-                            id='demo-simple-select-filled'
-                            name='companyId'
-                            value={companyId}
-                            onChange={(e) => onChange(e)}
-                            fullWidth
-                            required
-                            color='primary'
-                          >
-                            {renderCompaniesSelectOptions()}
-                          </Select>
-                        ) : null}
+                        <Select
+                          labelId='demo-simple-select-filled-label'
+                          id='demo-simple-select-filled'
+                          name='companyId'
+                          value={companyId}
+                          onChange={(e) => onChange(e)}
+                          fullWidth
+                          required
+                          color='primary'
+                        >
+                          {renderCompaniesSelectOptions()}
+                        </Select>
                       </FormControl>
                     </Grid>
                   ) : null}
@@ -319,20 +317,18 @@ function UsersModal(props: UserModalProps) {
                         <InputLabel id='demo-simple-select-filled-label'>
                           Manager
                         </InputLabel>
-                        {companies.length > 0 ? (
-                          <Select
-                            labelId='demo-simple-select-filled-label'
-                            id='demo-simple-select-filled'
-                            name='managerId'
-                            value={managerId}
-                            onChange={(e) => onChange(e)}
-                            fullWidth
-                            required
-                            color='primary'
-                          >
-                            {renderManagerSelectOptions()}
-                          </Select>
-                        ) : null}
+                        <Select
+                          labelId='demo-simple-select-filled-label'
+                          id='demo-simple-select-filled'
+                          name='managerId'
+                          value={managerId}
+                          onChange={(e) => onChange(e)}
+                          fullWidth
+                          required
+                          color='primary'
+                        >
+                          {renderManagerSelectOptions()}
+                        </Select>
                       </FormControl>
                     </Grid>
                   ) : null}
