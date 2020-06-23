@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { ICompany } from '../../models/Company';
 import Grid from '@material-ui/core/Grid';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
@@ -53,7 +53,7 @@ function UsersModal(props: UserModalProps) {
   });
 
   const companyStore = useContext(CompanyStore);
-  const { companies } = companyStore;
+  const { companies, getCompanies } = companyStore;
 
   const userStore = useContext(UserStore);
   const { createUser, updateUser } = userStore;
@@ -92,6 +92,16 @@ function UsersModal(props: UserModalProps) {
     });
   };
 
+  const renderCompaniesSelectOptions = () => {
+    return companies.map((company: any) => {
+      return (
+        <MenuItem key={company.id} value={company.id}>
+          {company.name}
+        </MenuItem>
+      );
+    });
+  };
+
   // const onNumberChange = (e: any) => {
   //   setCompanyData({
   //     ...companyData,
@@ -102,8 +112,6 @@ function UsersModal(props: UserModalProps) {
 
   const saveUser = async (e: any) => {
     e.preventDefault();
-
-    console.log(userData);
 
     if (edit) {
       await updateUser(userData);
@@ -228,7 +236,7 @@ function UsersModal(props: UserModalProps) {
                         </MenuItem>
                         <MenuItem value='HR'>HR</MenuItem>
 
-                        <MenuItem value='Research and Developmeny'>
+                        <MenuItem value='Research and Development'>
                           Research And Development
                         </MenuItem>
                         <MenuItem value='Production'>Production</MenuItem>
@@ -250,21 +258,20 @@ function UsersModal(props: UserModalProps) {
                       <InputLabel id='demo-simple-select-filled-label'>
                         Company
                       </InputLabel>
-                      <Select
-                        labelId='demo-simple-select-filled-label'
-                        id='demo-simple-select-filled'
-                        name='companyId'
-                        value={companyId}
-                        onChange={(e) => onChange(e)}
-                        fullWidth
-                        required
-                        color='primary'
-                      >
-                        {companies.map((company: ICompany) => (
-                          <MenuItem value={company.id}>{company.name}</MenuItem>
-                        ))}{' '}
-                        ;
-                      </Select>
+                      {companies.length > 0 ? (
+                        <Select
+                          labelId='demo-simple-select-filled-label'
+                          id='demo-simple-select-filled'
+                          name='companyId'
+                          value={companyId}
+                          onChange={(e) => onChange(e)}
+                          fullWidth
+                          required
+                          color='primary'
+                        >
+                          {renderCompaniesSelectOptions()}
+                        </Select>
+                      ) : null}
                     </FormControl>
                   </Grid>
 
@@ -287,41 +294,47 @@ function UsersModal(props: UserModalProps) {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <TextValidator
-                      id='password'
-                      name='password'
-                      label='Password'
-                      variant='outlined'
-                      type='password'
-                      color='primary '
-                      value={password}
-                      onChange={(e) => onChange(e)}
-                      validators={['required']}
-                      errorMessages={['Password is required']}
-                      required
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <TextValidator
-                      id='cfPassword'
-                      name='cfPassword'
-                      label='Confirm Password'
-                      variant='outlined'
-                      type='password'
-                      color='primary '
-                      value={cfPassword}
-                      onChange={(e) => onChange(e)}
-                      validators={['isPasswordMatch', 'required']}
-                      errorMessages={[
-                        'Passwords do not match',
-                        'Confirm Password is required',
-                      ]}
-                      required
-                      fullWidth
-                    />
-                  </Grid>
+
+                  {edit ? null : (
+                    <Grid item xs={12} sm={12}>
+                      <TextValidator
+                        id='password'
+                        name='password'
+                        label='Password'
+                        variant='outlined'
+                        type='password'
+                        color='primary '
+                        value={password}
+                        onChange={(e) => onChange(e)}
+                        validators={['required']}
+                        errorMessages={['Password is required']}
+                        required
+                        fullWidth
+                      />
+                    </Grid>
+                  )}
+                  {edit ? null : (
+                    <Grid item xs={12} sm={12}>
+                      <TextValidator
+                        id='cfPassword'
+                        name='cfPassword'
+                        label='Confirm Password'
+                        variant='outlined'
+                        type='password'
+                        color='primary '
+                        value={cfPassword}
+                        onChange={(e) => onChange(e)}
+                        validators={['isPasswordMatch', 'required']}
+                        errorMessages={[
+                          'Passwords do not match',
+                          'Confirm Password is required',
+                        ]}
+                        required
+                        fullWidth
+                      />
+                    </Grid>
+                  )}
+
                   <Grid item xs={12} sm={12}>
                     <Button
                       variant='contained'

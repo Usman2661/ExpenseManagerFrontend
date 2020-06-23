@@ -33,8 +33,11 @@ class UserStore {
         name: user.name,
         email: user.email,
         department: user.department,
+        userType: user.userType,
         password: user.password,
         jobTitle: user.jobTitle,
+        managerId: user.managerId,
+        companyId: user.companyId,
       };
       const data = await graphQLClient.request(CREATE_USER, variables);
 
@@ -97,6 +100,7 @@ class UserStore {
         jobTitle: user.jobTitle,
         userType: user.userType,
         managerId: user.managerId,
+        companyId: user.companyId,
       };
       const data = await graphQLClient.request(UPDATE_USER, variables);
 

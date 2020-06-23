@@ -7,6 +7,9 @@ export const CREATE_USER = `
     $password: String!
     $jobTitle: String!
     $department: String!
+    $userType: String!
+    $managerId: Int
+    $companyId: Int
   ) {
     createUser(
       name: $name
@@ -14,12 +17,18 @@ export const CREATE_USER = `
       password: $password
       jobTitle: $jobTitle
       department: $department
+      userType: $userType
+      managerId: $managerId
+      companyId: $companyId
     ) {
       id
       name
       email
       department
       jobTitle
+      userType
+      managerId
+      companyId
     }
   }
 `;
@@ -57,6 +66,7 @@ export const UPDATE_USER = `
     $department: String!
     $userType: String!
     $managerId: Int
+    $companyId: Int
   ) {
     updateUser(
       id: $id
@@ -66,6 +76,7 @@ export const UPDATE_USER = `
       department: $department
       userType: $userType
       managerId: $managerId
+      companyId: $companyId
     ) {
       id
       name
@@ -73,6 +84,8 @@ export const UPDATE_USER = `
       department
       jobTitle
       userType
+      managerId
+      companyId
     }
   }
 `;

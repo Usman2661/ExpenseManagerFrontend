@@ -125,6 +125,13 @@ function Users(props: any) {
       { title: 'User Type', field: 'userType' },
       { title: 'Job Title', field: 'jobTitle' },
       { title: 'Department', field: 'department' },
+      {
+        field: 'Company',
+        title: 'Company',
+        render: (rowData: IUser) => {
+          return rowData.Company?.name;
+        },
+      },
     ],
   });
 
@@ -169,6 +176,8 @@ function Users(props: any) {
                   jobTitle: rowData.jobTitle,
                   companyId: rowData.companyId,
                 };
+
+                console.log(myUser);
                 onEditUser(myUser);
               },
             },
@@ -178,7 +187,7 @@ function Users(props: any) {
         <CircularProgress style={{ marginLeft: '45%' }} />
       )}
 
-      <Tooltip title='Add Company' aria-label='Add Company'>
+      <Tooltip title='Add User' aria-label='Add User'>
         <Fab
           color='primary'
           onClick={onCreateUser}

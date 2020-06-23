@@ -8,6 +8,10 @@ export const GET_USERS = `
       userType
       jobTitle
       managerId
+      companyId
+      Company{
+        name
+      }
     }
   }
 `;
@@ -21,5 +25,6 @@ export const GET_USER = `query user($id: Int!) {
     userType
     jobTitle
     managerId
+    companyId
   }
 }`;

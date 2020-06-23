@@ -1,4 +1,5 @@
 import { IExpense } from './Expense';
+import { ICompany } from './Company';
 export interface IUser {
   id?: number;
   name: String;
@@ -10,4 +11,5 @@ export interface IUser {
   managerId?: number;
   companyId?: number;
   Expenses?: IExpense[];
+  Company?: ICompany;
 }
