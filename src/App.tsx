@@ -12,7 +12,6 @@ import { UserContext } from './userContext';
 import PublicRoute from './routing/PublicRoute';
 import { Account } from './components/Account/account';
 import SeniorPrivateRoute from './routing/SeniorPrivateRoute';
-import UpdateAccount from './components/Account/UpdateAccount';
 
 function App() {
   var auth;
@@ -52,9 +51,6 @@ function App() {
           {/* Private Routes for only for UserType Senior Management */}
           <SeniorPrivateRoute redirectPath='/' path='/account'>
             <Account />
-          </SeniorPrivateRoute>
-          <SeniorPrivateRoute redirectPath='/' path='/accountupdate'>
-            <UpdateAccount />
           </SeniorPrivateRoute>
         </Switch>
       </UserContext.Provider>
