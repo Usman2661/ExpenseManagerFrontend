@@ -59,7 +59,7 @@ function UsersModal(props: UserModalProps) {
   const { companies, getCompanies } = companyStore;
 
   const userStore = useContext(UserStore);
-  const { createUser, updateUser } = userStore;
+  const { createUser, updateUser, users } = userStore;
   const { edit, user, onCancel } = props;
 
   const [userData, setUserData] = useState<IUserModalState>({
@@ -77,6 +77,7 @@ function UsersModal(props: UserModalProps) {
 
   // Destructuring
   const {
+    id,
     name,
     email,
     password,
@@ -88,11 +89,31 @@ function UsersModal(props: UserModalProps) {
     companyId,
   } = userData;
 
+  let managerList: IUser[];
+
+  managerList = users.filter((user: IUser) => {
+    return (
+      user.id !== id && user.userType !== 'Staff' && user.userType !== null
+    );
+  });
+
+  if (userType === 'SeniorManagement') {
+    managerList = users.filter((user: IUser) => {
+      return user.id !== id && user.userType === 'SeniorManagement';
+    });
+  }
+
   const onChange = (e: any) => {
     setUserData({
       ...userData,
       [e.target.name]: e.target.value,
     });
+
+    if (userData.userType === 'SeniorManagement') {
+      managerList = users.filter((user: IUser) => {
+        return user.id !== id && user.userType === 'SeniorManagement';
+      });
+    }
   };
 
   const renderCompaniesSelectOptions = () => {
@@ -100,6 +121,16 @@ function UsersModal(props: UserModalProps) {
       return (
         <MenuItem key={company.id} value={company.id}>
           {company.name}
+        </MenuItem>
+      );
+    });
+  };
+
+  const renderManagerSelectOptions = () => {
+    return managerList.map((user: any) => {
+      return (
+        <MenuItem key={user.id} value={user.id}>
+          {user.name}
         </MenuItem>
       );
     });
@@ -258,7 +289,7 @@ function UsersModal(props: UserModalProps) {
                         <InputLabel id='demo-simple-select-filled-label'>
                           Company
                         </InputLabel>
-                        {companies.length > 0 ? (
+                        {managerList.length > 0 ? (
                           <Select
                             labelId='demo-simple-select-filled-label'
                             id='demo-simple-select-filled'
@@ -270,6 +301,36 @@ function UsersModal(props: UserModalProps) {
                             color='primary'
                           >
                             {renderCompaniesSelectOptions()}
+                          </Select>
+                        ) : null}
+                      </FormControl>
+                    </Grid>
+                  ) : null}
+
+                  {userAuthData.userType === 'SeniorManagement' ? (
+                    <Grid item xs={12} sm={12}>
+                      <FormControl
+                        variant='filled'
+                        className='managerId'
+                        color='primary'
+                        fullWidth
+                        required
+                      >
+                        <InputLabel id='demo-simple-select-filled-label'>
+                          Manager
+                        </InputLabel>
+                        {companies.length > 0 ? (
+                          <Select
+                            labelId='demo-simple-select-filled-label'
+                            id='demo-simple-select-filled'
+                            name='managerId'
+                            value={managerId}
+                            onChange={(e) => onChange(e)}
+                            fullWidth
+                            required
+                            color='primary'
+                          >
+                            {renderManagerSelectOptions()}
                           </Select>
                         ) : null}
                       </FormControl>

@@ -176,8 +176,6 @@ function Users(props: any) {
                   jobTitle: rowData.jobTitle,
                   companyId: rowData.companyId,
                 };
-
-                console.log(myUser);
                 onEditUser(myUser);
               },
             },
