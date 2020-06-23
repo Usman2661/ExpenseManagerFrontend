@@ -127,11 +127,6 @@ export function Login(props: any) {
                             Login
                           </Button>
                         </Grid>
-                        <Grid item xs={12} sm={12}>
-                          <Link to='/register'>
-                            Dont have an account ? Sign Up
-                          </Link>
-                        </Grid>
                       </Grid>
                     </ValidatorForm>
                   </CardContent>

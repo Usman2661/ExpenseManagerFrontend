@@ -1,10 +1,10 @@
 import React from 'react';
-import AccountTable from './accountTable';
+import Users from '../User/Users';
 
 export function Account() {
   return (
     <div>
-      <AccountTable />
+      <Users />
     </div>
   );
 }

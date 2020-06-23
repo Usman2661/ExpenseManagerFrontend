@@ -42,7 +42,7 @@ function App() {
           {/* 
           Public Routes */}
           <Route path='/' component={Login} exact />
-          <Route path='/register' component={Register} exact />
+          {/* <Route path='/register' component={Register} exact /> */}
 
           {/* Private Routes for Authenticated Users */}
           <PrivateRoute redirectPath='/' path='/home'>

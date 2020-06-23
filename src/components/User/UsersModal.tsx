@@ -13,6 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { observer } from 'mobx-react-lite';
+import { UserContext } from '../../userContext';
 
 interface UserModalProps {
   user?: IUser;
@@ -51,6 +52,8 @@ function UsersModal(props: UserModalProps) {
     }
     return true;
   });
+
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const companyStore = useContext(CompanyStore);
   const { companies, getCompanies } = companyStore;
@@ -101,14 +104,6 @@ function UsersModal(props: UserModalProps) {
       );
     });
   };
-
-  // const onNumberChange = (e: any) => {
-  //   setCompanyData({
-  //     ...companyData,
-  //     [e.target.name]:
-  //       e.target.type === 'number' ? parseInt(e.target.value) : e.target.value,
-  //   });
-  // };
 
   const saveUser = async (e: any) => {
     e.preventDefault();
@@ -183,7 +178,9 @@ function UsersModal(props: UserModalProps) {
                       color='primary'
                       fullWidth
                       required
-                      disabled
+                      disabled={
+                        userAuthData.userType === 'Admin' ? true : false
+                      }
                     >
                       <InputLabel id='demo-simple-select-filled-label'>
                         User Type
@@ -199,8 +196,10 @@ function UsersModal(props: UserModalProps) {
                         color='primary'
                       >
                         <MenuItem value='SeniorManagement'>
-                          <em>Senior Management</em>
+                          Senior Management
                         </MenuItem>
+                        <MenuItem value='Manager'>Manager</MenuItem>
+                        <MenuItem value='Staff'>Staff</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -247,33 +246,35 @@ function UsersModal(props: UserModalProps) {
                     </FormControl>
                   </Grid>
 
-                  <Grid item xs={12} sm={12}>
-                    <FormControl
-                      variant='filled'
-                      className='company'
-                      color='primary'
-                      fullWidth
-                      required
-                    >
-                      <InputLabel id='demo-simple-select-filled-label'>
-                        Company
-                      </InputLabel>
-                      {companies.length > 0 ? (
-                        <Select
-                          labelId='demo-simple-select-filled-label'
-                          id='demo-simple-select-filled'
-                          name='companyId'
-                          value={companyId}
-                          onChange={(e) => onChange(e)}
-                          fullWidth
-                          required
-                          color='primary'
-                        >
-                          {renderCompaniesSelectOptions()}
-                        </Select>
-                      ) : null}
-                    </FormControl>
-                  </Grid>
+                  {userAuthData.userType === 'Admin' ? (
+                    <Grid item xs={12} sm={12}>
+                      <FormControl
+                        variant='filled'
+                        className='company'
+                        color='primary'
+                        fullWidth
+                        required
+                      >
+                        <InputLabel id='demo-simple-select-filled-label'>
+                          Company
+                        </InputLabel>
+                        {companies.length > 0 ? (
+                          <Select
+                            labelId='demo-simple-select-filled-label'
+                            id='demo-simple-select-filled'
+                            name='companyId'
+                            value={companyId}
+                            onChange={(e) => onChange(e)}
+                            fullWidth
+                            required
+                            color='primary'
+                          >
+                            {renderCompaniesSelectOptions()}
+                          </Select>
+                        ) : null}
+                      </FormControl>
+                    </Grid>
+                  ) : null}
 
                   <Grid item xs={12} sm={12}>
                     <TextValidator
