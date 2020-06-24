@@ -17,14 +17,14 @@ class ExpenseStore {
   }
 
   @observable expenses: IExpense[] = [];
-  @observable expensesLoading: boolean = true;
+  @observable expensesLoaded: boolean = false;
 
   @action getExpenses = async () => {
     try {
       const graphQLClient = setHeaders();
       const data = await graphQLClient.request(ME);
       this.expenses = data.me.Expenses;
-      this.expensesLoading = false;
+      this.expensesLoaded = true;
     } catch (error) {
       console.error(error);
       const msg = error.message.split(':')[0];
@@ -35,12 +35,12 @@ class ExpenseStore {
 
   @computed get info() {
     const claimApproved = alasql(
-      'SELECT SUM(amount) AS totalClaimed FROM ? Where status=true',
+      'SELECT SUM(amount) AS totalClaimed FROM ? Where status="Approved"',
       [this.expenses]
     );
 
     const claimPending = alasql(
-      'SELECT SUM(amount) AS totalPending FROM ? Where status=false',
+      'SELECT SUM(amount) AS totalPending FROM ? Where status="Pending"',
       [this.expenses]
     );
 

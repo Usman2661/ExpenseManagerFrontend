@@ -24,7 +24,7 @@ function StatCards() {
         spacing={2}
         style={{ margin: 0, width: '100%' }}
       >
-        <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Grid item xs={12} sm={6} md={4} lg={4}>
           <Card variant='outlined' className='amountClaimed'>
             <CardContent>
               <Grid className='statCard1' container direction='row'>
@@ -44,7 +44,7 @@ function StatCards() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Grid item xs={12} sm={6} md={4} lg={4}>
           <Card variant='outlined' className='amountPending'>
             <CardContent>
               <Grid className='statCard2' container direction='row'>
@@ -64,7 +64,7 @@ function StatCards() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Grid item xs={12} sm={6} md={4} lg={4}>
           <Card variant='outlined' className='totalClaims'>
             <CardContent>
               <Grid className='statCard3' container direction='row'>

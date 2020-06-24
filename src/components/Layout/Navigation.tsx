@@ -10,13 +10,16 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
-import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { UserContext } from '../../userContext';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import MailIcon from '@material-ui/icons/Mail';
+import MenuIcon from '@material-ui/icons/Menu';
+import PeopleIcon from '@material-ui/icons/People';
 
 import {
   makeStyles,
@@ -30,7 +33,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'flex',
+      flexGrow: 1,
     },
     drawer: {
       [theme.breakpoints.up('md')]: {
@@ -95,28 +98,25 @@ export default function Navigation(props: Props) {
 
   const drawer = (
     <div>
-      <div className={classes.toolbar} />
+      <div />
+      <h1 style={{ textAlign: 'center' }}>Hello {userAuthData.name} </h1>
       <Divider />
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
+
+      <List component='nav' aria-label='main mailbox folders'>
+        <ListItem button component={Link} to='/home'>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary='Home' />
+        </ListItem>
+        {userAuthData.userType === 'SeniorManagement' ? (
+          <ListItem button component={Link} to='/account'>
             <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              <PeopleIcon />
             </ListItemIcon>
-            <ListItemText primary={text} />
+            <ListItemText primary='Users' />
           </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        ) : null}
       </List>
     </div>
   );
@@ -142,14 +142,10 @@ export default function Navigation(props: Props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant='h6' noWrap>
+          <Typography variant='h6' style={{ flex: 1 }}>
             Expense Manager
           </Typography>
-          {userAuthData.userType === 'SeniorManagement' ? (
-            <Button color='inherit' component={Link} to='/account'>
-              Users
-            </Button>
-          ) : null}
+
           {userAuthData.auth ? (
             <Button color='inherit' onClick={logout}>
               Logout
