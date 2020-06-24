@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import './App.css';
 import { Route, Switch } from 'react-router-dom';
 import { Login } from './components/Auth/login';
-import { Navbar } from './components/Layout/Navbar';
 import UserAlerts from './components/Layout/UserAlerts';
-import Register from './components/Auth/register';
-import { UserTest } from './components/UserTest';
 import { Home } from './components/Home/home';
 import PrivateRoute from './routing/PrivateRoute';
 import { UserContext } from './userContext';
-import PublicRoute from './routing/PublicRoute';
 import { Account } from './components/Account/account';
 import SeniorPrivateRoute from './routing/SeniorPrivateRoute';
 import Navigation from './components/Layout/Navigation';
-import Typography from '@material-ui/core/Typography';
 import {
   makeStyles,
   useTheme,
@@ -28,35 +23,18 @@ const useStyles = makeStyles((theme: Theme) =>
       // backgroundColor: '#e5e7e9',
       // color: '#e5e7e9',
     },
-    // drawer: {
-    //   [theme.breakpoints.up('md')]: {
-    //     width: drawerWidth,
-    //     flexShrink: 0,
-    //   },
-    // },
-    // appBar: {
-    //   [theme.breakpoints.up('md')]: {
-    //     width: `calc(100% - ${drawerWidth}px)`,
-    //     marginLeft: drawerWidth,
-    //   },
-    // },
-    // menuButton: {
-    //   marginRight: theme.spacing(2),
-    //   [theme.breakpoints.up('md')]: {
-    //     display: 'none',
-    //   },
-    // },
-    // toolbarRoot: {
-    //   flexGrow: 1,
-    // },
-    // // necessary for content to be below app bar
-    // toolbar: theme.mixins.toolbar,
-    // drawerPaper: {
-    //   width: drawerWidth,
-    // },
+
     content: {
       flexGrow: 1,
-      padding: theme.spacing(3),
+      marginTop: '1.2%',
+      // padding: theme.spacing(3),
+    },
+    contentLoggedIn: {
+      flexGrow: 1,
+      marginTop: '1.2%',
+      [theme.breakpoints.up('md')]: {
+        marginLeft: '240px',
+      },
     },
   })
 );
@@ -85,7 +63,11 @@ function App() {
 
   return (
     <div className={classes.root}>
-      <main className={classes.content}>
+      <main
+        className={
+          userAuthData.auth ? classes.contentLoggedIn : classes.content
+        }
+      >
         <UserContext.Provider value={{ userAuthData, setUserAuthData }}>
           {/* <Navbar></Navbar> */}
           <Navigation />

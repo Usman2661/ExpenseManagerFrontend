@@ -5,21 +5,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import TextField from '@material-ui/core/TextField';
-import { useMutation } from '@apollo/react-hooks';
-import { CREATE_USER, LOGIN_USER } from '../../graphQL/mutation/user.mutation';
-import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../../userContext';
-import Avatar from '@material-ui/core/Avatar';
-import LockIcon from '@material-ui/icons/Lock';
-import { setHeaders } from '../../graphQL/graphqlconfig';
-import { observer } from 'mobx-react-lite';
 import UserStore from '../../MobX/store/UserStore';
 
 export function Login(props: any) {

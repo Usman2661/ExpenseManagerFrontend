@@ -8,7 +8,6 @@ import ChevronLeft from '@material-ui/icons/ChevronLeft';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import Clear from '@material-ui/icons/Clear';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import { toJS } from 'mobx';
 import Edit from '@material-ui/icons/Edit';
 import FilterList from '@material-ui/icons/FilterList';
 import FirstPage from '@material-ui/icons/FirstPage';
@@ -17,10 +16,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import { Alert } from '@material-ui/lab';
-import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { IUser } from '../../models/User';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CompanyStore from '../../MobX/store/CompanyStore';
 import CompanyModal from './CompanyModal';
@@ -28,8 +24,6 @@ import { ICompany } from '../../models/Company';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
 const tableIcons: any = {
