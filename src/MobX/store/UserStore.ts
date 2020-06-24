@@ -160,6 +160,7 @@ class UserStore {
         localStorage.setItem('email', data.login.user.email);
         localStorage.setItem('userType', data.login.user.userType);
         localStorage.setItem('token', data.login.token);
+        localStorage.setItem('width', '240');
 
         return data.login;
       }
@@ -172,7 +173,7 @@ class UserStore {
     }
   };
 
-  @computed get info() {
+  @computed get infoUser() {
     return {
       total: this.users.length,
       approved: this.users.filter((user) => user.managerId).length,

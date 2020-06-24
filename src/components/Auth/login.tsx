@@ -16,6 +16,8 @@ import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert';
 import { UserContext } from '../../userContext';
+import Avatar from '@material-ui/core/Avatar';
+import LockIcon from '@material-ui/icons/Lock';
 import { setHeaders } from '../../graphQL/graphqlconfig';
 import { observer } from 'mobx-react-lite';
 import UserStore from '../../MobX/store/UserStore';
@@ -54,6 +56,7 @@ export function Login(props: any) {
           email: data.user.email,
           userType: data.user.userType,
           token: data.token,
+          width: '240',
         });
         props.history.push('/home');
       }
@@ -77,7 +80,10 @@ export function Login(props: any) {
               <Paper className='login'>
                 <Card className='loginCard '>
                   <CardContent>
-                    <h1 style={{ textAlign: 'center' }}> Login </h1>
+                    {/* <LockIcon
+                      style={{ color: 'blue', fontSize: 70, float: 'right' }}
+                    /> */}
+                    <h2 style={{ textAlign: 'center' }}> Login </h2>
 
                     <ValidatorForm className='loginForm' onSubmit={loginUser}>
                       <Grid container spacing={2}>

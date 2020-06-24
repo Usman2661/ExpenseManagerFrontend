@@ -152,7 +152,7 @@ class CompanyStore {
     }
   };
 
-  @computed get info() {
+  @computed get infoCompany() {
     return {
       total: this.companies.length,
     };
