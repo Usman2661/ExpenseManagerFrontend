@@ -86,6 +86,9 @@ export const UPDATE_USER = `
       userType
       managerId
       companyId
+      Company{
+        name
+      }
     }
   }
 `;

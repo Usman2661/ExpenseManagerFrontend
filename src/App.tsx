@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       marginTop: '1.2%',
       [theme.breakpoints.up('md')]: {
-        marginLeft: '240px',
+        marginLeft: '220px',
       },
     },
   })
