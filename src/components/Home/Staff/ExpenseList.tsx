@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -21,6 +21,10 @@ import Alert from '@material-ui/lab/Alert';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import { observer } from 'mobx-react-lite';
 import { IExpense } from '../../../models/Expense';
+import ExpenseModal from '../../Expense/ExpenseModal';
+import AddIcon from '@material-ui/icons/Add';
+import Fab from '@material-ui/core/Fab';
+import Tooltip from '@material-ui/core/Tooltip';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -72,10 +76,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+export interface ExpenseModalDataState {
+  showExpenseModal: boolean;
+  editExpense?: boolean;
+  expense?: IExpense;
+}
+
 function ExpenseList() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+
+  const [expenseModalData, setExpenseModalData] = useState<
+    ExpenseModalDataState
+  >({
+    showExpenseModal: false,
+    editExpense: false,
+  });
+
+  const { showExpenseModal, editExpense } = expenseModalData;
 
   const expenseStore = useContext(ExpenseStore);
   const { getExpenses, expenses } = expenseStore;
@@ -98,8 +117,25 @@ function ExpenseList() {
     setExpanded(!expanded);
   };
 
+  const closeExpenseModal = () => {
+    setExpenseModalData({
+      ...expenseModalData,
+      editExpense: false,
+      showExpenseModal: false,
+    });
+  };
+
+  const onCreateExpense = async () => {
+    setExpenseModalData({
+      ...expenseModalData,
+      editExpense: false,
+      showExpenseModal: true,
+    });
+  };
+
   return (
     <div>
+      {showExpenseModal ? <ExpenseModal onCancel={closeExpenseModal} /> : null}
       <Grid
         className='expensePanelContainer'
         container
@@ -240,6 +276,16 @@ function ExpenseList() {
           </SwipeableViews>
         </Grid>
       </Grid>
+
+      <Tooltip title='Add Expense' aria-label='Add Expense'>
+        <Fab
+          color='primary'
+          onClick={onCreateExpense}
+          style={{ float: 'right', marginTop: '1%' }}
+        >
+          <AddIcon />
+        </Fab>
+      </Tooltip>
     </div>
   );
 }

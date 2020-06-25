@@ -1,4 +1,5 @@
 import { IUser } from './User';
+import { IExpenseReceipts } from './ExpenseReciepts';
 
 export interface IExpense {
   id?: number;
@@ -6,8 +7,13 @@ export interface IExpense {
   description?: String;
   type: String;
   amount: number;
-  status: boolean;
-  date?: String;
-  recipt?: String;
+  status: ExpenseStatus;
   user?: IUser;
+  ExpenseReceipts?: IExpenseReceipts[];
+}
+
+export enum ExpenseStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
+  Rejected = 'Rejected',
 }
