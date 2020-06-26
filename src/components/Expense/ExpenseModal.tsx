@@ -377,8 +377,8 @@ function ExpenseModal(props: ExpenseModalProps) {
                                   'image/png',
                                   'image/bmp',
                                 ]}
-                                showPreviews={true}
                                 maxFileSize={5000000}
+                                filesLimit={10}
                                 onChange={handleRecieptChange}
                               />
 
