@@ -42,7 +42,7 @@ export default function CompanyModal(props: CompanyModalProps) {
   const { edit, company, onCancel } = props;
 
   const [companyData, setCompanyData] = useState<ICompanyModalState>({
-    id: company?.id || 0,
+    id: company?.id || undefined,
     name: company?.name || '',
     addressFirstLine: company?.addressFirstLine || '',
     addressSecondLine: company?.addressSecondLine || '',

@@ -11,17 +11,17 @@ import UserStore from '../../MobX/store/UserStore';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
 import Select from '@material-ui/core/Select';
 import { observer } from 'mobx-react-lite';
 import { UserContext } from '../../userContext';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import { IExpense } from '../../models/Expense';
 import ExpenseStore from '../../MobX/store/ExpenseStore';
-
-interface ExpenseModalProps {
-  expense?: IExpense;
-  edit?: boolean;
-  onCancel: () => void;
-}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,8 +30,21 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
     },
+    button: {
+      marginRight: theme.spacing(1),
+    },
+    instructions: {
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+    },
   })
 );
+
+interface ExpenseModalProps {
+  expense?: IExpense;
+  edit?: boolean;
+  onCancel: () => void;
+}
 
 export interface ExpenseModalState {
   id?: number;
@@ -41,8 +54,15 @@ export interface ExpenseModalState {
   amount?: number;
 }
 
+function getSteps() {
+  return ['Expense Details', 'Upload Receipts'];
+}
+
 function ExpenseModal(props: ExpenseModalProps) {
   const classes = useStyles();
+  const [activeStep, setActiveStep] = useState(0);
+  const [skipped, setSkipped] = useState(new Set<number>());
+  const steps = getSteps();
 
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
@@ -87,7 +107,56 @@ function ExpenseModal(props: ExpenseModalProps) {
       //   await createExpense(expenseData);
       //   onCancel();
       console.log(expenseData);
+      handleNext();
     }
+  };
+
+  const isStepOptional = (step: number) => {
+    return null;
+  };
+
+  const isStepSkipped = (step: number) => {
+    return skipped.has(step);
+  };
+
+  const handleNext = () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
+
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped(newSkipped);
+
+    if (activeStep === 2) {
+      // updateUser(formData);
+    }
+  };
+
+  const handleBack = () => {
+    if (activeStep === 0) {
+      onCancel();
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
+  };
+
+  const handleSkip = () => {
+    if (!isStepOptional(activeStep)) {
+      throw new Error("You can't skip a step that isn't optional.");
+    }
+
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped((prevSkipped) => {
+      const newSkipped = new Set(prevSkipped.values());
+      newSkipped.add(activeStep);
+      return newSkipped;
+    });
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
   };
   return (
     <div>
@@ -110,108 +179,229 @@ function ExpenseModal(props: ExpenseModalProps) {
                 {edit ? 'Edit Expense' : 'New Expense'}
               </h2>
 
-              <ValidatorForm className='expenseform' onSubmit={saveExpense}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={12}>
-                    <TextValidator
-                      name='title'
-                      variant='outlined'
-                      required
-                      fullWidth
-                      id='title'
-                      label='Title'
-                      color='primary '
-                      value={title}
-                      onChange={(e) => onChange(e)}
-                      validators={['required']}
-                      errorMessages={['Title is required']}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <TextValidator
-                      name='description'
-                      variant='outlined'
-                      required
-                      fullWidth
-                      id='description'
-                      color='primary '
-                      label='Description'
-                      onChange={(e) => onChange(e)}
-                      value={description}
-                      validators={['required']}
-                      errorMessages={['Description is required']}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <FormControl
-                      variant='filled'
-                      className='type'
-                      color='primary'
-                      fullWidth
-                      required
-                    >
-                      <InputLabel id='demo-simple-select-filled-label'>
-                        Type
-                      </InputLabel>
-                      <Select
-                        labelId='demo-simple-select-filled-label'
-                        id='demo-simple-select-filled'
-                        name='type'
-                        value={type}
-                        onChange={(e) => onChange(e)}
-                        fullWidth
-                        required
-                        color='primary'
-                      >
-                        <MenuItem value='Transport'>Transport</MenuItem>
-                        <MenuItem value='Food'>Food</MenuItem>
-                        <MenuItem value='Accomodation'>Accomodation</MenuItem>
-                        <MenuItem value='Training'>Training</MenuItem>
-                        <MenuItem value='Equipment'>Equipment</MenuItem>
-                        <MenuItem value='Other'>Other</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <TextValidator
-                      id='amount'
-                      name='amount'
-                      label='Amount'
-                      variant='outlined'
-                      type='number'
-                      color='primary'
-                      required
-                      value={amount}
-                      onChange={(e) => onNumberChange(e)}
-                      validators={['required']}
-                      errorMessages={['Amount is required']}
-                      fullWidth
-                    />
-                  </Grid>
+              <Stepper activeStep={activeStep}>
+                {steps.map((label, index) => {
+                  const stepProps: { completed?: boolean } = {};
+                  const labelProps: { optional?: React.ReactNode } = {};
+                  if (isStepOptional(index)) {
+                    labelProps.optional = (
+                      <Typography variant='caption'>Optional</Typography>
+                    );
+                  }
+                  if (isStepSkipped(index)) {
+                    stepProps.completed = false;
+                  }
+                  return (
+                    <Step key={label} {...stepProps}>
+                      <StepLabel {...labelProps}>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              <div>
+                {activeStep === steps.length ? (
+                  <div>
+                    <Typography className={classes.instructions}>
+                      All steps completed - you&apos;re finished
+                    </Typography>
+                    <Button onClick={handleReset} className={classes.button}>
+                      Reset
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    <Typography className={classes.instructions}>
+                      {(() => {
+                        if (activeStep === 0)
+                          return (
+                            <ValidatorForm
+                              className='expenseform'
+                              onSubmit={saveExpense}
+                            >
+                              <Grid container spacing={2}>
+                                <Grid item xs={12} sm={12}>
+                                  <TextValidator
+                                    name='title'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    id='title'
+                                    label='Title'
+                                    color='primary '
+                                    value={title}
+                                    onChange={(e) => onChange(e)}
+                                    validators={['required']}
+                                    errorMessages={['Title is required']}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={12}>
+                                  <TextValidator
+                                    name='description'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    id='description'
+                                    color='primary '
+                                    label='Description'
+                                    onChange={(e) => onChange(e)}
+                                    value={description}
+                                    validators={['required']}
+                                    errorMessages={['Description is required']}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={12}>
+                                  <FormControl
+                                    variant='filled'
+                                    className='type'
+                                    color='primary'
+                                    fullWidth
+                                    required
+                                  >
+                                    <InputLabel id='demo-simple-select-filled-label'>
+                                      Type
+                                    </InputLabel>
+                                    <Select
+                                      labelId='demo-simple-select-filled-label'
+                                      id='demo-simple-select-filled'
+                                      name='type'
+                                      value={type}
+                                      onChange={(e) => onChange(e)}
+                                      fullWidth
+                                      required
+                                      color='primary'
+                                    >
+                                      <MenuItem value='Transport'>
+                                        Transport
+                                      </MenuItem>
+                                      <MenuItem value='Food'>Food</MenuItem>
+                                      <MenuItem value='Accomodation'>
+                                        Accomodation
+                                      </MenuItem>
+                                      <MenuItem value='Training'>
+                                        Training
+                                      </MenuItem>
+                                      <MenuItem value='Equipment'>
+                                        Equipment
+                                      </MenuItem>
+                                      <MenuItem value='Other'>Other</MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </Grid>
+                                <Grid item xs={12} sm={12}>
+                                  <TextValidator
+                                    id='amount'
+                                    name='amount'
+                                    label='Amount'
+                                    variant='outlined'
+                                    type='number'
+                                    color='primary'
+                                    required
+                                    value={amount}
+                                    onChange={(e) => onNumberChange(e)}
+                                    validators={['required']}
+                                    errorMessages={['Amount is required']}
+                                    fullWidth
+                                    // startAdornment={
+                                    //   <InputAdornment position='start'>£</InputAdornment>
+                                    // }
+                                  />
+                                </Grid>
+                                {/* 
+                                <Grid item xs={12} sm={12}>
+                                  <Button
+                                    variant='contained'
+                                    color='primary'
+                                    type='submit'
+                                    fullWidth
+                                  >
+                                    Save
+                                  </Button>
+                                </Grid>
+                                <Grid item xs={12} sm={12}>
+                                  <Button
+                                    variant='contained'
+                                    color='secondary'
+                                    type='submit'
+                                    onClick={onCancel}
+                                    fullWidth
+                                  >
+                                    Cancel
+                                  </Button>
+                                </Grid> */}
+                                <Button
+                                  variant='contained'
+                                  color='primary'
+                                  type='submit'
+                                  // onClick={handleNext}
+                                  className={classes.button}
+                                  style={{ float: 'right' }}
+                                >
+                                  {activeStep === steps.length - 1
+                                    ? 'Finish'
+                                    : 'Next'}
+                                </Button>
+                                <Button
+                                  // disabled={activeStep === 0}
+                                  onClick={handleBack}
+                                  className={classes.button}
+                                  style={{ float: 'right' }}
+                                >
+                                  {activeStep === 0 ? 'Cancel' : 'Back'}
+                                </Button>
+                              </Grid>
+                            </ValidatorForm>
+                          );
+                        if (activeStep === 1)
+                          return (
+                            <div>
+                              <Button variant='contained' component='label'>
+                                Upload File
+                                <input
+                                  type='file'
+                                  style={{ display: 'none' }}
+                                />
+                              </Button>
 
-                  <Grid item xs={12} sm={12}>
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      type='submit'
-                      fullWidth
-                    >
-                      Save
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <Button
-                      variant='contained'
-                      color='secondary'
-                      type='submit'
-                      onClick={onCancel}
-                      fullWidth
-                    >
-                      Cancel
-                    </Button>
-                  </Grid>
-                </Grid>
-              </ValidatorForm>
+                              <Button
+                                variant='contained'
+                                color='primary'
+                                onClick={handleNext}
+                                className={classes.button}
+                                style={{ float: 'right' }}
+                              >
+                                {activeStep === steps.length - 1
+                                  ? 'Finish'
+                                  : 'Next'}
+                              </Button>
+                              <Button
+                                // disabled={activeStep === 0}
+                                onClick={handleBack}
+                                className={classes.button}
+                                style={{ float: 'right' }}
+                              >
+                                {activeStep > 0 ? 'Back' : 'Cancel'}
+                              </Button>
+                            </div>
+                          );
+                        else;
+                        return <span>Unknown Step</span>;
+                      })()}
+                    </Typography>
+                    <div>
+                      {isStepOptional(activeStep) && (
+                        <Button
+                          variant='contained'
+                          color='primary'
+                          onClick={handleSkip}
+                          className={classes.button}
+                        >
+                          Skip
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </Dialog>
         </Grid>
