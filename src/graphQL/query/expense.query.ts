@@ -12,6 +12,11 @@ export const ME = `
       amount, 
       status, 
       type
+      ExpenseReceipts{
+        id, 
+        expenseId, 
+        receipt
+      }
     }
 }
   }

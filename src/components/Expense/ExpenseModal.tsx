@@ -20,8 +20,11 @@ import { observer } from 'mobx-react-lite';
 import { UserContext } from '../../userContext';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { IExpense } from '../../models/Expense';
+import { IExpense, ExpenseStatus } from '../../models/Expense';
 import ExpenseStore from '../../MobX/store/ExpenseStore';
+import { DropzoneArea } from 'material-ui-dropzone';
+import axios from 'axios';
+import { Input } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,7 +54,8 @@ export interface ExpenseModalState {
   title: String;
   description?: String;
   type: String;
-  amount?: number;
+  amount: number;
+  status: ExpenseStatus;
 }
 
 function getSteps() {
@@ -67,7 +71,7 @@ function ExpenseModal(props: ExpenseModalProps) {
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const expenseStore = useContext(ExpenseStore);
-  //   const { createExpense } = expenseStore;
+  const { createExpense } = expenseStore;
 
   const { edit, expense, onCancel } = props;
 
@@ -76,7 +80,13 @@ function ExpenseModal(props: ExpenseModalProps) {
     title: expense?.title || '',
     description: expense?.description || '',
     type: expense?.type || '',
-    amount: expense?.amount || undefined,
+    amount: expense?.amount || 0,
+    status: ExpenseStatus.Pending,
+  });
+
+  const [expenseReceipt, setExpenseReceipt] = useState({
+    expenseId: '',
+    files: [],
   });
 
   // Destructuring
@@ -86,6 +96,13 @@ function ExpenseModal(props: ExpenseModalProps) {
     setExpenseData({
       ...expenseData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleRecieptChange = (files: any) => {
+    setExpenseReceipt({
+      ...expenseReceipt,
+      files: files,
     });
   };
 
@@ -101,14 +118,39 @@ function ExpenseModal(props: ExpenseModalProps) {
     e.preventDefault();
 
     if (edit) {
-      //   await updateUser(userData);
-      //   onCancel();
     } else {
-      //   await createExpense(expenseData);
-      //   onCancel();
-      console.log(expenseData);
+      const expense = await createExpense(expenseData);
+
+      setExpenseReceipt({
+        ...expenseReceipt,
+        expenseId: expense.id,
+      });
+
       handleNext();
     }
+  };
+
+  const saveReceipt = async (e: any) => {
+    e.preventDefault();
+
+    var saveReceiptFormData = new FormData();
+    saveReceiptFormData.set('expenseId', expenseReceipt.expenseId);
+
+    let file = expenseReceipt.files;
+    for (let i = 0; i < file.length; i++) {
+      saveReceiptFormData.append(`file`, file[i]);
+    }
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'http://localhost:3001/api/expense',
+        data: saveReceiptFormData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    } catch (error) {}
+
+    handleNext();
   };
 
   const isStepOptional = (step: number) => {
@@ -238,15 +280,12 @@ function ExpenseModal(props: ExpenseModalProps) {
                                   <TextValidator
                                     name='description'
                                     variant='outlined'
-                                    required
                                     fullWidth
                                     id='description'
                                     color='primary '
                                     label='Description'
                                     onChange={(e) => onChange(e)}
                                     value={description}
-                                    validators={['required']}
-                                    errorMessages={['Description is required']}
                                   />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
@@ -306,33 +345,11 @@ function ExpenseModal(props: ExpenseModalProps) {
                                     // }
                                   />
                                 </Grid>
-                                {/* 
-                                <Grid item xs={12} sm={12}>
-                                  <Button
-                                    variant='contained'
-                                    color='primary'
-                                    type='submit'
-                                    fullWidth
-                                  >
-                                    Save
-                                  </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={12}>
-                                  <Button
-                                    variant='contained'
-                                    color='secondary'
-                                    type='submit'
-                                    onClick={onCancel}
-                                    fullWidth
-                                  >
-                                    Cancel
-                                  </Button>
-                                </Grid> */}
+
                                 <Button
                                   variant='contained'
                                   color='primary'
                                   type='submit'
-                                  // onClick={handleNext}
                                   className={classes.button}
                                   style={{ float: 'right' }}
                                 >
@@ -354,18 +371,21 @@ function ExpenseModal(props: ExpenseModalProps) {
                         if (activeStep === 1)
                           return (
                             <div>
-                              <Button variant='contained' component='label'>
-                                Upload File
-                                <input
-                                  type='file'
-                                  style={{ display: 'none' }}
-                                />
-                              </Button>
+                              <DropzoneArea
+                                acceptedFiles={[
+                                  'image/jpeg',
+                                  'image/png',
+                                  'image/bmp',
+                                ]}
+                                showPreviews={true}
+                                maxFileSize={5000000}
+                                onChange={handleRecieptChange}
+                              />
 
                               <Button
                                 variant='contained'
                                 color='primary'
-                                onClick={handleNext}
+                                onClick={saveReceipt}
                                 className={classes.button}
                                 style={{ float: 'right' }}
                               >
@@ -374,7 +394,6 @@ function ExpenseModal(props: ExpenseModalProps) {
                                   : 'Next'}
                               </Button>
                               <Button
-                                // disabled={activeStep === 0}
                                 onClick={handleBack}
                                 className={classes.button}
                                 style={{ float: 'right' }}

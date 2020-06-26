@@ -7,6 +7,7 @@ import { getAlert } from './Alert';
 import { IExpense } from '../../models/Expense';
 import { ME } from '../../graphQL/query/expense.query';
 import alasql from 'alasql';
+import { CREATE_EXPENSE } from '../../graphQL/mutation/expense.mutation';
 
 class ExpenseStore {
   constructor() {
@@ -29,6 +30,36 @@ class ExpenseStore {
       console.error(error);
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'FetchExpensesError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action createExpense = async (expense: IExpense) => {
+    try {
+      const graphQLClient = setHeaders();
+
+      const variables = {
+        title: expense.title,
+        description: expense.description,
+        amount: expense.amount,
+        type: expense.type,
+      };
+      const data = await graphQLClient.request(CREATE_EXPENSE, variables);
+
+      this.expenses = [data.createExpense, ...this.expenses];
+
+      return data.createExpense;
+
+      //Setting Alert
+      const msg = `${data.createExpense.title} Expense Added Succesfully`;
+      const alert = await getAlert(msg, '', AlertTypes.success);
+      AlertStore.setAlert(alert);
+    } catch (error) {
+      console.error(error);
+
+      //Error Alert
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'CreateExpenseError', AlertTypes.error);
       AlertStore.setAlert(alert);
     }
   };
