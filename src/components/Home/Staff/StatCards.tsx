@@ -8,6 +8,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import '../../../css/StatCards.css';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import { observer } from 'mobx-react-lite';
+import CountUp from 'react-countup';
 
 function StatCards() {
   const expenseStore = useContext(ExpenseStore);
@@ -32,7 +33,9 @@ function StatCards() {
                   <Typography style={{ color: 'grey' }}>
                     Amount Claimed
                   </Typography>
-                  <h1 style={{ marginTop: 'auto' }}>£ {info.totalClaimed}</h1>
+                  <h1 style={{ marginTop: 'auto' }}>
+                    £ <CountUp decimals={2} end={info.totalClaimed} />
+                  </h1>
                 </Grid>
                 <Grid item xs={6}>
                   <MonetizationOnIcon
@@ -52,7 +55,9 @@ function StatCards() {
                   <Typography style={{ color: 'grey' }}>
                     Amount Pending
                   </Typography>
-                  <h1 style={{ marginTop: 'auto' }}>£ {info.totalPending}</h1>
+                  <h1 style={{ marginTop: 'auto' }}>
+                    £ <CountUp decimals={2} end={info.totalPending} />
+                  </h1>
                 </Grid>
                 <Grid item xs={6}>
                   <MonetizationOnIcon
@@ -72,7 +77,10 @@ function StatCards() {
                   <Typography style={{ color: 'grey' }}>
                     Total Claims
                   </Typography>
-                  <h1 style={{ marginTop: 'auto' }}>{info.total}</h1>
+                  <h1 style={{ marginTop: 'auto' }}>
+                    {' '}
+                    <CountUp end={info.total} />
+                  </h1>
                 </Grid>
                 <Grid item xs={6}>
                   <AssessmentIcon

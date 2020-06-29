@@ -14,6 +14,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
@@ -22,12 +23,21 @@ import CommuteIcon from '@material-ui/icons/Commute';
 import Alert from '@material-ui/lab/Alert';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import { observer } from 'mobx-react-lite';
-import { IExpense } from '../../../models/Expense';
+import { IExpense, ExpenseStatus } from '../../../models/Expense';
 import ExpenseModal from '../../Expense/ExpenseModal';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
+import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
-import { IExpenseReceipts } from '../../../models/ExpenseReciepts';
+import CountUp from 'react-countup';
+import Button from '@material-ui/core/Button';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { AlertTypes } from '../../../models/Alert';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -84,11 +94,19 @@ export interface ExpenseModalDataState {
   editExpense?: boolean;
   expense?: IExpense;
 }
+export interface IDialogState {
+  id?: number;
+  open: boolean;
+  title?: String;
+}
 
 function ExpenseList() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const [dialogData, setDialogData] = useState<IDialogState>({
+    open: false,
+  });
 
   const [expenseModalData, setExpenseModalData] = useState<
     ExpenseModalDataState
@@ -100,11 +118,15 @@ function ExpenseList() {
   const { showExpenseModal, editExpense } = expenseModalData;
 
   const expenseStore = useContext(ExpenseStore);
-  const { getExpenses, expenses } = expenseStore;
+  const { getExpenses, expenses, deleteExpense } = expenseStore;
 
   useEffect(() => {
     getExpenses();
   }, []);
+
+  const pendingExpenses = expenses.filter((expense: IExpense) => {
+    return expense.status === 'Pending';
+  });
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -118,6 +140,47 @@ function ExpenseList() {
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const setAlertType = (status: ExpenseStatus) => {
+    const statusAlert = [
+      {
+        status: ExpenseStatus.Pending,
+        alert: AlertTypes.warning,
+      },
+      {
+        status: ExpenseStatus.Approved,
+        alert: AlertTypes.success,
+      },
+      {
+        status: ExpenseStatus.Rejected,
+        alert: AlertTypes.error,
+      },
+    ];
+
+    let myAlert = statusAlert.find((alert) => alert.status === status);
+    console.log(myAlert);
+
+    return myAlert?.alert || AlertTypes.info;
+  };
+
+  const handleClose = () => {
+    setDialogData({
+      ...dialogData,
+      open: false,
+      id: undefined,
+      title: undefined,
+    });
+  };
+
+  const deleteExpenseConfirm = async () => {
+    await deleteExpense(dialogData.id);
+    setDialogData({
+      ...dialogData,
+      open: false,
+      id: undefined,
+      title: undefined,
+    });
   };
 
   const closeExpenseModal = () => {
@@ -176,7 +239,7 @@ function ExpenseList() {
                 style={{ margin: 0, width: '100%' }}
               >
                 <Grid item xs={12} sm={10} md={8} lg={8}>
-                  {expenses.map((expense: IExpense) => (
+                  {pendingExpenses.map((expense: IExpense) => (
                     <Card className='expenseCard' style={{ marginTop: '2%' }}>
                       <CardContent>
                         <h2 style={{ textAlign: 'center' }}>{expense.title}</h2>
@@ -201,12 +264,12 @@ function ExpenseList() {
 
                           <Grid item xs={6}>
                             <h3 style={{ textAlign: 'right' }}>
-                              {' '}
-                              {`£ ${expense.amount}`}
+                              £ <CountUp decimals={2} end={expense.amount} />
                             </h3>
+
                             <Alert
                               variant='filled'
-                              severity='warning'
+                              severity={setAlertType(expense.status)}
                               style={{ float: 'right', marginTop: '-5%' }}
                             >
                               {expense.status}
@@ -215,12 +278,25 @@ function ExpenseList() {
                         </Grid>
                       </CardContent>
                       <CardActions disableSpacing>
-                        <IconButton aria-label='add to favorites'>
-                          <FavoriteIcon />
+                        <IconButton aria-label='View'>
+                          <VisibilityIcon />
                         </IconButton>
-                        <IconButton aria-label='share'>
-                          <ShareIcon />
-                        </IconButton>
+                        {expense.status === 'Pending' ? (
+                          <IconButton
+                            aria-label='Delete'
+                            onClick={() =>
+                              setDialogData({
+                                ...dialogData,
+                                open: true,
+                                id: expense.id,
+                                title: expense.title,
+                              })
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        ) : null}
+
                         <IconButton
                           className={clsx(classes.expand, {
                             [classes.expandOpen]: expanded,
@@ -256,7 +332,104 @@ function ExpenseList() {
               </Grid>
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-              Item Two
+              <Grid
+                className='expenseCardContainer'
+                container
+                direction='row'
+                justify='center'
+                alignItems='center'
+                style={{ margin: 0, width: '100%' }}
+              >
+                <Grid item xs={12} sm={10} md={8} lg={8}>
+                  {expenses.map((expense: IExpense) => (
+                    <Card className='expenseCard' style={{ marginTop: '2%' }}>
+                      <CardContent>
+                        <h2 style={{ textAlign: 'center' }}>{expense.title}</h2>
+                        <Grid
+                          className='expenseCardContent'
+                          container
+                          direction='row'
+                        >
+                          <Grid item xs={6}>
+                            <h3 style={{ textAlign: 'left' }}>
+                              {expense.type}
+                            </h3>
+                            <CommuteIcon
+                              style={{
+                                fontSize: 70,
+                                float: 'left',
+                                marginTop: '-5%',
+                                color: 'blue',
+                              }}
+                            />
+                          </Grid>
+
+                          <Grid item xs={6}>
+                            <h3 style={{ textAlign: 'right' }}>
+                              £ <CountUp decimals={2} end={expense.amount} />
+                            </h3>
+                            <Alert
+                              variant='filled'
+                              severity={setAlertType(expense.status)}
+                              style={{ float: 'right', marginTop: '-5%' }}
+                            >
+                              {expense.status}
+                            </Alert>
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                      <CardActions disableSpacing>
+                        <IconButton aria-label='View'>
+                          <VisibilityIcon />
+                        </IconButton>
+                        {expense.status === 'Pending' ? (
+                          <IconButton
+                            aria-label='Delete'
+                            onClick={() =>
+                              setDialogData({
+                                ...dialogData,
+                                open: true,
+                                id: expense.id,
+                                title: expense.title,
+                              })
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        ) : null}
+                        <IconButton
+                          className={clsx(classes.expand, {
+                            [classes.expandOpen]: expanded,
+                          })}
+                          onClick={handleExpandClick}
+                          aria-expanded={expanded}
+                          aria-label='show more'
+                        >
+                          <ExpandMoreIcon />
+                        </IconButton>
+                      </CardActions>
+                      <Collapse in={expanded} timeout='auto' unmountOnExit>
+                        <CardContent>
+                          <Typography paragraph>Description:</Typography>
+                          <Typography paragraph>
+                            {expense.description}
+                          </Typography>
+                          <Carousel>
+                            {expense?.ExpenseReceipts?.map(
+                              (expenseReceipt: any) => (
+                                <CardMedia
+                                  style={{ height: '140px' }}
+                                  image={expenseReceipt.receipt}
+                                />
+                              )
+                            )}
+                          </Carousel>
+                        </CardContent>
+                      </Collapse>
+                    </Card>
+                  ))}
+                </Grid>
+              </Grid>
             </TabPanel>
           </SwipeableViews>
         </Grid>
@@ -271,6 +444,30 @@ function ExpenseList() {
           <AddIcon />
         </Fab>
       </Tooltip>
+
+      <Dialog
+        open={dialogData.open}
+        onClose={handleClose}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>
+          Delete {dialogData.title} Expense
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Are you sure you want to delete {dialogData.title} expense ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={deleteExpenseConfirm} color='primary' autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

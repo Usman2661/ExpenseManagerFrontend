@@ -7,7 +7,10 @@ import { getAlert } from './Alert';
 import { IExpense } from '../../models/Expense';
 import { ME } from '../../graphQL/query/expense.query';
 import alasql from 'alasql';
-import { CREATE_EXPENSE } from '../../graphQL/mutation/expense.mutation';
+import {
+  CREATE_EXPENSE,
+  DELETE_EXPENSE,
+} from '../../graphQL/mutation/expense.mutation';
 
 class ExpenseStore {
   constructor() {
@@ -49,17 +52,35 @@ class ExpenseStore {
       this.expenses = [data.createExpense, ...this.expenses];
 
       return data.createExpense;
-
-      //Setting Alert
-      const msg = `${data.createExpense.title} Expense Added Succesfully`;
-      const alert = await getAlert(msg, '', AlertTypes.success);
-      AlertStore.setAlert(alert);
     } catch (error) {
       console.error(error);
 
       //Error Alert
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'CreateExpenseError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action deleteExpense = async (id?: number) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        id,
+      };
+      const data = await graphQLClient.request(DELETE_EXPENSE, variables);
+      this.expenses = this.expenses.filter(
+        (expense) => expense.id !== data.deleteExpense.id
+      );
+
+      const msg = `Expense deleted succesfully`;
+      const alert = await getAlert(msg, '', AlertTypes.warning);
+      AlertStore.setAlert(alert);
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'DeleteExpenseError', AlertTypes.error);
       AlertStore.setAlert(alert);
     }
   };
@@ -80,8 +101,11 @@ class ExpenseStore {
 
     return {
       total: this.expenses.length,
-      approved: this.expenses.filter((expense) => expense.status).length,
-      notApproved: this.expenses.filter((expense) => !expense.status).length,
+      approved: this.expenses.filter((expense) => expense.status === 'Approved')
+        .length,
+      notApproved: this.expenses.filter(
+        (expense) => expense.status !== 'Approved'
+      ).length,
       totalClaimed,
       totalPending,
     };

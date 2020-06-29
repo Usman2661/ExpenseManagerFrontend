@@ -22,3 +22,11 @@ export const CREATE_EXPENSE = `
     }
   }
 `;
+
+export const DELETE_EXPENSE = `
+  mutation deleteExpense($id: Int!) {
+    deleteExpense(id: $id) {
+      id
+    }
+  }
+`;
