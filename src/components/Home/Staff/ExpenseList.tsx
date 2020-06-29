@@ -19,7 +19,14 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+// Expense Types Icon
 import CommuteIcon from '@material-ui/icons/Commute';
+import FastfoodIcon from '@material-ui/icons/Fastfood';
+import HotelIcon from '@material-ui/icons/Hotel';
+import HelpIcon from '@material-ui/icons/Help';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
+import DevicesOtherIcon from '@material-ui/icons/DevicesOther';
+
 import Alert from '@material-ui/lab/Alert';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import { observer } from 'mobx-react-lite';
@@ -83,6 +90,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     transition: theme.transitions.create('transform', {
       duration: theme.transitions.duration.shortest,
     }),
+  },
+  typeIcon: {
+    fontSize: 70,
+    float: 'left',
+    marginTop: '-5%',
+    color: 'blue',
   },
   expandOpen: {
     transform: 'rotate(180deg)',
@@ -159,9 +172,56 @@ function ExpenseList() {
     ];
 
     let myAlert = statusAlert.find((alert) => alert.status === status);
-    console.log(myAlert);
 
     return myAlert?.alert || AlertTypes.info;
+  };
+
+  const setExpenseIcon = (expenseType: String) => {
+    const expenseTypeIcons = [
+      {
+        type: 'Food',
+        icon: <FastfoodIcon className={classes.typeIcon} />,
+      },
+      {
+        type: 'Transport',
+        icon: <CommuteIcon className={classes.typeIcon} />,
+      },
+      {
+        type: 'Accomodation',
+        icon: <HotelIcon className={classes.typeIcon} />,
+      },
+      {
+        type: 'Training',
+        icon: <MenuBookIcon className={classes.typeIcon} />,
+      },
+      {
+        type: 'Equipment',
+        icon: <DevicesOtherIcon className={classes.typeIcon} />,
+      },
+      {
+        type: 'Other',
+        icon: <HelpIcon className={classes.typeIcon} />,
+      },
+    ];
+
+    let expenseIcon = expenseTypeIcons.find(
+      (expenseIcon) => expenseIcon.type === expenseType
+    );
+
+    // const ExpenseTag = `${expenseIcon?.icon}` as keyof JSX.IntrinsicElements;
+
+    // return (
+    //   <CommuteIcon
+    //     style={{
+    //       fontSize: 70,
+    //       float: 'left',
+    //       marginTop: '-5%',
+    //       color: 'blue',
+    //     }}
+    //   />
+    // );
+
+    return expenseIcon?.icon;
   };
 
   const handleClose = () => {
@@ -252,14 +312,15 @@ function ExpenseList() {
                             <h3 style={{ textAlign: 'left' }}>
                               {expense.type}
                             </h3>
-                            <CommuteIcon
+                            {setExpenseIcon(expense.type)}
+                            {/* <CommuteIcon
                               style={{
                                 fontSize: 70,
                                 float: 'left',
                                 marginTop: '-5%',
                                 color: 'blue',
                               }}
-                            />
+                            /> */}
                           </Grid>
 
                           <Grid item xs={6}>
@@ -354,14 +415,15 @@ function ExpenseList() {
                             <h3 style={{ textAlign: 'left' }}>
                               {expense.type}
                             </h3>
-                            <CommuteIcon
+                            {setExpenseIcon(expense.type)}
+                            {/* <CommuteIcon
                               style={{
                                 fontSize: 70,
                                 float: 'left',
                                 marginTop: '-5%',
                                 color: 'blue',
                               }}
-                            />
+                            /> */}
                           </Grid>
 
                           <Grid item xs={6}>
