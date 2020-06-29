@@ -15,6 +15,7 @@ import {
   Theme,
   createStyles,
 } from '@material-ui/core/styles';
+import ExpenseView from './components/Expense/ExpenseView';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,6 +82,9 @@ function App() {
             {/* Private Routes for Authenticated Users */}
             <PrivateRoute redirectPath='/' path='/home'>
               <Home />
+            </PrivateRoute>
+            <PrivateRoute redirectPath='/' path='/expense'>
+              <ExpenseView />
             </PrivateRoute>
 
             {/* Private Routes for only for UserType Senior Management */}

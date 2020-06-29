@@ -26,6 +26,8 @@ import HotelIcon from '@material-ui/icons/Hotel';
 import HelpIcon from '@material-ui/icons/Help';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import DevicesOtherIcon from '@material-ui/icons/DevicesOther';
+import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import Alert from '@material-ui/lab/Alert';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
@@ -116,6 +118,8 @@ export interface IDialogState {
 function ExpenseList() {
   const classes = useStyles();
   const theme = useTheme();
+  const history = useHistory();
+
   const [value, setValue] = React.useState(0);
   const [dialogData, setDialogData] = useState<IDialogState>({
     open: false,
@@ -317,7 +321,12 @@ function ExpenseList() {
                         </Grid>
                       </CardContent>
                       <CardActions disableSpacing>
-                        <IconButton aria-label='View'>
+                        <IconButton
+                          aria-label='View'
+                          onClick={() =>
+                            history.push(`/expense?id=${expense.id}`)
+                          }
+                        >
                           <VisibilityIcon />
                         </IconButton>
                         {expense.status === 'Pending' ? (
@@ -413,7 +422,12 @@ function ExpenseList() {
                         </Grid>
                       </CardContent>
                       <CardActions disableSpacing>
-                        <IconButton aria-label='View'>
+                        <IconButton
+                          aria-label='View'
+                          onClick={() =>
+                            history.push(`/expense?id=${expense.id}`)
+                          }
+                        >
                           <VisibilityIcon />
                         </IconButton>
                         {expense.status === 'Pending' ? (
