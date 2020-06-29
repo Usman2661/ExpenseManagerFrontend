@@ -244,10 +244,11 @@ function ExpenseModal(props: ExpenseModalProps) {
                 {activeStep === steps.length ? (
                   <div>
                     <Typography className={classes.instructions}>
-                      All steps completed - you&apos;re finished
+                      All steps completed - Expense has been submitted
+                      succesfully
                     </Typography>
-                    <Button onClick={handleReset} className={classes.button}>
-                      Reset
+                    <Button onClick={onCancel} className={classes.button}>
+                      Ok
                     </Button>
                   </div>
                 ) : (
@@ -358,7 +359,6 @@ function ExpenseModal(props: ExpenseModalProps) {
                                     : 'Next'}
                                 </Button>
                                 <Button
-                                  // disabled={activeStep === 0}
                                   onClick={handleBack}
                                   className={classes.button}
                                   style={{ float: 'right' }}
@@ -394,6 +394,7 @@ function ExpenseModal(props: ExpenseModalProps) {
                                   : 'Next'}
                               </Button>
                               <Button
+                                disabled={true}
                                 onClick={handleBack}
                                 className={classes.button}
                                 style={{ float: 'right' }}

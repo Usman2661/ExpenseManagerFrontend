@@ -5,7 +5,7 @@ import AlertStore from './AlertStore';
 import { AlertTypes } from '../../models/Alert';
 import { getAlert } from './Alert';
 import { IExpense } from '../../models/Expense';
-import { ME } from '../../graphQL/query/expense.query';
+import { ME, GET_EXPENSE } from '../../graphQL/query/expense.query';
 import alasql from 'alasql';
 import {
   CREATE_EXPENSE,
@@ -21,6 +21,7 @@ class ExpenseStore {
   }
 
   @observable expenses: IExpense[] = [];
+  @observable expense: any = {};
   @observable expensesLoaded: boolean = false;
 
   @action getExpenses = async () => {
@@ -33,6 +34,25 @@ class ExpenseStore {
       console.error(error);
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'FetchExpensesError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action getExpense = async (id: number) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        id: id,
+      };
+      const data = await graphQLClient.request(GET_EXPENSE, variables);
+      this.expense = data.expense;
+
+      return data.expense;
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'FetchExpenseError', AlertTypes.error);
       AlertStore.setAlert(alert);
     }
   };

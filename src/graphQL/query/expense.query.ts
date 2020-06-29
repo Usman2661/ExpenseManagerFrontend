@@ -22,6 +22,24 @@ export const ME = `
   }
 `;
 
+export const GET_EXPENSE = `query expense($id: Int!) {
+  expense(id: $id) {
+    id, 
+    title, 
+    description,
+    amount, 
+    type,
+    status, 
+    User{
+      id,
+      name
+    }
+    ExpenseReceipts{
+      receipt
+    }
+  }
+}`;
+
 export const GET_USERS = `
   query allUsers {
     allUsers {

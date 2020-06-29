@@ -38,7 +38,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
 import CountUp from 'react-countup';
 import Button from '@material-ui/core/Button';
-
+import Badge from '@material-ui/core/Badge';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -207,20 +207,6 @@ function ExpenseList() {
     let expenseIcon = expenseTypeIcons.find(
       (expenseIcon) => expenseIcon.type === expenseType
     );
-
-    // const ExpenseTag = `${expenseIcon?.icon}` as keyof JSX.IntrinsicElements;
-
-    // return (
-    //   <CommuteIcon
-    //     style={{
-    //       fontSize: 70,
-    //       float: 'left',
-    //       marginTop: '-5%',
-    //       color: 'blue',
-    //     }}
-    //   />
-    // );
-
     return expenseIcon?.icon;
   };
 
@@ -313,14 +299,6 @@ function ExpenseList() {
                               {expense.type}
                             </h3>
                             {setExpenseIcon(expense.type)}
-                            {/* <CommuteIcon
-                              style={{
-                                fontSize: 70,
-                                float: 'left',
-                                marginTop: '-5%',
-                                color: 'blue',
-                              }}
-                            /> */}
                           </Grid>
 
                           <Grid item xs={6}>
@@ -375,16 +353,18 @@ function ExpenseList() {
                           <Typography paragraph>
                             {expense.description}
                           </Typography>
-                          <Carousel>
-                            {expense?.ExpenseReceipts?.map(
-                              (expenseReceipt: any) => (
-                                <CardMedia
-                                  style={{ height: '140px' }}
-                                  image={expenseReceipt.receipt}
-                                />
-                              )
-                            )}
-                          </Carousel>
+                          {expense?.ExpenseReceipts?.length || 0 > 0 ? (
+                            <Carousel>
+                              {expense?.ExpenseReceipts?.map(
+                                (expenseReceipt: any) => (
+                                  <CardMedia
+                                    style={{ height: '140px' }}
+                                    image={expenseReceipt.receipt}
+                                  />
+                                )
+                              )}
+                            </Carousel>
+                          ) : null}
                         </CardContent>
                       </Collapse>
                     </Card>
@@ -416,14 +396,6 @@ function ExpenseList() {
                               {expense.type}
                             </h3>
                             {setExpenseIcon(expense.type)}
-                            {/* <CommuteIcon
-                              style={{
-                                fontSize: 70,
-                                float: 'left',
-                                marginTop: '-5%',
-                                color: 'blue',
-                              }}
-                            /> */}
                           </Grid>
 
                           <Grid item xs={6}>
@@ -476,16 +448,18 @@ function ExpenseList() {
                           <Typography paragraph>
                             {expense.description}
                           </Typography>
-                          <Carousel>
-                            {expense?.ExpenseReceipts?.map(
-                              (expenseReceipt: any) => (
-                                <CardMedia
-                                  style={{ height: '140px' }}
-                                  image={expenseReceipt.receipt}
-                                />
-                              )
-                            )}
-                          </Carousel>
+                          {expense?.ExpenseReceipts?.length || 0 > 0 ? (
+                            <Carousel>
+                              {expense?.ExpenseReceipts?.map(
+                                (expenseReceipt: any) => (
+                                  <CardMedia
+                                    style={{ height: '140px' }}
+                                    image={expenseReceipt.receipt}
+                                  />
+                                )
+                              )}
+                            </Carousel>
+                          ) : null}
                         </CardContent>
                       </Collapse>
                     </Card>
