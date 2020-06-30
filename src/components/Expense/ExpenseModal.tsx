@@ -71,7 +71,7 @@ function ExpenseModal(props: ExpenseModalProps) {
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const expenseStore = useContext(ExpenseStore);
-  const { createExpense } = expenseStore;
+  const { createExpense, updateExpense, getExpense } = expenseStore;
 
   const { edit, expense, onCancel } = props;
 
@@ -81,7 +81,7 @@ function ExpenseModal(props: ExpenseModalProps) {
     description: expense?.description || '',
     type: expense?.type || '',
     amount: expense?.amount || 0,
-    status: ExpenseStatus.Pending,
+    status: expense?.status || ExpenseStatus.Pending,
   });
 
   const [expenseReceipt, setExpenseReceipt] = useState({
@@ -118,6 +118,14 @@ function ExpenseModal(props: ExpenseModalProps) {
     e.preventDefault();
 
     if (edit) {
+      const expense = await updateExpense(expenseData);
+
+      setExpenseReceipt({
+        ...expenseReceipt,
+        expenseId: expense.id,
+      });
+
+      handleNext();
     } else {
       const expense = await createExpense(expenseData);
 
@@ -148,9 +156,11 @@ function ExpenseModal(props: ExpenseModalProps) {
         data: saveReceiptFormData,
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-    } catch (error) {}
 
-    handleNext();
+      await getExpense(expenseData.id || 0);
+
+      handleNext();
+    } catch (error) {}
   };
 
   const isStepOptional = (step: number) => {

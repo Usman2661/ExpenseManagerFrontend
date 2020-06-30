@@ -113,6 +113,7 @@ export interface IDialogState {
   id?: number;
   open: boolean;
   title?: String;
+  deleteExpenseOrReceipt?: String;
 }
 
 function ExpenseList() {

@@ -29,6 +29,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Alert from '@material-ui/lab/Alert';
 import { AlertTypes } from '../../models/Alert';
 import ExpenseStore from '../../MobX/store/ExpenseStore';
+import { IDialogState, ExpenseModalDataState } from '../Home/Staff/ExpenseList';
+import ExpenseModal from './ExpenseModal';
 
 const useStyles = makeStyles((theme: Theme) => ({
   typeIcon: {
@@ -38,13 +40,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: 'blue',
   },
 }));
-
-export interface IDialogState {
-  id?: number;
-  open: boolean;
-  title?: String;
-  deleteExpenseOrReceipt?: String;
-}
 
 function ExpenseView() {
   const classes = useStyles();
@@ -61,6 +56,15 @@ function ExpenseView() {
   const [dialogData, setDialogData] = useState<IDialogState>({
     open: false,
   });
+
+  const [expenseModalData, setExpenseModalData] = useState<
+    ExpenseModalDataState
+  >({
+    showExpenseModal: false,
+    editExpense: false,
+  });
+
+  const { showExpenseModal, editExpense } = expenseModalData;
 
   const expenseStore = useContext(ExpenseStore);
   const {
@@ -99,6 +103,22 @@ function ExpenseView() {
       id: undefined,
       title: undefined,
       deleteExpenseOrReceipt: undefined,
+    });
+  };
+
+  const closeExpenseModal = () => {
+    setExpenseModalData({
+      ...expenseModalData,
+      editExpense: false,
+      showExpenseModal: false,
+    });
+  };
+
+  const onEditExpense = async () => {
+    setExpenseModalData({
+      ...expenseModalData,
+      editExpense: true,
+      showExpenseModal: true,
     });
   };
 
@@ -158,6 +178,14 @@ function ExpenseView() {
   };
   return (
     <div>
+      {showExpenseModal ? (
+        <ExpenseModal
+          expense={expense}
+          edit={expenseModalData.editExpense}
+          onCancel={closeExpenseModal}
+        />
+      ) : null}
+
       <Grid
         className='expenseCardContainer'
         container
@@ -250,32 +278,13 @@ function ExpenseView() {
                     variant='contained'
                     color='primary'
                     style={{ float: 'right' }}
+                    onClick={onEditExpense}
                   >
                     Edit
                   </Button>
                 </div>
               ) : null}
             </CardActions>
-            {/* <CardActions disableSpacing>
-              <IconButton aria-label='View'>
-                <VisibilityIcon />
-              </IconButton>
-              {expense.status !== 'Approved' ? (
-                <IconButton
-                  aria-label='Delete'
-                  onClick={() =>
-                    setDialogData({
-                      ...dialogData,
-                      open: true,
-                      id: expense.id,
-                      title: expense.title,
-                    })
-                  }
-                >
-                  <DeleteIcon />
-                </IconButton>
-              ) : null}
-            </CardActions> */}
           </Card>
         </Grid>
       </Grid>

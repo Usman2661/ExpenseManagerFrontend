@@ -7,7 +7,10 @@ import { getAlert } from './Alert';
 import { IExpense } from '../../models/Expense';
 import { ME, GET_EXPENSE } from '../../graphQL/query/expense.query';
 import alasql from 'alasql';
-import { DELETE_EXPENSERECEIPT } from '../../graphQL/mutation/expense.mutation';
+import {
+  DELETE_EXPENSERECEIPT,
+  UPDATE_EXPENSE,
+} from '../../graphQL/mutation/expense.mutation';
 import { IExpenseReceipts } from '../../models/ExpenseReciepts';
 import {
   CREATE_EXPENSE,
@@ -84,6 +87,40 @@ class ExpenseStore {
     }
   };
 
+  @action updateExpense = async (expense: IExpense) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        id: expense.id,
+        title: expense.title,
+        description: expense.description,
+        type: expense.type,
+        amount: expense.amount,
+        status: expense.status,
+      };
+      const data = await graphQLClient.request(UPDATE_EXPENSE, variables);
+
+      this.expenses = this.expenses.map((expense: IExpense) => {
+        if (expense.id === data.updateExpense.id) {
+          return data.updateExpense;
+        }
+        return expense;
+      });
+
+      const msg = `Expense Details updated for ${data.updateExpense.title}`;
+      const alert = await getAlert(msg, '', AlertTypes.success);
+      AlertStore.setAlert(alert);
+
+      return data.updateExpense;
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(msg, 'UpdateUserError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
   @action deleteExpense = async (id?: number) => {
     try {
       const graphQLClient = setHeaders();
@@ -117,10 +154,6 @@ class ExpenseStore {
         DELETE_EXPENSERECEIPT,
         variables
       );
-      // this.expense = this.expense.ExpenseReceipts.filter(
-      //   (expenseReceipt: IExpenseReceipts) =>
-      //     expenseReceipt.id !== data.deleteExpenseReceipt.id
-      // );
 
       const msg = `Expense Receipt Removed!!`;
       const alert = await getAlert(msg, '', AlertTypes.warning);

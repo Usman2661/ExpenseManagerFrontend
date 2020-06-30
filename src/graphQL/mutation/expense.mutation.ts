@@ -23,6 +23,33 @@ export const CREATE_EXPENSE = `
   }
 `;
 
+export const UPDATE_EXPENSE = `
+  mutation updateExpense(
+    $id: Int!
+    $title: String!
+    $description: String
+    $status: String
+    $type: String!
+    $amount: Float!
+  ) {
+    updateExpense(
+      id: $id
+      title: $title
+      description: $description
+      status: $status
+      type: $type
+      amount: $amount
+    ) {
+      id
+      title
+      description
+      status
+      type
+      amount
+    }
+  }
+`;
+
 export const DELETE_EXPENSE = `
   mutation deleteExpense($id: Int!) {
     deleteExpense(id: $id) {
