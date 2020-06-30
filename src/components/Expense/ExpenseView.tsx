@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -20,6 +20,11 @@ import HelpIcon from '@material-ui/icons/Help';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import DevicesOtherIcon from '@material-ui/icons/DevicesOther';
 import { observer } from 'mobx-react-lite';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import Alert from '@material-ui/lab/Alert';
 import { AlertTypes } from '../../models/Alert';
@@ -34,6 +39,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+export interface IDialogState {
+  id?: number;
+  open: boolean;
+  title?: String;
+  deleteExpenseOrReceipt?: String;
+}
+
 function ExpenseView() {
   const classes = useStyles();
   const theme = useTheme();
@@ -46,16 +58,48 @@ function ExpenseView() {
   }
   const expenseId = parseInt(id || '0');
 
+  const [dialogData, setDialogData] = useState<IDialogState>({
+    open: false,
+  });
+
   const expenseStore = useContext(ExpenseStore);
-  const { getExpense, expense, deleteExpenseReceipt } = expenseStore;
+  const {
+    getExpense,
+    expense,
+    deleteExpenseReceipt,
+    deleteExpense,
+  } = expenseStore;
 
   useEffect(() => {
     getExpense(expenseId);
   }, []);
 
-  const ondeleteExpenseReceipt = async (id: number) => {
-    await deleteExpenseReceipt(id);
+  const handleClose = () => {
+    setDialogData({
+      ...dialogData,
+      open: false,
+      id: undefined,
+      title: undefined,
+      deleteExpenseOrReceipt: undefined,
+    });
+  };
+
+  const ondeleteExpenseConfirm = async () => {
+    await deleteExpense(expenseId);
+    history.push('/home');
+  };
+
+  const ondeleteExpenseReceiptConfirm = async () => {
+    await deleteExpenseReceipt(dialogData.id || 0);
     await getExpense(expenseId);
+
+    setDialogData({
+      ...dialogData,
+      open: false,
+      id: undefined,
+      title: undefined,
+      deleteExpenseOrReceipt: undefined,
+    });
   };
 
   const setAlertType = (status: ExpenseStatus) => {
@@ -146,7 +190,13 @@ function ExpenseView() {
                         aria-label='Delete'
                         style={{ float: 'right' }}
                         onClick={() =>
-                          ondeleteExpenseReceipt(expenseReceipt.id || 0)
+                          setDialogData({
+                            ...dialogData,
+                            open: true,
+                            id: expenseReceipt.id,
+                            title: undefined,
+                            deleteExpenseOrReceipt: 'Receipt',
+                          })
                         }
                       >
                         <DeleteIcon />
@@ -184,6 +234,15 @@ function ExpenseView() {
                     variant='contained'
                     color='primary'
                     style={{ float: 'right' }}
+                    onClick={() =>
+                      setDialogData({
+                        ...dialogData,
+                        open: true,
+                        id: expense.id,
+                        title: expense.title,
+                        deleteExpenseOrReceipt: 'Expense',
+                      })
+                    }
                   >
                     Delete
                   </Button>
@@ -220,6 +279,45 @@ function ExpenseView() {
           </Card>
         </Grid>
       </Grid>
+
+      <Dialog
+        open={dialogData.open}
+        onClose={handleClose}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>
+          Delete {dialogData.title}{' '}
+          {dialogData.deleteExpenseOrReceipt === 'Expense'
+            ? 'Expense'
+            : 'Expense Receipt'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Are you sure you want to delete {dialogData.title}{' '}
+            {dialogData.deleteExpenseOrReceipt === 'Expense'
+              ? 'expense'
+              : 'expense receipt'}{' '}
+            ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color='primary'>
+            Cancel
+          </Button>
+          <Button
+            onClick={
+              dialogData.deleteExpenseOrReceipt === 'Expense'
+                ? ondeleteExpenseConfirm
+                : ondeleteExpenseReceiptConfirm
+            }
+            color='primary'
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
