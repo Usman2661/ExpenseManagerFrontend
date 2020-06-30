@@ -7,6 +7,8 @@ import { getAlert } from './Alert';
 import { IExpense } from '../../models/Expense';
 import { ME, GET_EXPENSE } from '../../graphQL/query/expense.query';
 import alasql from 'alasql';
+import { DELETE_EXPENSERECEIPT } from '../../graphQL/mutation/expense.mutation';
+import { IExpenseReceipts } from '../../models/ExpenseReciepts';
 import {
   CREATE_EXPENSE,
   DELETE_EXPENSE,
@@ -101,6 +103,37 @@ class ExpenseStore {
 
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'DeleteExpenseError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action deleteExpenseReceipt = async (id: number) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        id,
+      };
+      const data = await graphQLClient.request(
+        DELETE_EXPENSERECEIPT,
+        variables
+      );
+      // this.expense = this.expense.ExpenseReceipts.filter(
+      //   (expenseReceipt: IExpenseReceipts) =>
+      //     expenseReceipt.id !== data.deleteExpenseReceipt.id
+      // );
+
+      const msg = `Expense Receipt Removed!!`;
+      const alert = await getAlert(msg, '', AlertTypes.warning);
+      AlertStore.setAlert(alert);
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'DeleteExpenseReceiptError',
+        AlertTypes.error
+      );
       AlertStore.setAlert(alert);
     }
   };

@@ -47,11 +47,16 @@ function ExpenseView() {
   const expenseId = parseInt(id || '0');
 
   const expenseStore = useContext(ExpenseStore);
-  const { getExpense, expense } = expenseStore;
+  const { getExpense, expense, deleteExpenseReceipt } = expenseStore;
 
   useEffect(() => {
     getExpense(expenseId);
   }, []);
+
+  const ondeleteExpenseReceipt = async (id: number) => {
+    await deleteExpenseReceipt(id);
+    await getExpense(expenseId);
+  };
 
   const setAlertType = (status: ExpenseStatus) => {
     const statusAlert = [
@@ -121,10 +126,15 @@ function ExpenseView() {
         <Grid item xs={12} sm={8} md={8} lg={6}>
           <Card className='expenseCard' style={{ marginTop: '2%' }}>
             <CardContent>
-              <h2 style={{ textAlign: 'center' }}> {expense.title} </h2>
+              <h1 style={{ textAlign: 'center' }}> {expense.title} </h1>
 
               {expense?.ExpenseReceipts?.length || 0 > 0 ? (
-                <Carousel>
+                <Carousel
+                  autoPlay={false}
+                  indicators={true}
+                  navButtonsAlwaysVisible={true}
+                  animation='slide'
+                >
                   {expense?.ExpenseReceipts?.map((expenseReceipt: any) => (
                     <div>
                       <CardMedia
@@ -132,9 +142,12 @@ function ExpenseView() {
                         image={expenseReceipt.receipt}
                       />
                       <IconButton
+                        disabled={expense.status !== 'Approved' ? false : true}
                         aria-label='Delete'
                         style={{ float: 'right' }}
-                        onClick={() => console.log(expenseReceipt.id)}
+                        onClick={() =>
+                          ondeleteExpenseReceipt(expenseReceipt.id || 0)
+                        }
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -165,26 +178,30 @@ function ExpenseView() {
               </Grid>
             </CardContent>
             <CardActions>
-              <Button
-                variant='contained'
-                color='primary'
-                style={{ float: 'right' }}
-              >
-                Delete
-              </Button>
-              <Button
-                variant='contained'
-                color='primary'
-                style={{ float: 'right' }}
-              >
-                Edit
-              </Button>
+              {expense.status !== 'Approved' ? (
+                <div>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    style={{ float: 'right' }}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    style={{ float: 'right' }}
+                  >
+                    Edit
+                  </Button>
+                </div>
+              ) : null}
             </CardActions>
             {/* <CardActions disableSpacing>
               <IconButton aria-label='View'>
                 <VisibilityIcon />
               </IconButton>
-              {expense.status === 'Pending' ? (
+              {expense.status !== 'Approved' ? (
                 <IconButton
                   aria-label='Delete'
                   onClick={() =>
@@ -199,34 +216,7 @@ function ExpenseView() {
                   <DeleteIcon />
                 </IconButton>
               ) : null}
-
-              <IconButton
-                className={clsx(classes.expand, {
-                  [classes.expandOpen]: expanded,
-                })}
-                onClick={handleExpandClick}
-                aria-expanded={expanded}
-                aria-label='show more'
-              >
-                <ExpandMoreIcon />
-              </IconButton>
             </CardActions> */}
-            {/* <Collapse in={expanded} timeout='auto' unmountOnExit>
-              <CardContent>
-                <Typography paragraph>Description:</Typography>
-                <Typography paragraph>{expense.description}</Typography>
-                {expense?.ExpenseReceipts?.length || 0 > 0 ? (
-                  <Carousel>
-                    {expense?.ExpenseReceipts?.map((expenseReceipt: any) => (
-                      <CardMedia
-                        style={{ height: '140px' }}
-                        image={expenseReceipt.receipt}
-                      />
-                    ))}
-                  </Carousel>
-                ) : null}
-              </CardContent>
-            </Collapse> */}
           </Card>
         </Grid>
       </Grid>

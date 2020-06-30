@@ -28,21 +28,29 @@ function StatCards() {
         <Grid item xs={12} sm={6} md={4} lg={4}>
           <Card variant='outlined' className='amountClaimed'>
             <CardContent>
-              <Grid className='statCard1' container direction='row'>
-                <Grid item xs={6} style={{ marginTop: '4%' }}>
+              <div
+                style={{
+                  width: '100%',
+                  paddingTop: '5px',
+                  paddingBottom: '70px',
+                }}
+              >
+                <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>
                     Amount Claimed
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
                     £ <CountUp decimals={2} end={info.totalClaimed} />
                   </h1>
-                </Grid>
-                <Grid item xs={6}>
-                  <MonetizationOnIcon
-                    style={{ fontSize: 80, float: 'right', color: 'green' }}
-                  />
-                </Grid>
-              </Grid>
+                </div>
+                <MonetizationOnIcon
+                  style={{
+                    fontSize: 80,
+                    float: 'right',
+                    color: 'green',
+                  }}
+                />
+              </div>
             </CardContent>
           </Card>
         </Grid>
@@ -50,21 +58,26 @@ function StatCards() {
         <Grid item xs={12} sm={6} md={4} lg={4}>
           <Card variant='outlined' className='amountPending'>
             <CardContent>
-              <Grid className='statCard2' container direction='row'>
-                <Grid item xs={6} style={{ marginTop: '4%' }}>
+              <div
+                style={{
+                  width: '100%',
+                  paddingTop: '5px',
+                  paddingBottom: '70px',
+                }}
+              >
+                <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>
                     Amount Pending
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
                     £ <CountUp decimals={2} end={info.totalPending} />
                   </h1>
-                </Grid>
-                <Grid item xs={6}>
-                  <MonetizationOnIcon
-                    style={{ fontSize: 80, float: 'right', color: 'red' }}
-                  />
-                </Grid>
-              </Grid>
+                </div>
+
+                <MonetizationOnIcon
+                  style={{ fontSize: 80, float: 'right', color: 'red' }}
+                />
+              </div>
             </CardContent>
           </Card>
         </Grid>
@@ -72,8 +85,14 @@ function StatCards() {
         <Grid item xs={12} sm={6} md={4} lg={4}>
           <Card variant='outlined' className='totalClaims'>
             <CardContent>
-              <Grid className='statCard3' container direction='row'>
-                <Grid item xs={6} style={{ marginTop: '4%' }}>
+              <div
+                style={{
+                  width: '100%',
+                  paddingTop: '5px',
+                  paddingBottom: '70px',
+                }}
+              >
+                <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>
                     Total Claims
                   </Typography>
@@ -81,14 +100,13 @@ function StatCards() {
                     {' '}
                     <CountUp end={info.total} />
                   </h1>
-                </Grid>
-                <Grid item xs={6}>
-                  <AssessmentIcon
-                    color='primary'
-                    style={{ fontSize: 80, float: 'right' }}
-                  />
-                </Grid>
-              </Grid>
+                </div>
+
+                <AssessmentIcon
+                  color='primary'
+                  style={{ fontSize: 80, float: 'right' }}
+                />
+              </div>
             </CardContent>
           </Card>
         </Grid>

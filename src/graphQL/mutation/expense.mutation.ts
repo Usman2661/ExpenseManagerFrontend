@@ -30,3 +30,11 @@ export const DELETE_EXPENSE = `
     }
   }
 `;
+
+export const DELETE_EXPENSERECEIPT = `
+  mutation deleteExpenseReceipt($id: Int!) {
+    deleteExpenseReceipt(id: $id) {
+      id
+    }
+  }
+`;
