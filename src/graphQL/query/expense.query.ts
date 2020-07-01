@@ -54,3 +54,28 @@ export const GET_USERS = `
     }
   }
 `;
+
+export const MANAGER_EXPENSE = `
+  query managerExpenses {
+    managerExpenses {
+      id, 
+      title, 
+      amount,
+      description, 
+      status,
+      type, 
+      User{ 
+      id, 
+      name, 
+      jobTitle,
+      department,
+      email,
+      }
+      ExpenseReceipts{
+        id, 
+        expenseId, 
+        receipt,
+      }
+    }
+  }
+`;

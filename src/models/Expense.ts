@@ -8,7 +8,7 @@ export interface IExpense {
   type: String;
   amount: number;
   status: ExpenseStatus;
-  user?: IUser;
+  User?: IUser;
   ExpenseReceipts?: IExpenseReceipts[];
 }
 

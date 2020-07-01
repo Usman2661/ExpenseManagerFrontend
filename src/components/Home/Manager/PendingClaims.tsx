@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -34,6 +34,9 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import { observer } from 'mobx-react-lite';
 import { deepOrange, deepPurple } from '@material-ui/core/colors';
+import CountUp from 'react-countup';
+import ExpenseStore from '../../../MobX/store/ExpenseStore';
+import { IExpense } from '../../../models/Expense';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,19 +79,28 @@ const tableIcons: any = {
 function PendingClaims() {
   const classes = useStyles();
 
+  const expenseStore = useContext(ExpenseStore);
+  const { getManagerExpenses, managerExpenses } = expenseStore;
+
+  useEffect(() => {
+    getManagerExpenses();
+  }, []);
+
   const [state, setState] = useState({
     columns: [
       { title: 'Title', field: 'title' },
       {
         title: 'User',
         field: 'user',
-        render: (rowData: any) => {
+        render: (rowData: IExpense) => {
           return (
             <div style={{ display: 'flex' }}>
               <ListItemAvatar>
-                <Avatar className={classes.orange}>U</Avatar>
+                <Avatar className={classes.orange}>
+                  {rowData.User?.name.charAt(0)}
+                </Avatar>
               </ListItemAvatar>
-              <ListItemText primary='Usman' />
+              <ListItemText primary={rowData.User?.name} />
             </div>
           );
         },
@@ -96,7 +108,7 @@ function PendingClaims() {
       {
         title: 'Amount',
         field: 'amount',
-        render: (rowData: any) => {
+        render: (rowData: IExpense) => {
           return <b>£{rowData.amount}</b>;
         },
       },
@@ -104,7 +116,7 @@ function PendingClaims() {
       {
         title: 'Status',
         field: 'status',
-        render: (rowData: any) => {
+        render: (rowData: IExpense) => {
           return (
             <span
               className='jss1936'
@@ -120,23 +132,6 @@ function PendingClaims() {
       },
     ],
   });
-
-  const expenses = [
-    {
-      id: 1,
-      title: 'Test',
-      user: 'Usman',
-      amount: 200,
-      status: 'Pending',
-    },
-    {
-      id: 2,
-      title: 'Breakfast',
-      user: 'Safian',
-      amount: 12,
-      status: 'Pending',
-    },
-  ];
 
   return (
     <div>
@@ -187,7 +182,7 @@ function PendingClaims() {
           <MaterialTable
             title='Pending Claims'
             columns={state.columns}
-            data={expenses}
+            data={managerExpenses}
             icons={tableIcons}
             options={{
               actionsColumnIndex: -1,

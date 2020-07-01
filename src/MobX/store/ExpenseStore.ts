@@ -5,7 +5,11 @@ import AlertStore from './AlertStore';
 import { AlertTypes } from '../../models/Alert';
 import { getAlert } from './Alert';
 import { IExpense } from '../../models/Expense';
-import { ME, GET_EXPENSE } from '../../graphQL/query/expense.query';
+import {
+  ME,
+  GET_EXPENSE,
+  MANAGER_EXPENSE,
+} from '../../graphQL/query/expense.query';
 import alasql from 'alasql';
 import {
   DELETE_EXPENSERECEIPT,
@@ -25,9 +29,11 @@ class ExpenseStore {
     );
   }
 
+  @observable managerExpenses: IExpense[] = [];
   @observable expenses: IExpense[] = [];
   @observable expense: any = {};
   @observable expensesLoaded: boolean = false;
+  @observable managerExpensesLoaded: boolean = false;
 
   @action getExpenses = async () => {
     try {
@@ -39,6 +45,24 @@ class ExpenseStore {
       console.error(error);
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'FetchExpensesError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action getManagerExpenses = async () => {
+    try {
+      const graphQLClient = setHeaders();
+      const data = await graphQLClient.request(MANAGER_EXPENSE);
+      this.managerExpenses = data.managerExpenses;
+      this.managerExpensesLoaded = true;
+    } catch (error) {
+      console.error(error);
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'FetchManagerExpenseError',
+        AlertTypes.error
+      );
       AlertStore.setAlert(alert);
     }
   };
