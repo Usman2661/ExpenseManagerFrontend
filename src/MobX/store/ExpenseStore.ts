@@ -209,7 +209,21 @@ class ExpenseStore {
     const totalClaimed: number = claimApproved[0].totalClaimed;
     const totalPending: number = claimPending[0].totalPending;
 
+    const claimApprovedManager = alasql(
+      'SELECT SUM(amount) AS totalClaimed FROM ? Where status="Approved"',
+      [this.managerExpenses]
+    );
+
+    const claimPendingManager = alasql(
+      'SELECT SUM(amount) AS totalPending FROM ? Where status="Pending"',
+      [this.managerExpenses]
+    );
+
+    const totalApprovedManager: number = claimApprovedManager[0].totalClaimed;
+    const totalPendingManager: number = claimPendingManager[0].totalPending;
+
     return {
+      //User
       total: this.expenses.length,
       approved: this.expenses.filter((expense) => expense.status === 'Approved')
         .length,
@@ -218,6 +232,12 @@ class ExpenseStore {
       ).length,
       totalClaimed,
       totalPending,
+      // Manager
+      pendingClaimsManager: this.managerExpenses.filter(
+        (expense) => expense.status === 'Pending'
+      ).length,
+      totalApprovedManager,
+      totalPendingManager,
     };
   }
 }

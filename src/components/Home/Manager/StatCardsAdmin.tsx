@@ -13,7 +13,7 @@ import CountUp from 'react-countup';
 
 function StatCardsAdmin() {
   const expenseStore = useContext(ExpenseStore);
-  const { getExpenses, info } = expenseStore;
+  const { info } = expenseStore;
 
   return (
     <div>
@@ -41,7 +41,7 @@ function StatCardsAdmin() {
                     Pending Claims
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
-                    <CountUp end={info.totalClaimed} />
+                    <CountUp end={info.pendingClaimsManager} />
                   </h1>
                 </div>
 
@@ -93,7 +93,7 @@ function StatCardsAdmin() {
                     Amount Approved
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
-                    £ <CountUp decimals={2} end={info.total} />
+                    £ <CountUp decimals={2} end={info.totalApprovedManager} />
                   </h1>
                 </div>
 
@@ -125,7 +125,7 @@ function StatCardsAdmin() {
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
                     £
-                    <CountUp decimals={2} end={info.total} />
+                    <CountUp decimals={2} end={info.totalPendingManager} />
                   </h1>
                 </div>
 
