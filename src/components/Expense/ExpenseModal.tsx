@@ -157,7 +157,9 @@ function ExpenseModal(props: ExpenseModalProps) {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      await getExpense(expenseData.id || 0);
+      if (edit) {
+        await getExpense(expenseData.id || 0);
+      }
 
       handleNext();
     } catch (error) {}
