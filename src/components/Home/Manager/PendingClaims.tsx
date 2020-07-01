@@ -37,6 +37,8 @@ import { deepOrange, deepPurple } from '@material-ui/core/colors';
 import CountUp from 'react-countup';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import { IExpense } from '../../../models/Expense';
+import { useHistory } from 'react-router-dom';
+import alasql from 'alasql';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -78,6 +80,7 @@ const tableIcons: any = {
 
 function PendingClaims() {
   const classes = useStyles();
+  const history = useHistory();
 
   const expenseStore = useContext(ExpenseStore);
   const { getManagerExpenses, managerExpenses } = expenseStore;
@@ -85,6 +88,23 @@ function PendingClaims() {
   useEffect(() => {
     getManagerExpenses();
   }, []);
+
+  const pendingExpenses = managerExpenses.filter((expense: IExpense) => {
+    return expense.status === 'Pending';
+  });
+
+  const mergeExpense = managerExpenses.map((expense: IExpense) => {
+    const myExpense = {
+      id: expense?.id,
+      amount: expense.amount,
+      type: expense.type,
+      name: expense?.User?.name,
+      department: expense?.User?.department,
+      jobTitle: expense?.User?.jobTitle,
+    };
+
+    return myExpense;
+  });
 
   const [state, setState] = useState({
     columns: [
@@ -109,7 +129,11 @@ function PendingClaims() {
         title: 'Amount',
         field: 'amount',
         render: (rowData: IExpense) => {
-          return <b>£{rowData.amount}</b>;
+          return (
+            <b>
+              £ <CountUp decimals={2} end={rowData.amount} />
+            </b>
+          );
         },
       },
 
@@ -133,6 +157,15 @@ function PendingClaims() {
     ],
   });
 
+  const topUsers = alasql(
+    'SELECT SUM(amount) AS totalClaimed,name,jobTitle FROM ? Group By name, jobTitle',
+    [mergeExpense]
+  );
+
+  console.log(topUsers);
+
+  console.log(mergeExpense);
+
   return (
     <div>
       <Grid
@@ -142,47 +175,44 @@ function PendingClaims() {
         spacing={2}
         style={{ margin: 0, width: '100%' }}
       >
-        <Grid item xs={12} sm={6} md={4} lg={4}>
+        <Grid item xs={12} sm={5} md={5} lg={4}>
           <Card variant='outlined' className='topUsers'>
             <CardHeader title='Top Users' />
 
             <Divider />
             <CardContent>
               <List className={classes.root}>
-                <ListItem>
-                  <ListItemAvatar>
-                    <Avatar className={classes.orange}>U</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary='Usman'
-                    secondary='Software Developer'
-                  />
+                {topUsers.map((topUser: any) => (
+                  <div>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar className={classes.orange}>
+                          {(topUser.name || 'A').charAt(0)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={topUser.name}
+                        secondary={topUser.jobTitle}
+                      />
 
-                  <h3> £200 </h3>
-                </ListItem>
-                <Divider></Divider>
-
-                <ListItem>
-                  <ListItemAvatar>
-                    <Avatar className={classes.orange}>J</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary='Jean-Marc'
-                    secondary='Development Manager'
-                  />
-
-                  <h3> £200 </h3>
-                </ListItem>
+                      <h3>
+                        £
+                        <CountUp decimals={2} end={topUser.totalClaimed} />{' '}
+                      </h3>
+                    </ListItem>
+                    <Divider></Divider>
+                  </div>
+                ))}
               </List>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={6} lg={8}>
+        <Grid item xs={12} sm={7} md={7} lg={8}>
           <MaterialTable
             title='Pending Claims'
             columns={state.columns}
-            data={managerExpenses}
+            data={pendingExpenses}
             icons={tableIcons}
             options={{
               actionsColumnIndex: -1,
@@ -192,18 +222,7 @@ function PendingClaims() {
                 icon: () => <VisibilityIcon />,
                 tooltip: '',
                 onClick: (event, rowData: any) => {
-                  // const myCompany: ICompany = {
-                  //   id: rowData.id,
-                  //   name: rowData.name,
-                  //   addressFirstLine: rowData.addressFirstLine,
-                  //   addressSecondLine: rowData.addressSecondLine,
-                  //   addressThirdLine: rowData.addressThirdLine,
-                  //   postcode: rowData.postcode,
-                  //   registerYear: rowData.registerYear,
-                  //   phone: rowData.phone,
-                  //   businessArea: rowData.businessArea,
-                  // };
-                  // onEditCompany(myCompany);
+                  history.push(`/expense?id=${rowData.id}`);
                 },
               },
             ]}
