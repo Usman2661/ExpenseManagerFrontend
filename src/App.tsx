@@ -16,19 +16,38 @@ import {
   createStyles,
 } from '@material-ui/core/styles';
 import ExpenseView from './components/Expense/ExpenseView';
+import { Navbar } from './components/Layout/Navbar';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-      // backgroundColor: '#e5e7e9',
-      // color: '#e5e7e9',
+      // '& .MuiButtonBase-root': {
+      //   all: 'revert !important',
+      //   // color: 'inherit !important',
+      //   // border: 'none !important',
+      //   // cursor: 'none !important',
+      //   // margin: '0',
+      //   // display: 'inline-flex',
+      //   // outline: '0',
+      //   // padding: '0',
+      //   // position: 'relative',
+      //   // alignItems: 'center',
+      //   // userSelect: 'none',
+      //   // borderRadius: '0',
+      //   // // vertical-align: 'middle',
+      //   // // -moz-appearance: 'none',
+      //   // // justify-content: 'center',
+      //   // // text-decoration: 'none',
+      //   backgroundColor: 'none !important',
+      //   // -webkit-appearance: 'none',
+      //   // -webkit-tap-highlight-color: 'transparent',
+      // },
     },
 
     content: {
       flexGrow: 1,
       marginTop: '1.2%',
-      // padding: theme.spacing(3),
     },
     contentLoggedIn: {
       flexGrow: 1,
@@ -55,6 +74,7 @@ function App() {
     auth: auth,
     email: localStorage.getItem('email'),
     userType: localStorage.getItem('userType'),
+    managerId: localStorage.getItem('managerId'),
     token: localStorage.getItem('token'),
     width: localStorage.getItem('width'),
     allUsers: [],
@@ -70,14 +90,12 @@ function App() {
         }
       >
         <UserContext.Provider value={{ userAuthData, setUserAuthData }}>
-          {/* <Navbar></Navbar> */}
           <Navigation />
+          {/* <Navbar /> */}
           <UserAlerts />
           <Switch>
-            {/* 
-          Public Routes */}
+            {/* Public Routes */}
             <Route path='/' component={Login} exact />
-            {/* <Route path='/register' component={Register} exact /> */}
 
             {/* Private Routes for Authenticated Users */}
             <PrivateRoute redirectPath='/' path='/home'>

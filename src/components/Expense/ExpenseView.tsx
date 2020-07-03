@@ -31,6 +31,7 @@ import { AlertTypes } from '../../models/Alert';
 import ExpenseStore from '../../MobX/store/ExpenseStore';
 import { IDialogState, ExpenseModalDataState } from '../Home/Staff/ExpenseList';
 import ExpenseModal from './ExpenseModal';
+import { UserContext } from '../../userContext';
 
 const useStyles = makeStyles((theme: Theme) => ({
   typeIcon: {
@@ -45,6 +46,8 @@ function ExpenseView() {
   const classes = useStyles();
   const theme = useTheme();
   const history = useHistory();
+
+  const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get('id');
@@ -72,11 +75,27 @@ function ExpenseView() {
     expense,
     deleteExpenseReceipt,
     deleteExpense,
+    updateExpense,
   } = expenseStore;
 
   useEffect(() => {
-    getExpense(expenseId);
+    if (expenseId !== 0) {
+      retrieveExpense();
+    }
   }, []);
+
+  const retrieveExpense = async () => {
+    const myExpense = await getExpense(expenseId);
+
+    if (myExpense?.User?.id) {
+      if (
+        parseInt(myExpense?.User?.id) != parseInt(userAuthData.id) &&
+        parseInt(myExpense?.User?.managerId) != parseInt(userAuthData.id)
+      ) {
+        history.push('/home');
+      }
+    }
+  };
 
   const handleClose = () => {
     setDialogData({
@@ -97,13 +116,42 @@ function ExpenseView() {
     await deleteExpenseReceipt(dialogData.id || 0);
     await getExpense(expenseId);
 
-    setDialogData({
-      ...dialogData,
-      open: false,
-      id: undefined,
-      title: undefined,
-      deleteExpenseOrReceipt: undefined,
-    });
+    handleClose();
+  };
+
+  const onApproveExpenseConfirm = async () => {
+    const expenseData = {
+      id: expense?.id,
+      title: expense.title,
+      description: expense?.description,
+      type: expense.type,
+      amount: expense.amount,
+      status: ExpenseStatus.Approved,
+    };
+
+    const updatedExpense = await updateExpense(expenseData);
+
+    if (updatedExpense.id) {
+      await getExpense(updatedExpense.id);
+      await handleClose();
+    }
+  };
+
+  const onRejectExpenseConfirm = async () => {
+    const expenseData = {
+      id: expense?.id,
+      title: expense.title,
+      description: expense?.description,
+      type: expense.type,
+      amount: expense.amount,
+      status: ExpenseStatus.Rejected,
+    };
+    const updatedExpense = await updateExpense(expenseData);
+
+    if (updatedExpense.id) {
+      await getExpense(updatedExpense.id);
+      await handleClose();
+    }
   };
 
   const closeExpenseModal = () => {
@@ -176,6 +224,7 @@ function ExpenseView() {
     );
     return expenseIcon?.icon;
   };
+
   return (
     <div>
       {showExpenseModal ? (
@@ -213,22 +262,27 @@ function ExpenseView() {
                         style={{ height: '140px' }}
                         image={expenseReceipt.receipt}
                       />
-                      <IconButton
-                        disabled={expense.status !== 'Approved' ? false : true}
-                        aria-label='Delete'
-                        style={{ float: 'right' }}
-                        onClick={() =>
-                          setDialogData({
-                            ...dialogData,
-                            open: true,
-                            id: expenseReceipt.id,
-                            title: undefined,
-                            deleteExpenseOrReceipt: 'Receipt',
-                          })
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+
+                      {expense?.User?.id == userAuthData.id ? (
+                        <IconButton
+                          disabled={
+                            expense.status !== 'Approved' ? false : true
+                          }
+                          aria-label='Delete'
+                          style={{ float: 'right' }}
+                          onClick={() =>
+                            setDialogData({
+                              ...dialogData,
+                              open: true,
+                              id: expenseReceipt.id,
+                              title: undefined,
+                              deleteExpenseOrReceipt: 'Receipt',
+                            })
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      ) : null}
                     </div>
                   ))}
                 </Carousel>
@@ -256,7 +310,8 @@ function ExpenseView() {
               </Grid>
             </CardContent>
             <CardActions>
-              {expense.status !== 'Approved' ? (
+              {expense.status !== 'Approved' &&
+              expense?.User?.id == userAuthData.id ? (
                 <div>
                   <Button
                     variant='contained'
@@ -284,6 +339,37 @@ function ExpenseView() {
                   </Button>
                 </div>
               ) : null}
+
+              {expense?.User?.managerId == userAuthData.id ? (
+                <div>
+                  <Button
+                    onClick={() =>
+                      setDialogData({
+                        ...dialogData,
+                        open: true,
+                        title: expense.title,
+                        deleteExpenseOrReceipt: 'Approve',
+                      })
+                    }
+                  >
+                    {' '}
+                    Approve Expense
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      setDialogData({
+                        ...dialogData,
+                        open: true,
+                        title: expense.title,
+                        deleteExpenseOrReceipt: 'Reject',
+                      })
+                    }
+                  >
+                    {' '}
+                    Reject Expense
+                  </Button>
+                </div>
+              ) : null}
             </CardActions>
           </Card>
         </Grid>
@@ -295,36 +381,76 @@ function ExpenseView() {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>
-          Delete {dialogData.title}{' '}
-          {dialogData.deleteExpenseOrReceipt === 'Expense'
-            ? 'Expense'
-            : 'Expense Receipt'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>
-            Are you sure you want to delete {dialogData.title}{' '}
-            {dialogData.deleteExpenseOrReceipt === 'Expense'
-              ? 'expense'
-              : 'expense receipt'}{' '}
-            ?
-          </DialogContentText>
-        </DialogContent>
+        {dialogData.deleteExpenseOrReceipt === 'Expense' ||
+        dialogData.deleteExpenseOrReceipt === 'Receipt' ? (
+          <div>
+            <DialogTitle id='alert-dialog-title'>
+              Delete {dialogData.title}{' '}
+              {dialogData.deleteExpenseOrReceipt === 'Expense'
+                ? 'Expense'
+                : 'Expense Receipt'}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id='alert-dialog-description'>
+                Are you sure you want to delete {dialogData.title}{' '}
+                {dialogData.deleteExpenseOrReceipt === 'Expense'
+                  ? 'expense'
+                  : 'expense receipt'}{' '}
+                ?
+              </DialogContentText>
+            </DialogContent>
+          </div>
+        ) : (
+          <div>
+            <DialogTitle id='alert-dialog-title'>
+              {dialogData.deleteExpenseOrReceipt} Expense {dialogData.title}
+              {/* Delete {dialogData.title}{' '}
+              {dialogData.deleteExpenseOrReceipt === 'Expense'
+                ? 'Expense'
+                : 'Expense Receipt'} */}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id='alert-dialog-description'>
+                Are you sure you want to
+                {dialogData.deleteExpenseOrReceipt === 'Approve'
+                  ? ' approve expense '
+                  : ' reject expense '}{' '}
+                {dialogData.title} {' ?'}
+              </DialogContentText>
+            </DialogContent>
+          </div>
+        )}
+
         <DialogActions>
           <Button onClick={handleClose} color='primary'>
             Cancel
           </Button>
-          <Button
-            onClick={
-              dialogData.deleteExpenseOrReceipt === 'Expense'
-                ? ondeleteExpenseConfirm
-                : ondeleteExpenseReceiptConfirm
-            }
-            color='primary'
-            autoFocus
-          >
-            Yes
-          </Button>
+          {dialogData.deleteExpenseOrReceipt === 'Expense' ||
+          dialogData.deleteExpenseOrReceipt === 'Receipt' ? (
+            <Button
+              onClick={
+                dialogData.deleteExpenseOrReceipt === 'Expense'
+                  ? ondeleteExpenseConfirm
+                  : ondeleteExpenseReceiptConfirm
+              }
+              color='primary'
+              autoFocus
+            >
+              Yes
+            </Button>
+          ) : (
+            <Button
+              onClick={
+                dialogData.deleteExpenseOrReceipt === 'Approve'
+                  ? onApproveExpenseConfirm
+                  : onRejectExpenseConfirm
+              }
+              color='primary'
+              autoFocus
+            >
+              Yes
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </div>

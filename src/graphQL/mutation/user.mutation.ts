@@ -44,6 +44,7 @@ export const LOGIN_USER = `
         department
         userType
         jobTitle
+        managerId
       }
     }
   }

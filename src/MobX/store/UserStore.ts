@@ -160,6 +160,7 @@ class UserStore {
         localStorage.setItem('email', data.login.user.email);
         localStorage.setItem('userType', data.login.user.userType);
         localStorage.setItem('token', data.login.token);
+        localStorage.setItem('managerId', data.login.user.managerId);
         localStorage.setItem('width', '240');
 
         return data.login;

@@ -66,7 +66,7 @@ function StatCardsAdmin() {
                 <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>My Users</Typography>
                   <h1 style={{ marginTop: 'auto' }}>
-                    <CountUp end={info.totalPending} />
+                    <CountUp end={0} />
                   </h1>
                 </div>
 

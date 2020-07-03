@@ -42,6 +42,7 @@ export function Login(props: any) {
           name: data.user.name,
           email: data.user.email,
           userType: data.user.userType,
+          managerId: data.user.managerId,
           token: data.token,
           width: '240',
         });

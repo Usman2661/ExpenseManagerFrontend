@@ -32,7 +32,8 @@ export const GET_EXPENSE = `query expense($id: Int!) {
     status, 
     User{
       id,
-      name
+      name,
+      managerId
     }
     ExpenseReceipts{
       id,
