@@ -2,7 +2,11 @@ import { observable, action, computed, reaction } from 'mobx';
 import { createContext } from 'react';
 import { IUser } from '../../models/User';
 import { v4 as uuid } from 'uuid';
-import { GET_USERS, GET_USER } from '../../graphQL/query/user.query';
+import {
+  GET_USERS,
+  GET_USER,
+  MANAGER_USERS,
+} from '../../graphQL/query/user.query';
 import { setHeaders } from '../../graphQL/graphqlconfig';
 import { LOGIN_USER } from '../../graphQL/mutation/user.mutation';
 import {
@@ -25,6 +29,7 @@ class UserStore {
   @observable users: IUser[] = [];
   @observable user: any = {};
   @observable usersLoaded: boolean = false;
+  @observable managerUsers: IUser[] = [];
 
   @action createUser = async (user: IUser) => {
     try {
@@ -85,6 +90,24 @@ class UserStore {
 
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'FetchUsersError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action getManagerUsers = async () => {
+    try {
+      const graphQLClient = setHeaders();
+      const data = await graphQLClient.request(MANAGER_USERS);
+      this.managerUsers = data.managerUsers;
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'FetchManagerUserError',
+        AlertTypes.error
+      );
       AlertStore.setAlert(alert);
     }
   };
@@ -179,6 +202,7 @@ class UserStore {
       total: this.users.length,
       approved: this.users.filter((user) => user.managerId).length,
       notApproved: this.users.filter((user) => !user.managerId).length,
+      managerUsersTotal: this.managerUsers.length,
     };
   }
 }

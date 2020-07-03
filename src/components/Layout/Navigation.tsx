@@ -16,9 +16,10 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { UserContext } from '../../userContext';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import MailIcon from '@material-ui/icons/Mail';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import MenuIcon from '@material-ui/icons/Menu';
+import { useHistory } from 'react-router-dom';
+
 import PeopleIcon from '@material-ui/icons/People';
 
 import {
@@ -77,6 +78,7 @@ export default function Navigation(props: Props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const history = useHistory();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -94,6 +96,8 @@ export default function Navigation(props: Props) {
       userType: '',
       token: '',
     });
+
+    history.push('/');
   };
 
   const drawer = (
@@ -110,11 +114,27 @@ export default function Navigation(props: Props) {
           <ListItemText primary='Home' />
         </ListItem>
         {userAuthData.userType === 'SeniorManagement' ? (
-          <ListItem button component={Link} to='/account'>
+          <div>
+            <ListItem button component={Link} to='/account'>
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary='Users' />
+            </ListItem>
+            <ListItem button component={Link} to='/myexpenses'>
+              <ListItemIcon>
+                <MonetizationOnIcon />
+              </ListItemIcon>
+              <ListItemText primary='My Expenses' />
+            </ListItem>
+          </div>
+        ) : null}
+        {userAuthData.userType === 'Manager' ? (
+          <ListItem button component={Link} to='/myexpenses'>
             <ListItemIcon>
-              <PeopleIcon />
+              <MonetizationOnIcon />
             </ListItemIcon>
-            <ListItemText primary='Users' />
+            <ListItemText primary='My Expenses' />
           </ListItem>
         ) : null}
       </List>

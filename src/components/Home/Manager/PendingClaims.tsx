@@ -12,6 +12,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
+import PersonIcon from '@material-ui/icons/Person';
 
 //Material Table
 import MaterialTable from 'material-table';
@@ -115,12 +116,8 @@ function PendingClaims() {
         render: (rowData: IExpense) => {
           return (
             <div style={{ display: 'flex' }}>
-              <ListItemAvatar>
-                <Avatar className={classes.orange}>
-                  {rowData.User?.name.charAt(0)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={rowData.User?.name} />
+              <PersonIcon />
+              <text>{rowData.User?.name}</text>
             </div>
           );
         },
@@ -162,9 +159,9 @@ function PendingClaims() {
     [mergeExpense]
   );
 
-  console.log(topUsers);
-
-  console.log(mergeExpense);
+  topUsers.sort(function (a: any, b: any) {
+    return b.totalClaimed - a.totalClaimed;
+  });
 
   return (
     <div>
@@ -182,27 +179,33 @@ function PendingClaims() {
             <Divider />
             <CardContent>
               <List className={classes.root}>
-                {topUsers.map((topUser: any) => (
+                {topUsers.length > 0 ? (
                   <div>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar className={classes.orange}>
-                          {(topUser.name || 'A').charAt(0)}
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={topUser.name}
-                        secondary={topUser.jobTitle}
-                      />
-
-                      <h3>
-                        £
-                        <CountUp decimals={2} end={topUser.totalClaimed} />{' '}
-                      </h3>
-                    </ListItem>
-                    <Divider></Divider>
+                    {topUsers.map((topUser: any) => (
+                      <div>
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar className={classes.orange}>
+                              {(topUser.name || '?').charAt(0)}
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={topUser.name}
+                            secondary={topUser.jobTitle}
+                          />
+                          <h3>
+                            £
+                            <CountUp
+                              decimals={2}
+                              end={topUser.totalClaimed}
+                            />{' '}
+                          </h3>
+                        </ListItem>
+                        <Divider></Divider>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : null}
               </List>
             </CardContent>
           </Card>

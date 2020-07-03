@@ -259,7 +259,7 @@ function ExpenseView() {
                   {expense?.ExpenseReceipts?.map((expenseReceipt: any) => (
                     <div>
                       <CardMedia
-                        style={{ height: '140px' }}
+                        style={{ height: 'auto', width: 'auto' }}
                         image={expenseReceipt.receipt}
                       />
 

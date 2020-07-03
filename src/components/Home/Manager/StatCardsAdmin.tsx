@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
@@ -10,10 +10,18 @@ import '../../../css/StatCards.css';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import { observer } from 'mobx-react-lite';
 import CountUp from 'react-countup';
+import UserStore from '../../../MobX/store/UserStore';
 
 function StatCardsAdmin() {
   const expenseStore = useContext(ExpenseStore);
   const { info } = expenseStore;
+
+  const userStore = useContext(UserStore);
+  const { getManagerUsers, infoUser } = userStore;
+
+  useEffect(() => {
+    getManagerUsers();
+  }, []);
 
   return (
     <div>
@@ -66,7 +74,7 @@ function StatCardsAdmin() {
                 <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>My Users</Typography>
                   <h1 style={{ marginTop: 'auto' }}>
-                    <CountUp end={0} />
+                    <CountUp end={infoUser.managerUsersTotal} />
                   </h1>
                 </div>
 

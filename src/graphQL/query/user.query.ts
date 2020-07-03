@@ -28,3 +28,17 @@ export const GET_USER = `query user($id: Int!) {
     companyId
   }
 }`;
+
+export const MANAGER_USERS = `
+query managerUsers {
+  managerUsers {
+    id
+    name
+    email
+    department
+    userType
+    jobTitle
+    managerId
+    companyId
+  }
+}`;
