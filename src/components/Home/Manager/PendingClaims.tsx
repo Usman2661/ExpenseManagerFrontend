@@ -172,7 +172,7 @@ function PendingClaims() {
         spacing={2}
         style={{ margin: 0, width: '100%' }}
       >
-        <Grid item xs={12} sm={5} md={5} lg={4}>
+        <Grid item xs={12} sm={12} md={5} lg={4}>
           <Card variant='outlined' className='topUsers'>
             <CardHeader title='Top Users' />
 
@@ -211,7 +211,7 @@ function PendingClaims() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={7} md={7} lg={8}>
+        <Grid item xs={12} sm={12} md={7} lg={8}>
           <MaterialTable
             title='Pending Claims'
             columns={state.columns}
