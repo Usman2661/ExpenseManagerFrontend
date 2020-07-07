@@ -10,7 +10,13 @@ import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
+
 import { useHistory } from 'react-router-dom';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import { deepOrange, deepPurple } from '@material-ui/core/colors';
 
 import { ExpenseStatus } from '../../models/Expense';
 import CommuteIcon from '@material-ui/icons/Commute';
@@ -32,6 +38,7 @@ import ExpenseStore from '../../MobX/store/ExpenseStore';
 import { IDialogState, ExpenseModalDataState } from '../Home/Staff/ExpenseList';
 import ExpenseModal from './ExpenseModal';
 import { UserContext } from '../../userContext';
+var dateFormat = require('dateformat');
 
 const useStyles = makeStyles((theme: Theme) => ({
   typeIcon: {
@@ -39,6 +46,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     float: 'left',
     marginTop: '-5%',
     color: 'blue',
+  },
+  orange: {
+    color: theme.palette.getContrastText(deepOrange[500]),
+    backgroundColor: deepOrange[500],
   },
 }));
 
@@ -170,6 +181,16 @@ function ExpenseView() {
     });
   };
 
+  const renderDate = (createdAt: string) => {
+    if (createdAt) {
+      const myDate = new Date(parseInt(createdAt));
+
+      const date = dateFormat(myDate, 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+
+      return date;
+    }
+  };
+
   const setAlertType = (status: ExpenseStatus) => {
     const statusAlert = [
       {
@@ -258,10 +279,15 @@ function ExpenseView() {
                 >
                   {expense?.ExpenseReceipts?.map((expenseReceipt: any) => (
                     <div>
-                      <CardMedia
-                        style={{ height: 'auto', width: 'auto' }}
-                        image={expenseReceipt.receipt}
-                      />
+                      <div>
+                        <img
+                          style={{
+                            height: '250px',
+                            marginLeft: '30%',
+                          }}
+                          src={expenseReceipt.receipt}
+                        />
+                      </div>
 
                       {expense?.User?.id == userAuthData.id ? (
                         <IconButton
@@ -287,7 +313,12 @@ function ExpenseView() {
                   ))}
                 </Carousel>
               ) : null}
-              <Grid className='expenseCardContent' container direction='row'>
+              <Grid
+                className='expenseCardContent'
+                container
+                direction='row'
+                justify='center'
+              >
                 <Grid item xs={6}>
                   <h3 style={{ textAlign: 'left' }}> {expense.type}</h3>
                   {setExpenseIcon(expense.type)}
@@ -299,6 +330,7 @@ function ExpenseView() {
                       £ <CountUp decimals={2} end={expense.amount} />
                     </h3>
                   ) : null}
+
                   <Alert
                     variant='filled'
                     severity={setAlertType(expense.status)}
@@ -307,6 +339,25 @@ function ExpenseView() {
                     {expense.status}
                   </Alert>
                 </Grid>
+
+                {userAuthData.userType !== 'Staff' ? (
+                  <div>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar className={classes.orange}>
+                          {(expense?.User?.name || '?').charAt(0)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={expense?.User?.name}
+                        secondary={expense?.User?.jobTitle}
+                      />
+                    </ListItem>
+                    <h4 style={{ marginTop: 'auto' }}>
+                      {renderDate(expense.createdAt)}
+                    </h4>
+                  </div>
+                ) : null}
               </Grid>
             </CardContent>
             <CardActions>
@@ -370,6 +421,11 @@ function ExpenseView() {
                   </Button>
                 </div>
               ) : null}
+              <div style={{ marginLeft: 'auto' }}>
+                {userAuthData.userType === 'Staff' ? (
+                  <h4>{renderDate(expense.createdAt)}</h4>
+                ) : null}
+              </div>
             </CardActions>
           </Card>
         </Grid>
