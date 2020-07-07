@@ -1,0 +1,48 @@
+/* XS Brakpoint */
+@media only screen and (min-width: 0px) and (max-width: 600px) {
+  .pieChartContainer {
+    height: 200px;
+  }
+  .barChartContainer {
+    height: 200px;
+  }
+}
+/* SM Breakpoint */
+@media only screen and (min-width: 600px) and (max-width: 960px) {
+  .pieChartContainer {
+    height: 200px;
+  }
+  .barChartContainer {
+    height: 200px;
+  }
+}
+
+/* MD BreakPoint */
+@media only screen and (min-width: 960px) and (max-width: 1280px) {
+  .pieChartContainer {
+    height: 180px;
+  }
+  .barChartContainer {
+    height: 180px;
+  }
+}
+
+/* LG BreakPoint */
+@media only screen and (min-width: 1280px) and (max-width: 1920px) {
+  .pieChartContainer {
+    height: 200px;
+  }
+  .barChartContainer {
+    height: 200px;
+  }
+}
+
+/* XL BreakPoint */
+@media only screen and (min-width: 1920px) {
+  .pieChartContainer {
+    margin-top: 7%;
+  }
+  .barChartContainer {
+    margin-top: 2%;
+  }
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
+import '../../css/PieBarCharts.css';
 
 interface PieChartProps {
   labels: String[];
@@ -19,11 +20,12 @@ export default function Pie(props: PieChartProps) {
     },
   };
   return (
-    <div>
+    <div className='pieChartContainer'>
       <ReactApexChart
         options={data.options}
         series={data.series}
         type='donut'
+        height={'100%'}
       />
     </div>
   );

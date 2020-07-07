@@ -6,6 +6,8 @@ import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import { deepOrange, deepPurple } from '@material-ui/core/colors';
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -19,6 +21,7 @@ import { UserContext } from '../../userContext';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import MenuIcon from '@material-ui/icons/Menu';
 import { useHistory } from 'react-router-dom';
+import Avatar from '@material-ui/core/Avatar';
 
 import PeopleIcon from '@material-ui/icons/People';
 
@@ -66,6 +69,10 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    orange: {
+      color: theme.palette.getContrastText(deepOrange[500]),
+      backgroundColor: deepOrange[500],
+    },
   })
 );
 
@@ -103,7 +110,10 @@ export default function Navigation(props: Props) {
   const drawer = (
     <div>
       <div />
-      <h1 style={{ textAlign: 'center' }}>Hello {userAuthData.name} </h1>
+      {/* <Avatar className={classes.orange} style={{ alignItems: 'center' }}>
+        {userAuthData.name.charAt(0)}
+      </Avatar> */}
+      <h2 style={{ textAlign: 'center' }}> Hello {userAuthData.name} </h2>
       <Divider />
 
       <List component='nav' aria-label='main mailbox folders'>

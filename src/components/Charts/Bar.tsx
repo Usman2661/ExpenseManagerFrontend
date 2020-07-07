@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
+import '../../css/PieBarCharts.css';
 
 interface BarChartProps {
-  title?: String;
-  name?: String;
-  catagories?: String[];
-  data?: Number[];
+  title: String;
+  name: String;
+  catagories: String[];
+  data: Number[];
 }
 
 export default function Bar(props: BarChartProps) {
@@ -92,13 +93,13 @@ export default function Bar(props: BarChartProps) {
   };
 
   return (
-    <div>
+    <div className='barChartContainer'>
       {catagories !== undefined && catagories.length > 0 ? (
         <ReactApexChart
           options={chartOptions.options}
           series={chartOptions.series}
           type='bar'
-          height={175}
+          height={'100%'}
         />
       ) : null}
     </div>
