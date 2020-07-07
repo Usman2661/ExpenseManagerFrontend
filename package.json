@@ -22,6 +22,7 @@
     "apexcharts": "^3.19.3",
     "apollo-boost": "^0.4.9",
     "axios": "^0.19.2",
+    "dateformat": "^3.0.3",
     "graphql": "^15.0.0",
     "graphql-request": "^2.0.0",
     "material-table": "^1.60.0",

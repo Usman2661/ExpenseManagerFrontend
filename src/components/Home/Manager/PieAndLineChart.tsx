@@ -8,6 +8,8 @@ import alasql from 'alasql';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import AreaGraph from '../../Charts/AreaGraph';
 import Bar from '../../Charts/Bar';
+import { IExpense } from '../../../models/Expense';
+var dateFormat = require('dateformat');
 
 function PieAndLineChart() {
   const expenseStore = useContext(ExpenseStore);
@@ -15,8 +17,32 @@ function PieAndLineChart() {
 
   useEffect(() => {}, []);
 
-  let series: Number[] = [];
-  let labels: String[] = [];
+  let seriesPie: Number[] = [];
+  let labelsPie: String[] = [];
+  let seriesBar: Number[] = [];
+  let labelsBar: String[] = [];
+
+  const managerExpenseWithDate = managerExpenses.map((expense: any) => {
+    const myDate = new Date(parseInt(expense.createdAt));
+
+    expense['Date'] = dateFormat(myDate, 'dS mmmm');
+
+    return expense;
+  });
+
+  console.log(managerExpenseWithDate);
+
+  const expenseByDate = alasql(
+    'SELECT SUM(amount) AS totalClaimed,Date FROM ? Group By Date',
+    [managerExpenses]
+  );
+
+  if (expenseByDate[0].Date !== undefined) {
+    expenseByDate.map((expense: any) => {
+      seriesBar.push(parseInt(expense.totalClaimed));
+      labelsBar.push(expense.Date.toString());
+    });
+  }
 
   const topCatagories = alasql(
     'SELECT SUM(amount) AS totalClaimed,type FROM ? Group By type',
@@ -25,8 +51,8 @@ function PieAndLineChart() {
 
   if (topCatagories[0].type !== undefined) {
     topCatagories.map((topCatagory: any) => {
-      series.push(parseInt(topCatagory.totalClaimed));
-      labels.push(topCatagory.type.toString());
+      seriesPie.push(parseInt(topCatagory.totalClaimed));
+      labelsPie.push(topCatagory.type.toString());
     });
   }
 
@@ -42,8 +68,8 @@ function PieAndLineChart() {
         <Grid item xs={12} sm={12} md={5} lg={4}>
           <Card variant='outlined' className='amountPending'>
             <CardContent>
-              {labels.length > 0 ? (
-                <PieGraph labels={labels} series={series} />
+              {labelsPie.length > 0 ? (
+                <PieGraph labels={labelsPie} series={seriesPie} />
               ) : null}
             </CardContent>
           </Card>
@@ -53,10 +79,10 @@ function PieAndLineChart() {
           <Card variant='outlined' className='amountPending'>
             <CardContent>
               <Bar
-                name='Expenses'
-                title='Expense Distribution By Catagory'
-                catagories={labels}
-                data={series}
+                name='Amount'
+                title='Expense Per Date'
+                catagories={labelsBar}
+                data={seriesBar}
               />
             </CardContent>
           </Card>

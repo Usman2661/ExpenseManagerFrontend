@@ -32,7 +32,7 @@ export default function Bar(props: BarChartProps) {
       dataLabels: {
         enabled: true,
         formatter: function (val: number) {
-          return val;
+          return '£' + val;
         },
         offsetY: -20,
         style: {
@@ -76,7 +76,7 @@ export default function Bar(props: BarChartProps) {
         labels: {
           show: false,
           formatter: function (val: number) {
-            return val;
+            return '£' + val;
           },
         },
       },
