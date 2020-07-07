@@ -6,6 +6,8 @@ import PieGraph from '../../Charts/Pie';
 import { observer } from 'mobx-react-lite';
 import alasql from 'alasql';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
+import AreaGraph from '../../Charts/AreaGraph';
+import Bar from '../../Charts/Bar';
 
 function PieAndLineChart() {
   const expenseStore = useContext(ExpenseStore);
@@ -21,7 +23,7 @@ function PieAndLineChart() {
     [managerExpenses]
   );
 
-  if (topCatagories.length > 1) {
+  if (topCatagories[0].type !== undefined) {
     topCatagories.map((topCatagory: any) => {
       series.push(parseInt(topCatagory.totalClaimed));
       labels.push(topCatagory.type.toString());
@@ -50,7 +52,12 @@ function PieAndLineChart() {
         <Grid item xs={12} sm={12} md={7} lg={8}>
           <Card variant='outlined' className='amountPending'>
             <CardContent>
-              <h1>Line Card</h1>
+              <Bar
+                name='Expenses'
+                title='Expense Distribution By Catagory'
+                catagories={labels}
+                data={series}
+              />
             </CardContent>
           </Card>
         </Grid>

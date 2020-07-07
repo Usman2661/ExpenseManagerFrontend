@@ -11,7 +11,9 @@ export const ME = `
       description,
       amount, 
       status, 
-      type
+      type,
+      createdAt,
+      updatedAt,
       ExpenseReceipts{
         id, 
         expenseId, 
@@ -30,6 +32,8 @@ export const GET_EXPENSE = `query expense($id: Int!) {
     amount, 
     type,
     status, 
+    createdAt,
+    updatedAt,
     User{
       id,
       name,
@@ -65,6 +69,8 @@ export const MANAGER_EXPENSE = `
       description, 
       status,
       type, 
+      createdAt,
+      updatedAt,
       User{ 
       id, 
       name, 

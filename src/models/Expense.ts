@@ -8,6 +8,8 @@ export interface IExpense {
   type: String;
   amount: number;
   status: ExpenseStatus;
+  createdAt?: String;
+  updatedAt?: String;
   User?: IUser;
   ExpenseReceipts?: IExpenseReceipts[];
 }

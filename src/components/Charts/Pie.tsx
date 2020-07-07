@@ -1,12 +1,30 @@
 import React from 'react';
+import ReactApexChart from 'react-apexcharts';
 
 interface PieChartProps {
-  labels?: String[];
-  series?: Number[];
+  labels: String[];
+  series: Number[];
 }
 
-export default function PieGraph(props: PieChartProps) {
+export default function Pie(props: PieChartProps) {
   const { labels, series } = props;
 
-  return <div></div>;
+  const data = {
+    series: series,
+    options: {
+      labels: labels,
+      chart: {
+        type: 'donut',
+      },
+    },
+  };
+  return (
+    <div>
+      <ReactApexChart
+        options={data.options}
+        series={data.series}
+        type='donut'
+      />
+    </div>
+  );
 }
