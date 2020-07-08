@@ -131,12 +131,12 @@ export default function Navigation(props: Props) {
               </ListItemIcon>
               <ListItemText primary='Users' />
             </ListItem>
-            <ListItem button component={Link} to='/expenses'>
+            {/* <ListItem button component={Link} to='/expenses'>
               <ListItemIcon>
                 <MonetizationOnIcon />
               </ListItemIcon>
               <ListItemText primary='All User Expenses' />
-            </ListItem>
+            </ListItem> */}
             <ListItem button component={Link} to='/myexpenses'>
               <ListItemIcon>
                 <MonetizationOnIcon />
@@ -147,12 +147,12 @@ export default function Navigation(props: Props) {
         ) : null}
         {userAuthData.userType === 'Manager' ? (
           <div>
-            <ListItem button component={Link} to='/expenses'>
+            {/* <ListItem button component={Link} to='/expenses'>
               <ListItemIcon>
                 <MonetizationOnIcon />
               </ListItemIcon>
               <ListItemText primary='All User Expenses' />
-            </ListItem>
+            </ListItem> */}
 
             <ListItem button component={Link} to='/myexpenses'>
               <ListItemIcon>

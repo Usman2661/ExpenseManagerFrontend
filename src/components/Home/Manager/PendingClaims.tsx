@@ -13,6 +13,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import PersonIcon from '@material-ui/icons/Person';
+import Button from '@material-ui/core/Button';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 
 //Material Table
 import MaterialTable from 'material-table';
@@ -212,27 +215,30 @@ function PendingClaims() {
         </Grid>
 
         <Grid item xs={12} sm={12} md={7} lg={8}>
-          <MaterialTable
-            title='Pending Claims'
-            columns={state.columns}
-            data={pendingExpenses}
-            icons={tableIcons}
-            options={{
-              actionsColumnIndex: -1,
-            }}
-            actions={[
-              {
-                icon: () => <VisibilityIcon />,
-                tooltip: '',
-                onClick: (event, rowData: any) => {
-                  history.push(`/expense?id=${rowData.id}`);
+          <Card variant='outlined' className='topUsers'>
+            <MaterialTable
+              title='Pending Claims'
+              columns={state.columns}
+              data={pendingExpenses}
+              icons={tableIcons}
+              options={{
+                actionsColumnIndex: -1,
+              }}
+              actions={[
+                {
+                  icon: () => <VisibilityIcon />,
+                  tooltip: '',
+                  onClick: (event, rowData: any) => {
+                    history.push(`/expense?id=${rowData.id}`);
+                  },
                 },
-              },
-            ]}
-          />
-
-          {/* </CardContent>
-          </Card> */}
+              ]}
+            />
+            <Button component={Link} to='/expenses' style={{ float: 'right' }}>
+              View All
+              <ChevronRightIcon />
+            </Button>
+          </Card>
         </Grid>
       </Grid>
     </div>

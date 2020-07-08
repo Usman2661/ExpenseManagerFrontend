@@ -4,6 +4,7 @@ import StatCards from './Staff/StatCards';
 import ExpenseList from './Staff/ExpenseList';
 import AdminHome from './Admin/AdminHome';
 import ManagerHome from './Manager/ManagerHome';
+import SeniorHome from './SeniorManagement/SeniorHome';
 
 export function Home() {
   const { userAuthData, setUserAuthData } = useContext(UserContext);
@@ -23,6 +24,8 @@ export function Home() {
       ) : null}
 
       {userAuthData.userType === 'Manager' ? <ManagerHome /> : null}
+
+      {userAuthData.userType === 'SeniorManagement' ? <SeniorHome /> : null}
     </div>
   );
 }
