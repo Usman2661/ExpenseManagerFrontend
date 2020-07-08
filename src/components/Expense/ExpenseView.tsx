@@ -340,7 +340,7 @@ function ExpenseView() {
                   </Alert>
                 </Grid>
 
-                {userAuthData.userType !== 'Staff' ? (
+                {userAuthData.id != expense?.User?.id ? (
                   <div>
                     <ListItem>
                       <ListItemAvatar>
@@ -422,7 +422,7 @@ function ExpenseView() {
                 </div>
               ) : null}
               <div style={{ marginLeft: 'auto' }}>
-                {userAuthData.userType === 'Staff' ? (
+                {userAuthData.id == expense?.User?.id ? (
                   <h4>{renderDate(expense.createdAt)}</h4>
                 ) : null}
               </div>

@@ -230,6 +230,7 @@ function PendingClaims() {
               },
             ]}
           />
+
           {/* </CardContent>
           </Card> */}
         </Grid>

@@ -19,6 +19,7 @@ import ExpenseView from './components/Expense/ExpenseView';
 import { Navbar } from './components/Layout/Navbar';
 import ManagerOrSeniorPrivateRoute from './routing/ManagerOrSeniorPrivateRoute';
 import ManagerSeniorExpense from './components/Home/Manager/ManagerSeniorExpense';
+import ExpenseTable from './components/Expense/ExpenseTable';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -115,6 +116,9 @@ function App() {
             {/* Private Routes for only for UserType Senior Management adn Manager */}
             <ManagerOrSeniorPrivateRoute redirectPath='/' path='/myexpenses'>
               <ManagerSeniorExpense />
+            </ManagerOrSeniorPrivateRoute>
+            <ManagerOrSeniorPrivateRoute redirectPath='/' path='/expenses'>
+              <ExpenseTable />
             </ManagerOrSeniorPrivateRoute>
           </Switch>
         </UserContext.Provider>

@@ -30,8 +30,6 @@ function PieAndLineChart() {
     return expense;
   });
 
-  console.log(managerExpenseWithDate);
-
   const expenseByDate = alasql(
     'SELECT SUM(amount) AS totalClaimed,Date FROM ? Group By Date',
     [managerExpenses]
