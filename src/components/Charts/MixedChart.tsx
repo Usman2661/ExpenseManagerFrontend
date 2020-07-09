@@ -5,24 +5,24 @@ export default function MixedChart() {
   const data = {
     series: [
       {
-        name: 'TEAM A',
+        name: 'Approved',
         type: 'column',
         data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
       },
       {
-        name: 'TEAM B',
-        type: 'area',
+        name: 'Rejected',
+        type: 'column',
         data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
       },
       {
-        name: 'TEAM C',
+        name: 'Pending',
         type: 'line',
         data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
       },
     ],
     options: {
+      colors: ['#2ECC71', '#E74C3C', '#F39C12'],
       chart: {
-        height: 350,
         type: 'line',
         stacked: false,
       },
@@ -36,17 +36,7 @@ export default function MixedChart() {
         },
       },
 
-      fill: {
-        opacity: [0.85, 0.25, 1],
-        gradient: {
-          inverseColors: false,
-          shade: 'light',
-          type: 'vertical',
-          opacityFrom: 0.85,
-          opacityTo: 0.55,
-          stops: [0, 100, 100, 100],
-        },
-      },
+      fill: {},
       labels: [
         '01/01/2003',
         '02/01/2003',
@@ -68,13 +58,14 @@ export default function MixedChart() {
       },
       yaxis: {
         title: {
-          text: 'Points',
+          text: 'Amount',
         },
         min: 0,
       },
       tooltip: {
         shared: true,
         intersect: false,
+        colors: ['#F44336', '#E91E63', '#9C27B0'],
         y: {
           formatter: function (y: any) {
             if (typeof y !== 'undefined') {

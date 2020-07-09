@@ -88,3 +88,29 @@ export const MANAGER_EXPENSE = `
     }
   }
 `;
+
+export const SENIOR_EXPENSE = `
+  query seniorExpenses {
+    seniorExpenses{
+      id, 
+      title, 
+      amount,
+      description, 
+      status,
+      type, 
+    createdAt
+      User{ 
+      id, 
+      name, 
+      jobTitle,
+      department
+      email,
+      }
+      ExpenseReceipts{
+        id, 
+        expenseId, 
+        receipt
+      }
+    }
+  }
+`;

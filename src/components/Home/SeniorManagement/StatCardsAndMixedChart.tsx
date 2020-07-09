@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
-import PeopleIcon from '@material-ui/icons/People';
+import { observer } from 'mobx-react-lite';
 import CountUp from 'react-countup';
 import LinearProgress from '@material-ui/core/LinearProgress';
-
+import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import MixedChart from '../../Charts/MixedChart';
+import EqualizerIcon from '@material-ui/icons/Equalizer';
+import ExpenseStore from '../../../MobX/store/ExpenseStore';
 
-export default function StatCardsAndMixedChart() {
+function StatCardsAndMixedChart() {
+  const expenseStore = useContext(ExpenseStore);
+  const { seniorExpenses, getSeniorExpenses, info } = expenseStore;
+
+  useEffect(() => {
+    getSeniorExpenses();
+  }, []);
+
   return (
     <div>
       <Grid
@@ -36,11 +43,11 @@ export default function StatCardsAndMixedChart() {
                     Total Expenses
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
-                    £<CountUp end={20} />
+                    £<CountUp end={info.totalExpensesSenior} />
                   </h1>
                 </div>
 
-                <HourglassEmptyIcon
+                <LocalAtmIcon
                   style={{ fontSize: 80, float: 'right', color: 'red' }}
                 />
               </div>
@@ -62,15 +69,15 @@ export default function StatCardsAndMixedChart() {
               >
                 <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>
-                    Pending Claims
+                    Total Claims
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
-                    <CountUp end={10} />
+                    <CountUp end={info.totalClaimsSenior} />
                   </h1>
                 </div>
 
-                <HourglassEmptyIcon
-                  style={{ fontSize: 80, float: 'right', color: 'red' }}
+                <EqualizerIcon
+                  style={{ fontSize: 80, float: 'right', color: 'purple' }}
                 />
               </div>
             </CardContent>
@@ -89,23 +96,18 @@ export default function StatCardsAndMixedChart() {
                 }}
               >
                 <Typography style={{ color: 'grey' }}>Approval Rate</Typography>
-                <Grid
-                  className='linearProgress'
-                  container
-                  direction='row'
-                  style={{ margin: 0, width: '100%' }}
-                >
+                <Grid className='linearProgress' container>
                   <Grid item xs={2}>
                     <h1 style={{ marginTop: 'auto' }}>
-                      <CountUp end={10} />%
+                      <CountUp end={info.acceptRateSenior} />%
                     </h1>
                   </Grid>
                   <Grid item xs={10}>
                     {' '}
                     <LinearProgress
                       variant='determinate'
-                      value={10}
-                      //   style={{ marginTop: '6%' }}
+                      value={info.acceptRateSenior}
+                      style={{ marginTop: 'auto' }}
                     />
                   </Grid>
                 </Grid>
@@ -124,3 +126,5 @@ export default function StatCardsAndMixedChart() {
     </div>
   );
 }
+
+export default observer(StatCardsAndMixedChart);

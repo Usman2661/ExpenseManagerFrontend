@@ -16,6 +16,7 @@ import {
   UPDATE_EXPENSE,
 } from '../../graphQL/mutation/expense.mutation';
 import { IExpenseReceipts } from '../../models/ExpenseReciepts';
+import { SENIOR_EXPENSE } from '../../graphQL/query/expense.query';
 import {
   CREATE_EXPENSE,
   DELETE_EXPENSE,
@@ -30,10 +31,12 @@ class ExpenseStore {
   }
 
   @observable managerExpenses: IExpense[] = [];
+  @observable seniorExpenses: IExpense[] = [];
   @observable expenses: IExpense[] = [];
   @observable expense: any = {};
   @observable expensesLoaded: boolean = false;
   @observable managerExpensesLoaded: boolean = false;
+  @observable seniorExpensesLoaded: boolean = false;
 
   @action getExpenses = async () => {
     try {
@@ -61,6 +64,24 @@ class ExpenseStore {
       const alert = await getAlert(
         msg,
         'FetchManagerExpenseError',
+        AlertTypes.error
+      );
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action getSeniorExpenses = async () => {
+    try {
+      const graphQLClient = setHeaders();
+      const data = await graphQLClient.request(SENIOR_EXPENSE);
+      this.seniorExpenses = data.seniorExpenses;
+      this.seniorExpensesLoaded = true;
+    } catch (error) {
+      console.error(error);
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'FetchSeniorExpenseError',
         AlertTypes.error
       );
       AlertStore.setAlert(alert);
@@ -222,6 +243,29 @@ class ExpenseStore {
     const totalApprovedManager: number = claimApprovedManager[0].totalClaimed;
     const totalPendingManager: number = claimPendingManager[0].totalPending;
 
+    const ExpensesSenior = alasql('SELECT SUM(amount) AS totalAmount FROM ? ', [
+      this.seniorExpenses,
+    ]);
+
+    const totalWithoutPendingSenior = alasql(
+      'SELECT id,title,amount FROM ? Where status="Rejected" OR status="Approved"',
+      [this.seniorExpenses]
+    );
+
+    let approveRateSenior: number = 0;
+
+    const acceptRateSenior: number =
+      (this.seniorExpenses.filter((expense) => expense.status === 'Approved')
+        .length /
+        totalWithoutPendingSenior.length) *
+      100;
+
+    if (acceptRateSenior > 0) {
+      approveRateSenior = acceptRateSenior;
+    }
+
+    const totalExpensesSenior: number = ExpensesSenior[0].totalAmount;
+
     return {
       //User
       total: this.expenses.length,
@@ -238,6 +282,11 @@ class ExpenseStore {
       ).length,
       totalApprovedManager,
       totalPendingManager,
+
+      //SeniorManagement
+      totalExpensesSenior,
+      totalClaimsSenior: this.seniorExpenses.length,
+      acceptRateSenior: approveRateSenior
     };
   }
 }
