@@ -35,6 +35,8 @@ function PieAndLineChart() {
     [managerExpenses]
   );
 
+
+
   if (expenseByDate[0].Date !== undefined) {
     expenseByDate.map((expense: any) => {
       seriesBar.push(parseInt(expense.totalClaimed));

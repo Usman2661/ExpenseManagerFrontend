@@ -10,14 +10,44 @@ import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import MixedChart from '../../Charts/MixedChart';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
+import alasql from 'alasql';
+import { IExpense } from '../../../models/Expense';
+var dateFormat = require('dateformat');
 
 function StatCardsAndMixedChart() {
   const expenseStore = useContext(ExpenseStore);
   const { seniorExpenses, getSeniorExpenses, info } = expenseStore;
 
+  let approvedData: Number[] = [];
+  let labels: String[] = [];
+  let pendingData: Number[] = [];
+  let rejectedData: Number[] = [];
+
   useEffect(() => {
     getSeniorExpenses();
   }, []);
+
+  seniorExpenses.map((expense: any) => {
+    const myDate = new Date(parseInt(expense.createdAt));
+    expense['Date'] = dateFormat(myDate, 'dS mmmm');
+    return expense;
+  });
+
+  const dailyTotals = alasql(
+    'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved , Date FROM ? group by Date',
+    [seniorExpenses]
+  );
+
+  console.log(dailyTotals);
+
+  if (dailyTotals[0].Date !== undefined) {
+    dailyTotals.map((expense: any) => {
+      approvedData.push(parseInt(expense.approved));
+      pendingData.push(parseInt(expense.pending));
+      rejectedData.push(parseInt(expense.rejected));
+      labels.push(expense.Date.toString());
+    });
+  }
 
   return (
     <div>
@@ -118,7 +148,12 @@ function StatCardsAndMixedChart() {
         <Grid item xs={12} sm={8} md={8} lg={8}>
           <Card variant='outlined' className='amountPending'>
             <CardContent>
-              <MixedChart />
+              <MixedChart
+                labels={labels}
+                approvedData={approvedData}
+                pendingData={pendingData}
+                rejectedData={rejectedData}
+              />
             </CardContent>
           </Card>
         </Grid>

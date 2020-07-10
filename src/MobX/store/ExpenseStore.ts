@@ -247,6 +247,8 @@ class ExpenseStore {
       this.seniorExpenses,
     ]);
 
+    const totalExpensesSenior: number = ExpensesSenior[0].totalAmount;
+
     const totalWithoutPendingSenior = alasql(
       'SELECT id,title,amount FROM ? Where status="Rejected" OR status="Approved"',
       [this.seniorExpenses]
@@ -263,8 +265,6 @@ class ExpenseStore {
     if (acceptRateSenior > 0) {
       approveRateSenior = acceptRateSenior;
     }
-
-    const totalExpensesSenior: number = ExpensesSenior[0].totalAmount;
 
     return {
       //User
@@ -286,7 +286,7 @@ class ExpenseStore {
       //SeniorManagement
       totalExpensesSenior,
       totalClaimsSenior: this.seniorExpenses.length,
-      acceptRateSenior: approveRateSenior
+      acceptRateSenior: approveRateSenior,
     };
   }
 }

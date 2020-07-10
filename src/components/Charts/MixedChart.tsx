@@ -1,23 +1,31 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 
-export default function MixedChart() {
+interface MixedChartProps {
+  labels: String[];
+  approvedData: Number[];
+  rejectedData: Number[];
+  pendingData: Number[];
+}
+
+export default function MixedChart(props: MixedChartProps) {
+  const { labels, approvedData, rejectedData, pendingData } = props;
   const data = {
     series: [
       {
         name: 'Approved',
         type: 'column',
-        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+        data: approvedData,
       },
       {
         name: 'Rejected',
         type: 'column',
-        data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+        data: rejectedData,
       },
       {
         name: 'Pending',
         type: 'line',
-        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+        data: pendingData,
       },
     ],
     options: {
@@ -37,24 +45,12 @@ export default function MixedChart() {
       },
 
       fill: {},
-      labels: [
-        '01/01/2003',
-        '02/01/2003',
-        '03/01/2003',
-        '04/01/2003',
-        '05/01/2003',
-        '06/01/2003',
-        '07/01/2003',
-        '08/01/2003',
-        '09/01/2003',
-        '10/01/2003',
-        '11/01/2003',
-      ],
+      labels: labels,
       markers: {
         size: 0,
       },
       xaxis: {
-        type: 'datetime',
+        type: 'String',
       },
       yaxis: {
         title: {
@@ -69,7 +65,7 @@ export default function MixedChart() {
         y: {
           formatter: function (y: any) {
             if (typeof y !== 'undefined') {
-              return y.toFixed(0) + ' points';
+              return '£' + y.toFixed(0);
             }
             return y;
           },
