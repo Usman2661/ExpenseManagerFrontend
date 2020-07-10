@@ -14,12 +14,12 @@ export default function MixedChart(props: MixedChartProps) {
     series: [
       {
         name: 'Approved',
-        type: 'column',
+        type: 'bar',
         data: approvedData,
       },
       {
         name: 'Rejected',
-        type: 'column',
+        type: 'bar',
         data: rejectedData,
       },
       {
@@ -80,7 +80,7 @@ export default function MixedChart(props: MixedChartProps) {
         options={data.options}
         series={data.series}
         type='line'
-        height={300}
+        height={260}
       />
     </div>
   );
