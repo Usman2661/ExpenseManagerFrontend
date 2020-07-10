@@ -20,6 +20,9 @@ import FastfoodIcon from '@material-ui/icons/Fastfood';
 import HelpIcon from '@material-ui/icons/Help';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import DevicesOtherIcon from '@material-ui/icons/DevicesOther';
+import BasicBar from '../../Charts/BasicBar';
+import { IExpense } from '../../../models/Expense';
+import Pie from '../../Charts/Pie';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,6 +46,38 @@ function DepartmentPieTypeList() {
   const classes = useStyles();
   const expenseStore = useContext(ExpenseStore);
   const { seniorExpenses, info } = expenseStore;
+
+  let labels: String[] = [];
+  let data: Number[] = [];
+
+  const mergeExpense = seniorExpenses.map((expense: IExpense) => {
+    const myExpense = {
+      id: expense?.id,
+      amount: expense.amount,
+      type: expense.type,
+      name: expense?.User?.name,
+      department: expense?.User?.department,
+      jobTitle: expense?.User?.jobTitle,
+    };
+
+    return myExpense;
+  });
+
+  const topDepartment = alasql(
+    'SELECT SUM(amount) AS totalClaimed,count(type) as claims, department FROM ? Group By department',
+    [mergeExpense]
+  );
+
+  topDepartment.sort(function (a: any, b: any) {
+    return b.totalClaimed - a.totalClaimed;
+  });
+
+  if (topDepartment[0].department !== undefined) {
+    topDepartment.map((expense: any) => {
+      data.push(parseInt(expense.totalClaimed));
+      labels.push(expense.department.toString());
+    });
+  }
 
   const topExpenseType = alasql(
     'SELECT SUM(amount) AS totalClaimed,count(title) as claims, type FROM ? Group By type',
@@ -135,7 +170,24 @@ function DepartmentPieTypeList() {
 
         <Grid item xs={12} sm={8} md={8} lg={8}>
           <Card variant='outlined' className='amountClaimed'>
-            <CardContent></CardContent>
+            <CardContent>
+              <Grid
+                className='barChartAndOther'
+                container
+                direction='row'
+                style={{ margin: 0, width: '100%' }}
+              >
+                <Grid item xs={12} sm={6} md={6} lg={6}>
+                  <BasicBar labels={labels} data={data} />
+                </Grid>
+                <Divider />
+                <Grid item xs={12} sm={6} md={6} lg={6}>
+                  <div style={{ marginTop: '20%' }}>
+                    <Pie labels={labels} series={data} />
+                  </div>
+                </Grid>
+              </Grid>
+            </CardContent>
           </Card>
         </Grid>
       </Grid>
