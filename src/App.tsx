@@ -81,6 +81,7 @@ function App() {
     email: localStorage.getItem('email'),
     userType: localStorage.getItem('userType'),
     managerId: localStorage.getItem('managerId'),
+    companyName: localStorage.getItem('companyName'),
     token: localStorage.getItem('token'),
     width: localStorage.getItem('width'),
     allUsers: [],

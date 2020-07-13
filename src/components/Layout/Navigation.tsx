@@ -7,7 +7,8 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import { deepOrange, deepPurple } from '@material-ui/core/colors';
-
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -104,15 +105,24 @@ export default function Navigation(props: Props) {
       token: '',
     });
 
+    handleClose();
+
     history.push('/');
   };
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const drawer = (
     <div>
       <div />
-      {/* <Avatar className={classes.orange} style={{ alignItems: 'center' }}>
-        {userAuthData.name.charAt(0)}
-      </Avatar> */}
+
       <h2 style={{ textAlign: 'center' }}> Hello {userAuthData.name} </h2>
       <Divider />
 
@@ -131,12 +141,7 @@ export default function Navigation(props: Props) {
               </ListItemIcon>
               <ListItemText primary='Users' />
             </ListItem>
-            {/* <ListItem button component={Link} to='/expenses'>
-              <ListItemIcon>
-                <MonetizationOnIcon />
-              </ListItemIcon>
-              <ListItemText primary='All User Expenses' />
-            </ListItem> */}
+
             <ListItem button component={Link} to='/myexpenses'>
               <ListItemIcon>
                 <MonetizationOnIcon />
@@ -147,13 +152,6 @@ export default function Navigation(props: Props) {
         ) : null}
         {userAuthData.userType === 'Manager' ? (
           <div>
-            {/* <ListItem button component={Link} to='/expenses'>
-              <ListItemIcon>
-                <MonetizationOnIcon />
-              </ListItemIcon>
-              <ListItemText primary='All User Expenses' />
-            </ListItem> */}
-
             <ListItem button component={Link} to='/myexpenses'>
               <ListItemIcon>
                 <MonetizationOnIcon />
@@ -188,19 +186,25 @@ export default function Navigation(props: Props) {
             <MenuIcon />
           </IconButton>
           <Typography variant='h6' style={{ flex: 1 }}>
-            Expense Manager
+            {userAuthData.auth && userAuthData.userType !== 'Admin'
+              ? userAuthData.companyName
+              : 'Expense Manager'}
           </Typography>
 
           {userAuthData.auth ? (
-            <Button color='inherit' onClick={logout}>
-              Logout
+            <Button color='inherit' onClick={handleClick}>
+              <div style={{ display: 'flex' }}>
+                <Avatar className={classes.orange}>
+                  {userAuthData.name.charAt(0)}
+                </Avatar>
+                <span style={{ marginTop: '5%' }}>{userAuthData.name}</span>
+              </div>
             </Button>
           ) : null}
         </Toolbar>
       </AppBar>
       {userAuthData.auth ? (
         <nav className={classes.drawer} aria-label='mailbox folders'>
-          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
           <Hidden mdUp implementation='css'>
             <Drawer
               container={container}
@@ -231,6 +235,16 @@ export default function Navigation(props: Props) {
           </Hidden>
         </nav>
       ) : null}
+      <Menu
+        id='simple-menu'
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
+      </Menu>
 
       <main className={classes.content}>
         {/* <div className={classes.toolbar} /> */}

@@ -45,6 +45,9 @@ export const LOGIN_USER = `
         userType
         jobTitle
         managerId
+        Company{ 
+          name
+        }
       }
     }
   }

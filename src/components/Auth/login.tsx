@@ -44,6 +44,7 @@ export function Login(props: any) {
           userType: data.user.userType,
           managerId: data.user.managerId,
           token: data.token,
+          companyName: data.user?.Company?.name,
           width: '240',
         });
         props.history.push('/home');
