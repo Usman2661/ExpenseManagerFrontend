@@ -17,6 +17,7 @@ import {
 import AlertStore from './AlertStore';
 import { AlertTypes } from '../../models/Alert';
 import { getAlert } from './Alert';
+import { ME } from '../../graphQL/query/expense.query';
 
 class UserStore {
   constructor() {
@@ -30,6 +31,13 @@ class UserStore {
   @observable user: any = {};
   @observable usersLoaded: boolean = false;
   @observable managerUsers: IUser[] = [];
+  @observable userProfile: IUser = {
+    name: '',
+    email: '',
+    jobTitle: '',
+    department: '',
+  };
+  @observable userProfileLoaded: boolean = false;
 
   @action createUser = async (user: IUser) => {
     try {
@@ -90,6 +98,25 @@ class UserStore {
 
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'FetchUsersError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action getUserProfile = async () => {
+    try {
+      const graphQLClient = setHeaders();
+      const data = await graphQLClient.request(ME);
+      this.userProfile = data.me;
+      this.userProfileLoaded = true;
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'FetchMyProfileError',
+        AlertTypes.error
+      );
       AlertStore.setAlert(alert);
     }
   };

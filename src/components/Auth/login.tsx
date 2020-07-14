@@ -20,7 +20,7 @@ export function Login(props: any) {
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const userStore = useContext(UserStore);
-  const { login } = userStore;
+  const { login, getUserProfile } = userStore;
 
   if (userAuthData.auth) {
     props.history.push('/home');
@@ -47,6 +47,8 @@ export function Login(props: any) {
           companyName: data.user?.Company?.name,
           width: '240',
         });
+
+        await getUserProfile();
         props.history.push('/home');
       }
     } catch (error) {

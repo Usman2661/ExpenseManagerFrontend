@@ -1,5 +1,4 @@
 import { observable, action, computed, reaction } from 'mobx';
-import { createContext } from 'react';
 import { IAlert } from '../../models/Alert';
 
 class AlertStore {

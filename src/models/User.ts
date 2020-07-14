@@ -12,4 +12,5 @@ export interface IUser {
   companyId?: number;
   Expenses?: IExpense[];
   Company?: ICompany;
+  Manager?: IUser;
 }

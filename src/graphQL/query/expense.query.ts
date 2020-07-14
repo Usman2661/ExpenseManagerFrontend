@@ -4,7 +4,20 @@ export const ME = `
     id,
     name,
     email,
-    jobTitle
+    jobTitle,
+    userType
+    Company{
+      id, 
+      name,
+      addressFirstLine,
+      addressSecondLine,
+      addressThirdLine
+    }
+    Manager{ 
+    id, 
+    name
+    email
+    }
     Expenses{
       id, 
       title, 
@@ -20,7 +33,7 @@ export const ME = `
         receipt
       }
     }
-}
+  }
   }
 `;
 

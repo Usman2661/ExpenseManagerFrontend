@@ -47,7 +47,7 @@ class ExpenseStore {
     } catch (error) {
       console.error(error);
       const msg = error.message.split(':')[0];
-      const alert = await getAlert(msg, 'FetchExpensesError', AlertTypes.error);
+      const alert = await getAlert(msg, 'FetchExpensesMe', AlertTypes.error);
       AlertStore.setAlert(alert);
     }
   };

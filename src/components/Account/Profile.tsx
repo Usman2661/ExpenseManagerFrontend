@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -21,6 +21,8 @@ import '../../css/StatCards.css';
 import Button from '@material-ui/core/Button';
 import { deepOrange, deepPurple } from '@material-ui/core/colors';
 import { IUserModalState } from '../User/UsersModal';
+import UserStore from '../../MobX/store/UserStore';
+import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,33 +33,38 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function Profile() {
+function Profile() {
   const classes = useStyles();
   const theme = useTheme();
 
-  const user = {
-    id: 0,
-    name: 'Usman Ali',
-    email: 'uali@modernnetworks.co.uk',
-    password: 'test',
-    jobTitle: 'software develloper',
-    userType: 'Staff',
-    department: 'Technology',
-    managerId: 14,
-    companyId: 1,
-  };
+  const userStore = useContext(UserStore);
+  const { userProfile, userProfileLoaded, getUserProfile } = userStore;
+
+  console.log(userProfile);
+
+  // const user = {
+  //   id: 0,
+  //   name: 'Usman Ali',
+  //   email: 'uali@modernnetworks.co.uk',
+  //   password: 'test',
+  //   jobTitle: 'software develloper',
+  //   userType: 'Staff',
+  //   department: 'Technology',
+  //   managerId: 14,
+  //   companyId: 1,
+  // };
 
   const [userData, setUserData] = useState<IUserModalState>({
-    id: user?.id || 0,
-    name: user?.name || '',
-    email: user?.email || '',
-    password: user?.password || '',
+    id: userProfile?.id || 0,
+    name: userProfile?.name || '',
+    email: userProfile?.email || '',
+    password: userProfile?.password || '',
     cfPassword: '',
-    jobTitle: user?.jobTitle || '',
-    userType: user?.userType || 'SeniorManagement',
-    department: user?.department || '',
-    managerId: user?.managerId || undefined,
-    companyId: user?.companyId || undefined,
+    jobTitle: userProfile?.jobTitle || '',
+    userType: userProfile?.userType || 'SeniorManagement',
+    department: userProfile?.department || '',
+    managerId: userProfile?.managerId || undefined,
+    companyId: userProfile?.companyId || undefined,
   });
 
   // Destructuring
@@ -112,10 +119,12 @@ export default function Profile() {
                   className={classes.orange}
                   style={{ height: '90px', width: '90px' }}
                 >
-                  <h1 style={{ fontSize: '40' }}>U</h1>
+                  <h1 style={{ fontSize: '40' }}>
+                    {userProfile.name.charAt(0)}
+                  </h1>
                 </Avatar>
                 <Typography style={{ marginTop: 'auto' }} variant='h4'>
-                  Usman Ali
+                  {userProfile.name}
                 </Typography>
                 <Typography
                   style={{
@@ -125,7 +134,7 @@ export default function Profile() {
                     color: '#7B7D7D',
                   }}
                 >
-                  Software Developer
+                  {userProfile.jobTitle}
                 </Typography>
                 <Typography
                   style={{
@@ -134,7 +143,7 @@ export default function Profile() {
                     fontStyle: 'italic',
                   }}
                 >
-                  Staff
+                  {userProfile.userType}
                 </Typography>
                 <Button color='primary'>Change Password</Button>
               </div>
@@ -361,3 +370,5 @@ export default function Profile() {
     </div>
   );
 }
+
+export default observer(Profile);

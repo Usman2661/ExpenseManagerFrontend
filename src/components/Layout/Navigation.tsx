@@ -33,6 +33,7 @@ import {
   Theme,
   createStyles,
 } from '@material-ui/core/styles';
+import UserStore from '../../MobX/store/UserStore';
 
 const drawerWidth = 220;
 
@@ -98,6 +99,13 @@ export default function Navigation(props: Props) {
   };
 
   const { userAuthData, setUserAuthData } = useContext(UserContext);
+
+  const userStore = useContext(UserStore);
+  const { userProfile, userProfileLoaded, getUserProfile } = userStore;
+
+  if (!userProfileLoaded) {
+    getUserProfile();
+  }
 
   const logout = () => {
     localStorage.clear();
@@ -177,7 +185,9 @@ export default function Navigation(props: Props) {
               fontWeight: 'bold',
               color: '#7B7D7D',
             }}
-          ></Typography>
+          >
+            {userProfile.jobTitle}
+          </Typography>
           <Typography
             variant='body2'
             style={{
