@@ -6,7 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CardMedia from '@material-ui/core/CardMedia';
 import clsx from 'clsx';
-import Carousel from 'react-material-ui-carousel';
+// import Carousel from 'react-material-ui-carousel';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -364,16 +364,17 @@ function ExpenseList() {
                             {expense.description}
                           </Typography>
                           {expense?.ExpenseReceipts?.length || 0 > 0 ? (
-                            <Carousel>
-                              {expense?.ExpenseReceipts?.map(
-                                (expenseReceipt: any) => (
-                                  <CardMedia
-                                    style={{ height: '140px' }}
-                                    image={expenseReceipt.receipt}
-                                  />
-                                )
-                              )}
-                            </Carousel>
+                            // <Carousel>
+                            //   {expense?.ExpenseReceipts?.map(
+                            //     (expenseReceipt: any) => (
+                            //       <CardMedia
+                            //         style={{ height: '140px' }}
+                            //         image={expenseReceipt.receipt}
+                            //       />
+                            //     )
+                            //   )}
+                            // </Carousel>
+                            <h1>Carousal Should have been here</h1>
                           ) : null}
                         </CardContent>
                       </Collapse>
@@ -464,16 +465,17 @@ function ExpenseList() {
                             {expense.description}
                           </Typography>
                           {expense?.ExpenseReceipts?.length || 0 > 0 ? (
-                            <Carousel>
-                              {expense?.ExpenseReceipts?.map(
-                                (expenseReceipt: any) => (
-                                  <CardMedia
-                                    style={{ height: '140px' }}
-                                    image={expenseReceipt.receipt}
-                                  />
-                                )
-                              )}
-                            </Carousel>
+                            // <Carousel>
+                            //   {expense?.ExpenseReceipts?.map(
+                            //     (expenseReceipt: any) => (
+                            //       <CardMedia
+                            //         style={{ height: '140px' }}
+                            //         image={expenseReceipt.receipt}
+                            //       />
+                            //     )
+                            //   )}
+                            // </Carousel>
+                            <h1> Carousel should have been here </h1>
                           ) : null}
                         </CardContent>
                       </Collapse>

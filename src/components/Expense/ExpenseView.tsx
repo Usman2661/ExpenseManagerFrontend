@@ -5,7 +5,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import CountUp from 'react-countup';
-import Carousel from 'react-material-ui-carousel';
+import Carousel from '@brainhubeu/react-carousel';
+import '@brainhubeu/react-carousel/lib/style.css';
 import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -270,49 +271,46 @@ function ExpenseView() {
             <CardContent>
               <h1 style={{ textAlign: 'center' }}> {expense.title} </h1>
 
-              {expense?.ExpenseReceipts?.length || 0 > 0 ? (
-                <Carousel
-                  autoPlay={false}
-                  indicators={true}
-                  navButtonsAlwaysVisible={true}
-                  animation='slide'
-                >
-                  {expense?.ExpenseReceipts?.map((expenseReceipt: any) => (
-                    <div>
-                      <div>
-                        <img
-                          style={{
-                            height: '250px',
-                            marginLeft: '30%',
-                          }}
-                          src={expenseReceipt.receipt}
-                        />
-                      </div>
-
-                      {expense?.User?.id == userAuthData.id ? (
-                        <IconButton
-                          disabled={
-                            expense.status !== 'Approved' ? false : true
-                          }
-                          aria-label='Delete'
-                          style={{ float: 'right' }}
-                          onClick={() =>
-                            setDialogData({
-                              ...dialogData,
-                              open: true,
-                              id: expenseReceipt.id,
-                              title: undefined,
-                              deleteExpenseOrReceipt: 'Receipt',
-                            })
-                          }
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      ) : null}
-                    </div>
-                  ))}
-                </Carousel>
-              ) : null}
+              {/* {expense?.ExpenseReceipts?.length || 0 > 0 ? ( */}
+              <Carousel arrows dots>
+                {expense?.ExpenseReceipts?.map((expenseReceipt: any) => (
+                  // <div>
+                  //   <div>
+                  <img
+                    style={
+                      {
+                        // height: '250px',
+                        // marginLeft: '30%',
+                        // width: '200px',
+                      }
+                    }
+                    src={expenseReceipt.receipt}
+                  />
+                  // </div>
+                  //   {expense?.User?.id == userAuthData.id ? (
+                  //     <IconButton
+                  //       disabled={
+                  //         expense.status !== 'Approved' ? false : true
+                  //       }
+                  //       aria-label='Delete'
+                  //       style={{ float: 'right' }}
+                  //       onClick={() =>
+                  //         setDialogData({
+                  //           ...dialogData,
+                  //           open: true,
+                  //           id: expenseReceipt.id,
+                  //           title: undefined,
+                  //           deleteExpenseOrReceipt: 'Receipt',
+                  //         })
+                  //       }
+                  //     >
+                  //       <DeleteIcon />
+                  //     </IconButton>
+                  //   ) : null}
+                  // </div>
+                ))}
+              </Carousel>
+              {/* ) : null} */}
               <Grid
                 className='expenseCardContent'
                 container

@@ -6,6 +6,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { deepOrange, deepPurple } from '@material-ui/core/colors';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -74,6 +75,10 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.getContrastText(deepOrange[500]),
       backgroundColor: deepOrange[500],
     },
+    purple: {
+      color: theme.palette.getContrastText(deepPurple[500]),
+      backgroundColor: deepPurple[500],
+    },
   })
 );
 
@@ -123,7 +128,68 @@ export default function Navigation(props: Props) {
     <div>
       <div />
 
-      <h2 style={{ textAlign: 'center' }}> Hello {userAuthData.name} </h2>
+      <div>
+        {/* <div style={{ display: 'flex', marginLeft: '8%', marginTop: '8%' }}>
+          <Button color='inherit' component={Link} to='/profile'>
+            <ListItemAvatar>
+              <Avatar className={classes.orange}>
+                {(userAuthData.name || '?').charAt(0)}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={userAuthData.name}
+              secondary={userAuthData.userType}
+            />
+          </Button>
+        </div> */}
+
+        <div
+          className='ProfileSettings'
+          style={{
+            marginTop: '3%',
+            display: 'flex',
+            textAlign: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            margin: '0',
+            wordSpacing: 'none',
+          }}
+          // autoFocus
+          // onClick={handleClick}
+        >
+          <Avatar
+            className={classes.purple}
+            style={{ height: '70px', width: '70px' }}
+          >
+            <h1 style={{ fontSize: '40' }}>
+              {' '}
+              {(userAuthData.name || '?').charAt(0)}
+            </h1>
+          </Avatar>
+          <Typography style={{ marginTop: 'auto' }} variant='h4'>
+            {userAuthData.name}
+          </Typography>
+
+          <Typography
+            variant='body1'
+            style={{
+              marginTop: 'auto',
+              fontWeight: 'bold',
+              color: '#7B7D7D',
+            }}
+          ></Typography>
+          <Typography
+            variant='body2'
+            style={{
+              marginTop: 'auto',
+              color: '#7B7D7D',
+              fontStyle: 'italic',
+            }}
+          >
+            {userAuthData.userType}
+          </Typography>
+        </div>
+      </div>
       <Divider />
 
       <List component='nav' aria-label='main mailbox folders'>
@@ -242,7 +308,9 @@ export default function Navigation(props: Props) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem component={Link} to='/profile'>
+          Profile
+        </MenuItem>
         <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
 
