@@ -108,6 +108,8 @@ class UserStore {
       const data = await graphQLClient.request(ME);
       this.userProfile = data.me;
       this.userProfileLoaded = true;
+
+      return data.me;
     } catch (error) {
       console.error(error);
 

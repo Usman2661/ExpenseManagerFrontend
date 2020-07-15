@@ -23,12 +23,19 @@ import { deepOrange, deepPurple } from '@material-ui/core/colors';
 import { IUserModalState } from '../User/UsersModal';
 import UserStore from '../../MobX/store/UserStore';
 import { observer } from 'mobx-react-lite';
+import Dialog from '@material-ui/core/Dialog';
+import { IDialogState } from '../Home/Staff/ExpenseList';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     orange: {
       color: theme.palette.getContrastText(deepOrange[500]),
       backgroundColor: deepOrange[500],
+    },
+    paper: {
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
     },
   })
 );
@@ -38,21 +45,18 @@ function Profile() {
   const theme = useTheme();
 
   const userStore = useContext(UserStore);
-  const { userProfile, userProfileLoaded, getUserProfile } = userStore;
+  const {
+    userProfile,
+    userProfileLoaded,
+    getUserProfile,
+    updateUser,
+  } = userStore;
 
-  console.log(userProfile);
-
-  // const user = {
-  //   id: 0,
-  //   name: 'Usman Ali',
-  //   email: 'uali@modernnetworks.co.uk',
-  //   password: 'test',
-  //   jobTitle: 'software develloper',
-  //   userType: 'Staff',
-  //   department: 'Technology',
-  //   managerId: 14,
-  //   companyId: 1,
-  // };
+  useEffect(() => {
+    if (!userProfileLoaded) {
+      retrieveProfile();
+    }
+  }, []);
 
   const [userData, setUserData] = useState<IUserModalState>({
     id: userProfile?.id || 0,
@@ -60,12 +64,39 @@ function Profile() {
     email: userProfile?.email || '',
     password: userProfile?.password || '',
     cfPassword: '',
+    newPassword: '',
     jobTitle: userProfile?.jobTitle || '',
-    userType: userProfile?.userType || 'SeniorManagement',
+    userType: userProfile?.userType || '',
     department: userProfile?.department || '',
     managerId: userProfile?.managerId || undefined,
     companyId: userProfile?.companyId || undefined,
   });
+
+  const [dialogData, setDialogData] = useState<IDialogState>({
+    open: false,
+  });
+
+  const { open } = dialogData;
+
+  const retrieveProfile = async () => {
+    const data = await getUserProfile();
+
+    if (data) {
+      setUserData({
+        ...userData,
+        id: data.id,
+        name: data.name || '',
+        email: data.email || '',
+        password: data.password || '',
+        cfPassword: '',
+        jobTitle: data.jobTitle || '',
+        userType: data.userType || '',
+        department: data.department || '',
+        managerId: data.managerId || undefined,
+        companyId: data.companyId || undefined,
+      });
+    }
+  };
 
   // Destructuring
   const {
@@ -74,12 +105,34 @@ function Profile() {
     email,
     password,
     cfPassword,
+    newPassword,
     jobTitle,
     userType,
     department,
     managerId,
     companyId,
   } = userData;
+
+  ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
+    if (value !== userData.newPassword) {
+      return false;
+    }
+    return true;
+  });
+
+  ValidatorForm.addValidationRule('isOldPassword', (value) => {
+    if (value === userData.password) {
+      return false;
+    }
+    return true;
+  });
+
+  const handleClose = () => {
+    setDialogData({
+      ...dialogData,
+      open: false,
+    });
+  };
 
   const onChange = (e: any) => {
     setUserData({
@@ -90,6 +143,15 @@ function Profile() {
 
   const saveChanges = async (e: any) => {
     e.preventDefault();
+
+    await updateUser(userData);
+    await getUserProfile();
+  };
+
+  const changePassword = async (e: any) => {
+    e.preventDefault();
+
+    console.log('Changed Password!!');
   };
 
   return (
@@ -145,7 +207,17 @@ function Profile() {
                 >
                   {userProfile.userType}
                 </Typography>
-                <Button color='primary'>Change Password</Button>
+                <Button
+                  color='primary'
+                  onClick={() =>
+                    setDialogData({
+                      ...dialogData,
+                      open: true,
+                    })
+                  }
+                >
+                  Change Password
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -224,59 +296,27 @@ function Profile() {
                     />
                   </Grid>
 
-                  {/* {userAuthData.userType === 'Admin' ? (
-                    <Grid item xs={12} sm={12}>
-                      <FormControl
-                        variant='filled'
-                        className='company'
-                        color='primary'
-                        fullWidth
-                        required
-                      >
-                        <InputLabel id='demo-simple-select-filled-label'>
-                          Company
-                        </InputLabel>
-                        <Select
-                          labelId='demo-simple-select-filled-label'
-                          id='demo-simple-select-filled'
-                          name='companyId'
-                          value={companyId}
-                          onChange={(e) => onChange(e)}
-                          fullWidth
-                          required
-                          color='primary'
-                        >
-                          {renderCompaniesSelectOptions()}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  ) : null} */}
-
                   <Grid item xs={12} sm={12}>
-                    <FormControl
-                      variant='filled'
-                      className='managerId'
-                      color='primary'
+                    <TextValidator
+                      name='managerId'
+                      variant='outlined'
                       disabled={true}
-                      fullWidth
                       required
-                    >
-                      <InputLabel id='demo-simple-select-filled-label'>
-                        Manager
-                      </InputLabel>
-                      <Select
-                        labelId='demo-simple-select-filled-label'
-                        id='demo-simple-select-filled'
-                        name='managerId'
-                        value={managerId}
-                        onChange={(e) => onChange(e)}
-                        fullWidth
-                        required
-                        color='primary'
-                      >
-                        {/* {renderManagerSelectOptions()} */}
-                      </Select>
-                    </FormControl>
+                      fullWidth
+                      id='managerId'
+                      color='primary'
+                      label='Manager'
+                      onChange={(e) => onChange(e)}
+                      value={
+                        userProfile?.Manager?.name +
+                        ' - ' +
+                        userProfile?.Manager?.jobTitle +
+                        ' - ' +
+                        userProfile?.Manager?.email
+                      }
+                      validators={['required']}
+                      errorMessages={['Manager is required']}
+                    />
                   </Grid>
 
                   <Grid item xs={12} sm={12}>
@@ -365,6 +405,112 @@ function Profile() {
               </ValidatorForm>
             </CardContent>
           </Card>
+        </Grid>
+      </Grid>
+
+      <Grid
+        className='userModalGrid'
+        container
+        direction='row'
+        justify='center'
+        alignItems='center'
+        style={{ margin: 0, width: '100%' }}
+      >
+        <Grid item xs={12} sm={10} md={8} lg={6}>
+          <Dialog
+            onClose={handleClose}
+            aria-labelledby='simple-dialog-title'
+            open={dialogData.open}
+          >
+            <div className={classes.paper}>
+              <h2 id='simple-modal-title' style={{ textAlign: 'center' }}>
+                Change Password
+              </h2>
+
+              <ValidatorForm className='signUpForm' onSubmit={changePassword}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={12}>
+                    <TextValidator
+                      id='password'
+                      name='password'
+                      label='Old Password'
+                      variant='outlined'
+                      type='password'
+                      color='primary'
+                      value={password}
+                      onChange={(e) => onChange(e)}
+                      validators={['required']}
+                      errorMessages={['Password is required']}
+                      required
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12}>
+                    <TextValidator
+                      id='newPassword'
+                      name='newPassword'
+                      label='New Password'
+                      variant='outlined'
+                      type='password'
+                      color='primary'
+                      value={newPassword}
+                      onChange={(e) => onChange(e)}
+                      validators={['isOldPassword', 'required']}
+                      errorMessages={[
+                        'New Password cannot be same as old password',
+                        'New Password is required',
+                      ]}
+                      required
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12}>
+                    <TextValidator
+                      id='cfPassword'
+                      name='cfPassword'
+                      label='Confirm New Password'
+                      variant='outlined'
+                      type='password'
+                      color='primary'
+                      value={cfPassword}
+                      onChange={(e) => onChange(e)}
+                      validators={['isPasswordMatch', 'required']}
+                      errorMessages={[
+                        'Passwords do not match',
+                        'Confirm New Password is required',
+                      ]}
+                      required
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12}>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      type='submit'
+                      fullWidth
+                    >
+                      Save
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <Button
+                      variant='contained'
+                      color='secondary'
+                      type='submit'
+                      onClick={handleClose}
+                      fullWidth
+                    >
+                      Cancel
+                    </Button>
+                  </Grid>
+                </Grid>
+              </ValidatorForm>
+            </div>
+          </Dialog>
         </Grid>
       </Grid>
     </div>

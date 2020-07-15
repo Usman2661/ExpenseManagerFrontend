@@ -5,7 +5,8 @@ export const ME = `
     name,
     email,
     jobTitle,
-    userType
+    userType,
+    department
     Company{
       id, 
       name,
@@ -17,6 +18,7 @@ export const ME = `
     id, 
     name
     email
+    jobTitle
     }
     Expenses{
       id, 

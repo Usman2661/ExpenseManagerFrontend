@@ -42,6 +42,7 @@ export interface IUserModalState {
   department: String;
   managerId?: number;
   companyId?: number;
+  newPassword?: String;
 }
 function UsersModal(props: UserModalProps) {
   const classes = useStyles();

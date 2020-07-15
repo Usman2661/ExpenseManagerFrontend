@@ -48,8 +48,10 @@ export function Login(props: any) {
           width: '240',
         });
 
-        await getUserProfile();
-        props.history.push('/home');
+        const me = await getUserProfile();
+        if (me.name) {
+          props.history.push('/home');
+        }
       }
     } catch (error) {
       return error;

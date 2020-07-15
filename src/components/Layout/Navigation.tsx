@@ -5,12 +5,12 @@ import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { deepOrange, deepPurple } from '@material-ui/core/colors';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import List from '@material-ui/core/List';
+import { observer } from 'mobx-react-lite';
+
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -87,7 +87,7 @@ interface Props {
   window?: () => Window;
 }
 
-export default function Navigation(props: Props) {
+function Navigation(props: Props) {
   const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
@@ -103,11 +103,13 @@ export default function Navigation(props: Props) {
   const userStore = useContext(UserStore);
   const { userProfile, userProfileLoaded, getUserProfile } = userStore;
 
-  if (!userProfileLoaded) {
-    getUserProfile();
+  if (userAuthData.auth) {
+    if (!userProfileLoaded) {
+      getUserProfile();
+    }
   }
 
-  const logout = () => {
+  const logout = async () => {
     localStorage.clear();
     setUserAuthData({
       id: '',
@@ -171,11 +173,11 @@ export default function Navigation(props: Props) {
           >
             <h1 style={{ fontSize: '40' }}>
               {' '}
-              {(userAuthData.name || '?').charAt(0)}
+              {(userProfile.name || '?').charAt(0)}
             </h1>
           </Avatar>
           <Typography style={{ marginTop: 'auto' }} variant='h4'>
-            {userAuthData.name}
+            {userProfile.name}
           </Typography>
 
           <Typography
@@ -196,7 +198,7 @@ export default function Navigation(props: Props) {
               fontStyle: 'italic',
             }}
           >
-            {userAuthData.userType}
+            {userProfile.userType}
           </Typography>
         </div>
       </div>
@@ -263,7 +265,7 @@ export default function Navigation(props: Props) {
           </IconButton>
           <Typography variant='h6' style={{ flex: 1 }}>
             {userAuthData.auth && userAuthData.userType !== 'Admin'
-              ? userAuthData.companyName
+              ? userProfile?.Company?.name
               : 'Expense Manager'}
           </Typography>
 
@@ -271,9 +273,9 @@ export default function Navigation(props: Props) {
             <Button color='inherit' onClick={handleClick}>
               <div style={{ display: 'flex' }}>
                 <Avatar className={classes.orange}>
-                  {userAuthData.name.charAt(0)}
+                  {userProfile.name.charAt(0)}
                 </Avatar>
-                <span style={{ marginTop: '5%' }}>{userAuthData.name}</span>
+                <span style={{ marginTop: '5%' }}>{userProfile.name}</span>
               </div>
             </Button>
           ) : null}
@@ -330,3 +332,5 @@ export default function Navigation(props: Props) {
     </div>
   );
 }
+
+export default observer(Navigation);
