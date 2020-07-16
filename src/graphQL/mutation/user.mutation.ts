@@ -96,3 +96,17 @@ export const UPDATE_USER = `
     }
   }
 `;
+
+export const CHANGE_PASSWORD = `
+  mutation changePassword($password: String!, $newPassword: String!) {
+    changePassword(password: $password, newPassword: $newPassword) {
+        id
+        name
+        email
+        department
+        userType
+        jobTitle
+        managerId
+    }
+  }
+`;

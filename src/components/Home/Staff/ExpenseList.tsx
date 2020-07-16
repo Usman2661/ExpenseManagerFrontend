@@ -4,7 +4,7 @@ import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import CardMedia from '@material-ui/core/CardMedia';
+// import CardMedia from '@material-ui/core/CardMedia';
 import clsx from 'clsx';
 // import Carousel from 'react-material-ui-carousel';
 import Typography from '@material-ui/core/Typography';
@@ -16,8 +16,6 @@ import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import IconButton from '@material-ui/core/IconButton';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 // Expense Types Icon
 import CommuteIcon from '@material-ui/icons/Commute';
@@ -26,7 +24,6 @@ import HotelIcon from '@material-ui/icons/Hotel';
 import HelpIcon from '@material-ui/icons/Help';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import DevicesOtherIcon from '@material-ui/icons/DevicesOther';
-import { Route, Link, BrowserRouter, withRouter } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 
 import Alert from '@material-ui/lab/Alert';
@@ -40,7 +37,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
 import CountUp from 'react-countup';
 import Button from '@material-ui/core/Button';
-import Badge from '@material-ui/core/Badge';
+
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';

@@ -8,7 +8,10 @@ import {
   MANAGER_USERS,
 } from '../../graphQL/query/user.query';
 import { setHeaders } from '../../graphQL/graphqlconfig';
-import { LOGIN_USER } from '../../graphQL/mutation/user.mutation';
+import {
+  LOGIN_USER,
+  CHANGE_PASSWORD,
+} from '../../graphQL/mutation/user.mutation';
 import {
   DELETE_USER,
   UPDATE_USER,
@@ -223,6 +226,33 @@ class UserStore {
 
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'LoginError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action changePassword = async (password: String, newPassword: String) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        password,
+        newPassword,
+      };
+      const data = await graphQLClient.request(CHANGE_PASSWORD, variables);
+
+      const msg = `Password Changed for user ${data.changePassword.name}`;
+      const alert = await getAlert(msg, '', AlertTypes.success);
+      AlertStore.setAlert(alert);
+
+      return data.changePassword;
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'ChangePasswordError',
+        AlertTypes.error
+      );
       AlertStore.setAlert(alert);
     }
   };

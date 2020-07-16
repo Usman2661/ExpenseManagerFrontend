@@ -6,9 +6,7 @@ import PieGraph from '../../Charts/Pie';
 import { observer } from 'mobx-react-lite';
 import alasql from 'alasql';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
-import AreaGraph from '../../Charts/AreaGraph';
 import Bar from '../../Charts/Bar';
-import { IExpense } from '../../../models/Expense';
 var dateFormat = require('dateformat');
 
 function PieAndLineChart() {
@@ -22,7 +20,7 @@ function PieAndLineChart() {
   let seriesBar: Number[] = [];
   let labelsBar: String[] = [];
 
-  const managerExpenseWithDate = managerExpenses.map((expense: any) => {
+  managerExpenses.map((expense: any) => {
     const myDate = new Date(parseInt(expense.createdAt));
 
     expense['Date'] = dateFormat(myDate, 'dS mmmm');
@@ -34,8 +32,6 @@ function PieAndLineChart() {
     'SELECT SUM(amount) AS totalClaimed,Date FROM ? Group By Date',
     [managerExpenses]
   );
-
-
 
   if (expenseByDate[0].Date !== undefined) {
     expenseByDate.map((expense: any) => {

@@ -5,12 +5,13 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import CountUp from 'react-countup';
-import Carousel from '@brainhubeu/react-carousel';
-import '@brainhubeu/react-carousel/lib/style.css';
+
 import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 import { useHistory } from 'react-router-dom';
 import ListItem from '@material-ui/core/ListItem';
@@ -95,6 +96,14 @@ function ExpenseView() {
       retrieveExpense();
     }
   }, []);
+
+  var settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   const retrieveExpense = async () => {
     const myExpense = await getExpense(expenseId);
@@ -271,46 +280,81 @@ function ExpenseView() {
             <CardContent>
               <h1 style={{ textAlign: 'center' }}> {expense.title} </h1>
 
-              {/* {expense?.ExpenseReceipts?.length || 0 > 0 ? ( */}
-              <Carousel arrows dots>
+              <Carousel showThumbs={false}>
                 {expense?.ExpenseReceipts?.map((expenseReceipt: any) => (
-                  // <div>
-                  //   <div>
-                  <img
-                    style={
-                      {
-                        // height: '250px',
-                        // marginLeft: '30%',
-                        // width: '200px',
-                      }
-                    }
-                    src={expenseReceipt.receipt}
-                  />
-                  // </div>
-                  //   {expense?.User?.id == userAuthData.id ? (
-                  //     <IconButton
-                  //       disabled={
-                  //         expense.status !== 'Approved' ? false : true
-                  //       }
-                  //       aria-label='Delete'
-                  //       style={{ float: 'right' }}
-                  //       onClick={() =>
-                  //         setDialogData({
-                  //           ...dialogData,
-                  //           open: true,
-                  //           id: expenseReceipt.id,
-                  //           title: undefined,
-                  //           deleteExpenseOrReceipt: 'Receipt',
-                  //         })
-                  //       }
-                  //     >
-                  //       <DeleteIcon />
-                  //     </IconButton>
-                  //   ) : null}
-                  // </div>
+                  <div>
+                    <div>
+                      <img
+                        style={{
+                          height: '250px',
+                          width: '200px',
+                        }}
+                        src={expenseReceipt.receipt}
+                      />
+                    </div>
+                    {expense?.User?.id == userAuthData.id ? (
+                      <Button
+                        disabled={expense.status !== 'Approved' ? false : true}
+                        style={{
+                          color: 'white',
+                          float: 'right',
+                          marginRight: '5%',
+                          marginBottom: '5%',
+                        }}
+                        onClick={() =>
+                          setDialogData({
+                            ...dialogData,
+                            open: true,
+                            id: expenseReceipt.id,
+                            title: undefined,
+                            deleteExpenseOrReceipt: 'Receipt',
+                          })
+                        }
+                      >
+                        Remove Receipt
+                      </Button>
+                    ) : null}
+                  </div>
                 ))}
               </Carousel>
-              {/* ) : null} */}
+
+              {/* {expense?.ExpenseReceipts?.length || 0 > 0 ? (
+                
+                    <div>
+                      <div>
+                        <img
+                          style={{
+                            height: '250px',
+                            // marginLeft: '30%',
+                            width: '200px',
+                          }}
+                          src={expenseReceipt.receipt}
+                        />
+                      </div>
+                      {expense?.User?.id == userAuthData.id ? (
+                        <IconButton
+                          disabled={
+                            expense.status !== 'Approved' ? false : true
+                          }
+                          aria-label='Delete'
+                          style={{ float: 'right' }}
+                          onClick={() =>
+                            setDialogData({
+                              ...dialogData,
+                              open: true,
+                              id: expenseReceipt.id,
+                              title: undefined,
+                              deleteExpenseOrReceipt: 'Receipt',
+                            })
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      ) : null}
+                    </div>
+                  ))}
+                </Carousel>
+              ) : null} */}
               <Grid
                 className='expenseCardContent'
                 container

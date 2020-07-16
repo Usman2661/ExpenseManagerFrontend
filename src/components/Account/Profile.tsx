@@ -50,6 +50,7 @@ function Profile() {
     userProfileLoaded,
     getUserProfile,
     updateUser,
+    changePassword,
   } = userStore;
 
   useEffect(() => {
@@ -148,10 +149,22 @@ function Profile() {
     await getUserProfile();
   };
 
-  const changePassword = async (e: any) => {
+  const onChangePassword = async (e: any) => {
     e.preventDefault();
 
-    console.log('Changed Password!!');
+    if (password != undefined && newPassword != undefined) {
+      const data = await changePassword(password, newPassword);
+
+      if (data) {
+        setUserData({
+          ...userData,
+          password: '',
+          newPassword: '',
+          cfPassword: '',
+        });
+        handleClose();
+      }
+    }
   };
 
   return (
@@ -427,7 +440,7 @@ function Profile() {
                 Change Password
               </h2>
 
-              <ValidatorForm className='signUpForm' onSubmit={changePassword}>
+              <ValidatorForm className='signUpForm' onSubmit={onChangePassword}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12}>
                     <TextValidator
@@ -500,7 +513,6 @@ function Profile() {
                     <Button
                       variant='contained'
                       color='secondary'
-                      type='submit'
                       onClick={handleClose}
                       fullWidth
                     >
