@@ -250,6 +250,11 @@ function Navigation(props: Props) {
       <CssBaseline />
 
       <AppBar
+        style={{
+          backgroundColor:
+            userProfile?.Company?.CompanyConfig?.appBarColor?.toString() ||
+            'primary',
+        }}
         position='fixed'
         className={userAuthData.auth ? classes.appBar : undefined}
       >
@@ -263,6 +268,10 @@ function Navigation(props: Props) {
           >
             <MenuIcon />
           </IconButton>
+          <img
+            src={userProfile?.Company?.CompanyConfig?.logo.toString()}
+            height='40px'
+          />
           <Typography variant='h6' style={{ flex: 1 }}>
             {userAuthData.auth && userAuthData.userType !== 'Admin'
               ? userProfile?.Company?.name

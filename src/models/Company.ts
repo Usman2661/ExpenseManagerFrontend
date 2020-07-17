@@ -1,3 +1,4 @@
+import { ICompanyConfig } from './CompanyConfig';
 export interface ICompany {
   id?: number;
   name: String;
@@ -8,4 +9,5 @@ export interface ICompany {
   phone: String;
   businessArea: String;
   registerYear: number;
+  CompanyConfig?: ICompanyConfig;
 }

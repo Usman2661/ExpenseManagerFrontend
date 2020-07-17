@@ -13,6 +13,11 @@ export const ME = `
       addressFirstLine,
       addressSecondLine,
       addressThirdLine
+      CompanyConfig{
+        logo, 
+        appBarColor,
+        companyId
+      }
     }
     Manager{ 
     id, 
