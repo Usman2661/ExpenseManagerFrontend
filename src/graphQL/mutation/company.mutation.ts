@@ -77,3 +77,39 @@ export const UPDATE_COMPANY = `
     }
   }
 `;
+
+export const CREATE_COMPANYCONFIG = `
+  mutation createCompanyConfig(
+    $logo: String
+    $appBarColor: String
+  ) {
+    createCompanyConfig(
+      logo: $logo
+      appBarColor: $appBarColor
+    ) {
+      id
+      logo, 
+      appBarColor, 
+      companyId
+    }
+  }
+`;
+
+export const UPDATE_COMPANYCONFIG = `
+  mutation updateCompanyConfig(
+    $id: Int!
+    $logo: String
+    $appBarColor: String
+  ) {
+    updateCompanyConfig(
+      id: $id
+      logo: $logo
+      appBarColor: $appBarColor
+    ) {
+      id
+      logo, 
+      appBarColor, 
+      companyId
+    }
+  }
+`;

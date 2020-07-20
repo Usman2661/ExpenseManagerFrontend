@@ -11,6 +11,7 @@ import {
   DELETE_COMPANY,
 } from '../../graphQL/mutation/company.mutation';
 import { COMPANY, ALL_COMPANIES } from '../../graphQL/query/company.query';
+import { CREATE_COMPANYCONFIG } from '../../graphQL/mutation/company.mutation';
 
 class CompanyStore {
   constructor() {
@@ -148,6 +149,29 @@ class CompanyStore {
 
       const msg = error.message.split(':')[0];
       const alert = await getAlert(msg, 'DeleteCompanyError', AlertTypes.error);
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action createCompanyConfig = async (logo: string, appBarColor: string) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        logo,
+        appBarColor,
+      };
+      const data = await graphQLClient.request(CREATE_COMPANYCONFIG, variables);
+
+      return data.createCompanyConfig;
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'CreateCompanyConfigError',
+        AlertTypes.error
+      );
       AlertStore.setAlert(alert);
     }
   };
