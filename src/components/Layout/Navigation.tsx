@@ -109,8 +109,18 @@ function Navigation(props: Props) {
     }
   }
 
+  const renderColor = () => {
+    const color = userAuthData.auth
+      ? userProfile?.Company?.CompanyConfig?.appBarColor?.toString() ||
+        '#3f51b5'
+      : '#3f51b5';
+
+    return color;
+  };
+
   const logout = async () => {
     localStorage.clear();
+
     setUserAuthData({
       id: '',
       auth: false,
@@ -121,7 +131,6 @@ function Navigation(props: Props) {
     });
 
     handleClose();
-
     history.push('/');
   };
 
@@ -251,9 +260,10 @@ function Navigation(props: Props) {
 
       <AppBar
         style={{
-          backgroundColor:
-            userProfile?.Company?.CompanyConfig?.appBarColor?.toString() ||
-            'primary',
+          // backgroundColor:
+          //   userProfile?.Company?.CompanyConfig?.appBarColor?.toString() ||
+          //   'primary',
+          backgroundColor: renderColor(),
         }}
         position='fixed'
         className={userAuthData.auth ? classes.appBar : undefined}
@@ -268,10 +278,12 @@ function Navigation(props: Props) {
           >
             <MenuIcon />
           </IconButton>
-          <img
-            src={userProfile?.Company?.CompanyConfig?.logo.toString()}
-            height='40px'
-          />
+          {userAuthData.auth ? (
+            <img
+              src={userProfile?.Company?.CompanyConfig?.logo.toString()}
+              height='40px'
+            />
+          ) : null}
           <Typography variant='h6' style={{ flex: 1 }}>
             {userAuthData.auth && userAuthData.userType !== 'Admin'
               ? userProfile?.Company?.name
@@ -332,6 +344,11 @@ function Navigation(props: Props) {
         <MenuItem component={Link} to='/profile'>
           Profile
         </MenuItem>
+        {userAuthData.userType === 'SeniorManagement' ? (
+          <MenuItem component={Link} to='/company'>
+            Company Details
+          </MenuItem>
+        ) : null}
         <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
 

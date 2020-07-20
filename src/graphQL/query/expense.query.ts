@@ -13,6 +13,7 @@ export const ME = `
       addressFirstLine,
       addressSecondLine,
       addressThirdLine
+      businessArea
       CompanyConfig{
         logo, 
         appBarColor,

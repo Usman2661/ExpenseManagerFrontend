@@ -21,37 +21,13 @@ import ManagerOrSeniorPrivateRoute from './routing/ManagerOrSeniorPrivateRoute';
 import ManagerSeniorExpense from './components/Home/Manager/ManagerSeniorExpense';
 import ExpenseTable from './components/Expense/ExpenseTable';
 import Profile from './components/Account/Profile';
+import CompanyConfig from './components/Company/CompanyConfig';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-      '& .MuiButtonBase-root': {
-        // all: 'revert !important',
-        // color: 'inherit !important',
-        // border: 'none !important',
-        // cursor: 'none !important',
-        // margin: '0',
-        // display: 'inline-flex',
-        // outline: '0',
-        // padding: '0',
-        // position: 'relative',
-        // alignItems: 'center',
-        // userSelect: 'none',
-        // padding: '6px 16px',
-        // borderRadius: '4px',
-        // color: '#fff',
-        // backgroundColor: '#3f51b5',
-        // vertical-align: 'middle',
-        // -moz-appearance: 'none',
-        // justify-content: 'center',
-        // text-decoration: 'none',
-        // backgroundColor: 'none !important',
-        // -webkit-appearance: 'none',
-        // -webkit-tap-highlight-color: 'transparent',
-      },
     },
-
     content: {
       flexGrow: 1,
       marginTop: '1.2%',
@@ -119,6 +95,9 @@ function App() {
             {/* Private Routes for only for UserType Senior Management */}
             <SeniorPrivateRoute redirectPath='/' path='/account'>
               <Account />
+            </SeniorPrivateRoute>
+            <SeniorPrivateRoute redirectPath='/' path='/company'>
+              <CompanyConfig />
             </SeniorPrivateRoute>
 
             {/* Private Routes for only for UserType Senior Management and Manager */}
