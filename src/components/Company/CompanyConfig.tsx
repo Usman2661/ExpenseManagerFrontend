@@ -17,7 +17,7 @@ function CompanyConfig() {
   const { userProfile, userProfileLoaded, getUserProfile } = userStore;
 
   const companyStore = useContext(CompanyStore);
-  const { createCompanyConfig } = companyStore;
+  const { createCompanyConfig, updateCompanyConfig } = companyStore;
   const [color, setColor] = React.useState();
   const [companyLogo, setCompanyLogo] = useState({
     files: [],
@@ -41,23 +41,35 @@ function CompanyConfig() {
     }
 
     try {
-      const response = await axios({
-        method: 'post',
-        url: 'http://localhost:3001/api/expense/logo',
-        data: uploadLogoFormData,
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      let logo;
+      if (companyLogo.files.length > 0) {
+        const response = await axios({
+          method: 'post',
+          url: 'http://localhost:3001/api/expense/logo',
+          data: uploadLogoFormData,
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
-      const logo = response.data.data[0].logo;
-
-      //   if (edit) {
-      //     await getExpense(expenseData.id || 0);
-      //   }
-
-      //   handleNext();
+        logo = response.data.data[0].logo;
+      }
 
       if (userProfile.Company?.CompanyConfig == null) {
-        createCompanyConfig(logo, color.hex);
+        const data = await createCompanyConfig(logo, color.hex);
+
+        if (data) {
+          getUserProfile();
+        }
+      }
+      if (userProfile.Company?.CompanyConfig != null) {
+        const data = await updateCompanyConfig(
+          userProfile.Company?.CompanyConfig.id || 0,
+          logo,
+          color.hex
+        );
+
+        if (data) {
+          getUserProfile();
+        }
       }
     } catch (error) {}
   };
@@ -72,7 +84,7 @@ function CompanyConfig() {
         spacing={2}
         style={{ margin: 0, width: '100%' }}
       >
-        <Grid item xs={12} sm={4} md={4} lg={6}>
+        <Grid item xs={12} sm={8} md={6} lg={6}>
           <Card variant='outlined' className='cardRaiased'>
             <CardContent>
               <div
@@ -86,21 +98,27 @@ function CompanyConfig() {
                   wordSpacing: 'none',
                 }}
               >
-                <Avatar
-                  //   className={classes.orange}
-                  style={{ height: '90px', width: '90px' }}
-                >
-                  <h1 style={{ fontSize: '40' }}>
-                    {(userProfile.Company?.name || '?').charAt(0)}
-                  </h1>
-                </Avatar>
+                {userProfile.Company?.CompanyConfig?.logo ? (
+                  <img
+                    src={userProfile.Company?.CompanyConfig?.logo.toString()}
+                  />
+                ) : (
+                  <Avatar
+                    //   className={classes.orange}
+                    style={{ height: '90px', width: '90px' }}
+                  >
+                    <h1 style={{ fontSize: '40' }}>
+                      {(userProfile.Company?.name || '?').charAt(0)}
+                    </h1>
+                  </Avatar>
+                )}
+
                 <Typography style={{ marginTop: 'auto' }} variant='h4'>
                   {userProfile.Company?.name}
                 </Typography>
                 <Typography
                   style={{
                     marginTop: 'auto',
-
                     fontWeight: 'bold',
                     color: '#7B7D7D',
                   }}
@@ -110,7 +128,14 @@ function CompanyConfig() {
               </div>
 
               <div>
-                <p>Color :</p>
+                <Typography
+                  style={{
+                    marginTop: 'auto',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Color:
+                </Typography>
                 <InputColor
                   initialValue={
                     userProfile.Company?.CompanyConfig?.appBarColor.toString() ||
@@ -119,12 +144,23 @@ function CompanyConfig() {
                   onChange={setColor}
                   placement='right'
                 />
-                <p>Company Logo: </p>
+                <Typography
+                  style={{
+                    marginTop: 'auto',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Company Logo:
+                </Typography>
                 <DropzoneArea
                   acceptedFiles={['image/jpeg', 'image/png', 'image/bmp']}
                   maxFileSize={5000000}
                   filesLimit={1}
                   onChange={handleLogoChange}
+                  //   initialFiles={[
+                  //     userProfile.Company?.CompanyConfig?.logo.toString() ||
+                  //       'http://localhost:3001/images/userExpenses/1595349415091-drax.png',
+                  //   ]}
                 />
                 <Button
                   color='primary'

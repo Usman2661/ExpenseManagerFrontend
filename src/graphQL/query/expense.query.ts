@@ -15,6 +15,7 @@ export const ME = `
       addressThirdLine
       businessArea
       CompanyConfig{
+        id,
         logo, 
         appBarColor,
         companyId

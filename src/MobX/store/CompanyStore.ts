@@ -11,7 +11,7 @@ import {
   DELETE_COMPANY,
 } from '../../graphQL/mutation/company.mutation';
 import { COMPANY, ALL_COMPANIES } from '../../graphQL/query/company.query';
-import { CREATE_COMPANYCONFIG } from '../../graphQL/mutation/company.mutation';
+import { CREATE_COMPANYCONFIG, UPDATE_COMPANYCONFIG } from '../../graphQL/mutation/company.mutation';
 
 class CompanyStore {
   constructor() {
@@ -162,6 +162,11 @@ class CompanyStore {
       };
       const data = await graphQLClient.request(CREATE_COMPANYCONFIG, variables);
 
+       //Setting Alert
+       const msg = `Company Configuration Added!!`;
+       const alert = await getAlert(msg, '', AlertTypes.success);
+       AlertStore.setAlert(alert);
+
       return data.createCompanyConfig;
     } catch (error) {
       console.error(error);
@@ -170,6 +175,33 @@ class CompanyStore {
       const alert = await getAlert(
         msg,
         'CreateCompanyConfigError',
+        AlertTypes.error
+      );
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action updateCompanyConfig = async (id: number , logo?: string, appBarColor?: string) => {
+    try {
+      const graphQLClient = setHeaders();
+      const variables = {
+        id,
+        logo,
+        appBarColor,
+      };
+      const data = await graphQLClient.request(UPDATE_COMPANYCONFIG, variables);
+
+      const msg = `Company Configuration Updated!!`;
+      const alert = await getAlert(msg, '', AlertTypes.success);
+      AlertStore.setAlert(alert);
+      return data.updateCompanyConfig;
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'UpdateCompanyConfigError',
         AlertTypes.error
       );
       AlertStore.setAlert(alert);
