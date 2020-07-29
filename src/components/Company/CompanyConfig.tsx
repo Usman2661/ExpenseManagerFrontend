@@ -101,6 +101,7 @@ function CompanyConfig() {
                 {userProfile.Company?.CompanyConfig?.logo ? (
                   <img
                     src={userProfile.Company?.CompanyConfig?.logo.toString()}
+                    style={{height: '60px', width:'100px'}}
                   />
                 ) : (
                   <Avatar

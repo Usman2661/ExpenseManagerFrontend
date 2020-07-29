@@ -80,7 +80,7 @@ export default function MixedChart(props: MixedChartProps) {
         options={data.options}
         series={data.series}
         type='line'
-        height={260}
+        height={245}
       />
     </div>
   );

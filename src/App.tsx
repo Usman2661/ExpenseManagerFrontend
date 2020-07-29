@@ -7,6 +7,8 @@ import { Home } from './components/Home/home';
 import PrivateRoute from './routing/PrivateRoute';
 import { UserContext } from './userContext';
 import { Account } from './components/Account/account';
+import  MiniDrawer  from './components/Layout/MiniNavigation';
+
 import SeniorPrivateRoute from './routing/SeniorPrivateRoute';
 import Navigation from './components/Layout/Navigation';
 import {
@@ -75,6 +77,8 @@ function App() {
       >
         <UserContext.Provider value={{ userAuthData, setUserAuthData }}>
           <Navigation />
+          {/* <MiniDrawer /> */}
+          
           {/* <Navbar /> */}
           <UserAlerts />
           <Switch>

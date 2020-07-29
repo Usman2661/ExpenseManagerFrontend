@@ -1,0 +1,30 @@
+.amountClaimedSenior {
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
+      0 1px 3px 0 rgba(63, 63, 68, 0.15);
+    border-radius: 4px;
+  }
+  .approvalRateSenior {
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
+      0 1px 3px 0 rgba(63, 63, 68, 0.15);
+    border-radius: 4px;
+  }
+
+  @media only screen and (min-width: 600px) {
+    .approvalRateSenior {
+      margin-top: 30px;
+    }
+    .amountClaimedSenior {
+      margin-top: 30px;
+    }
+ 
+  }
+
+  @media only screen and (min-width: 0px) and (max-width: 600px) {
+    .approvalRateSenior {
+      margin-top: 15px;
+    }
+    .amountClaimedSenior {
+      margin-top: 15px;
+    }
+ 
+  }

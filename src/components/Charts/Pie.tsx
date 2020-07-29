@@ -14,6 +14,7 @@ export default function Pie(props: PieChartProps) {
     series: series,
     options: {
       labels: labels,
+  
       chart: {
         type: 'donut',
       },

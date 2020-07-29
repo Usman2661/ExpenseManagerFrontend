@@ -266,6 +266,28 @@ class ExpenseStore {
       approveRateSenior = acceptRateSenior;
     }
 
+
+    const totalApprovedS= alasql(
+      'SELECT SUM(amount) AS totalClaimed FROM ? Where status="Approved"',
+      [this.seniorExpenses]
+    );
+
+    const totalPendingS= alasql(
+      'SELECT SUM(amount) AS totalClaimed FROM ? Where status="Pending"',
+      [this.seniorExpenses]
+    );
+
+    const totalRejectedS = alasql(
+      'SELECT SUM(amount) AS totalClaimed FROM ? Where status="Rejected"',
+      [this.seniorExpenses]
+    );
+
+
+    const totalPendingSenior: number = totalPendingS[0].totalClaimed;
+    const totalApprovedSenior: number = totalApprovedS[0].totalClaimed;
+    const totalRejectedSenior: number = totalRejectedS[0].totalClaimed;
+
+
     return {
       //User
       total: this.expenses.length,
@@ -287,6 +309,13 @@ class ExpenseStore {
       totalExpensesSenior,
       totalClaimsSenior: this.seniorExpenses.length,
       acceptRateSenior: approveRateSenior,
+
+      totalApprovedSenior, 
+      totalPendingSenior,
+      totalRejectedSenior, 
+      totalPendingClaimSenior: this.seniorExpenses.filter(
+        (expense) => expense.status === 'Pending'
+      ).length,
     };
   }
 }

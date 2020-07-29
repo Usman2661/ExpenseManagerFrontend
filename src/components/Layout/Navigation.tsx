@@ -280,7 +280,7 @@ function Navigation(props: Props) {
           </IconButton>
           {userAuthData.auth ? (
             <img
-              src={userProfile?.Company?.CompanyConfig?.logo.toString()}
+              src={userProfile?.Company?.CompanyConfig?.logo ? userProfile?.Company?.CompanyConfig?.logo.toString() : undefined }
               height='40px'
             />
           ) : null}

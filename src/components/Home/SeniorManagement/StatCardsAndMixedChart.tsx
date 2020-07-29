@@ -10,18 +10,26 @@ import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import MixedChart from '../../Charts/MixedChart';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
+import UserStore from '../../../MobX/store/UserStore';
+import { IExpense } from '../../../models/Expense';
 
+import PeopleIcon from '@material-ui/icons/People';
 import alasql from 'alasql';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import '../../../css/StatCardsAndMixedChart.css';
+
 var dateFormat = require('dateformat');
 
 function StatCardsAndMixedChart() {
   const expenseStore = useContext(ExpenseStore);
   const { seniorExpenses, getSeniorExpenses, info } = expenseStore;
+
+  const userStore = useContext(UserStore);
+  const { infoUser, getUsers  } = userStore;
 
   const [value, setValue] = React.useState('Daily');
 
@@ -36,6 +44,7 @@ function StatCardsAndMixedChart() {
 
   useEffect(() => {
     getSeniorExpenses();
+    getUsers();
   }, []);
 
   seniorExpenses.map((expense: any) => {
@@ -49,7 +58,6 @@ function StatCardsAndMixedChart() {
     [seniorExpenses]
   );
 
-  console.log(dailyTotals);
 
   if (dailyTotals[0].Date !== undefined) {
     dailyTotals.map((expense: any) => {
@@ -69,7 +77,7 @@ function StatCardsAndMixedChart() {
         spacing={2}
         style={{ margin: 0, width: '100%' }}
       >
-        <Grid item xs={12} sm={4} md={4} lg={4}>
+        <Grid item xs={12} sm={6} md={3} lg={3}>
           <Card variant='outlined' className='amountClaimed'>
             <CardContent>
               <div
@@ -77,11 +85,13 @@ function StatCardsAndMixedChart() {
                   width: '100%',
                   paddingTop: '5px',
                   paddingBottom: '70px',
+                  marginTop:'20px',
+                  marginBottom:'20px',
                 }}
               >
                 <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>
-                    Total Expenses
+                    Expenses
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
                     £<CountUp end={info.totalExpensesSenior} />
@@ -89,7 +99,7 @@ function StatCardsAndMixedChart() {
                 </div>
 
                 <LocalAtmIcon
-                  style={{ fontSize: 80, float: 'right', color: 'red' }}
+                  style={{ fontSize: 50, float: 'right', color: 'red' }}
                 />
               </div>
             </CardContent>
@@ -97,8 +107,8 @@ function StatCardsAndMixedChart() {
 
           <Card
             variant='outlined'
-            className='amountClaimed'
-            style={{ marginTop: '1%' }}
+            className='amountClaimedSenior'
+        
           >
             <CardContent>
               <div
@@ -106,11 +116,13 @@ function StatCardsAndMixedChart() {
                   width: '100%',
                   paddingTop: '5px',
                   paddingBottom: '70px',
+                  marginTop:'20px',
+                  marginBottom:'20px',
                 }}
               >
                 <div style={{ float: 'left' }}>
                   <Typography style={{ color: 'grey' }}>
-                    Total Claims
+                    Claims
                   </Typography>
                   <h1 style={{ marginTop: 'auto' }}>
                     <CountUp end={info.totalClaimsSenior} />
@@ -118,7 +130,44 @@ function StatCardsAndMixedChart() {
                 </div>
 
                 <EqualizerIcon
-                  style={{ fontSize: 80, float: 'right', color: 'purple' }}
+                  style={{ fontSize: 50, float: 'right', color: 'purple' }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+       
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3} lg={3}>
+        
+
+          <Card
+            variant='outlined'
+            className='amountClaimed'
+          
+          >
+            <CardContent>
+              <div
+                style={{
+                  width: '100%',
+                  paddingTop: '5px',
+                  paddingBottom: '70px',
+                  marginTop:'20px',
+                  marginBottom:'20px',
+                }}
+              >
+                <div style={{ float: 'left' }}>
+                  <Typography style={{ color: 'grey' }}>
+                    Users
+                  </Typography>
+                  <h1 style={{ marginTop: 'auto' }}>
+                    <CountUp end={infoUser.total} />
+                  </h1>
+                </div>
+
+                <PeopleIcon
+                  style={{ fontSize: 50, float: 'right', color: 'blue' }}
                 />
               </div>
             </CardContent>
@@ -126,13 +175,15 @@ function StatCardsAndMixedChart() {
 
           <Card
             variant='outlined'
-            className='amountClaimed'
-            style={{ marginTop: '1%' }}
+            className='approvalRateSenior'
+            
           >
             <CardContent>
               <div
                 style={{
                   width: '100%',
+                  marginTop:'20px',
+                  marginBottom:'20px',
                 }}
               >
                 <Typography style={{ color: 'grey' }}>Approval Rate</Typography>
@@ -152,7 +203,8 @@ function StatCardsAndMixedChart() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={8} md={8} lg={8}>
+
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <Card variant='outlined' className='amountPending'>
             <CardContent>
               <FormControl component='fieldset'>
