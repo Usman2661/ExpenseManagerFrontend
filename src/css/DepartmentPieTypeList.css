@@ -1,0 +1,36 @@
+.expenseStats {
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
+      0 1px 3px 0 rgba(63, 63, 68, 0.15);
+    border-radius: 4px;
+  }
+  .expenseCats {
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
+      0 1px 3px 0 rgba(63, 63, 68, 0.15);
+    border-radius: 4px;
+  }
+  .topDepartments {
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
+      0 1px 3px 0 rgba(63, 63, 68, 0.15);
+    border-radius: 4px;
+  }
+  .topUsers {
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
+      0 1px 3px 0 rgba(63, 63, 68, 0.15);
+    border-radius: 4px;
+  }
+
+  @media only screen and (min-width: 950px) {
+    .topDepartments {
+     height: 488px;
+    }
+    .expenseStats {
+        height: 488px;
+    }
+    .expenseCats {
+        height: 488px;
+    }
+      .topUsers {
+        height: 488px;
+    }
+ 
+  }

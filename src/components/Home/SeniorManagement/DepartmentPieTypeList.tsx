@@ -52,6 +52,9 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import { useHistory } from 'react-router-dom';
 
+import '../../../css/DepartmentPieTypeList.css';
+
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -294,7 +297,7 @@ function DepartmentPieTypeList() {
         style={{ margin: 0, width: '100%' }}
       >
      <Grid item xs={12} sm={12} md={6} lg={4}>
-          <Card variant='outlined' className='amountClaimed'>
+          <Card variant='outlined' className='topDepartments'>
           <CardHeader title='Top Departments' />
 
 <Divider />
@@ -349,7 +352,7 @@ function DepartmentPieTypeList() {
         </Grid>
 
         <Grid item xs={12} sm={12} md={6} lg={4}>
-          <Card variant='outlined' className='amountClaimed'>
+          <Card variant='outlined' className='expenseStats' >
           <CardHeader title='Expense Statistics' />
 
           <Divider />
@@ -364,7 +367,7 @@ function DepartmentPieTypeList() {
      
 
         <Grid item xs={12} sm={12} md={6} lg={4}>
-          <Card variant='outlined' className='amountClaimed'>
+          <Card variant='outlined' className='expenseCats'>
           <CardHeader title='Top Expense Catagories' />
 
 <Divider />
