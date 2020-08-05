@@ -31,16 +31,45 @@ function StatCardsAndMixedChart() {
   const userStore = useContext(UserStore);
   const { infoUser, getUsers  } = userStore;
 
-  const [value, setValue] = React.useState('Daily');
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue((event.target as HTMLInputElement).value);
-  };
-
   let approvedData: Number[] = [];
   let labels: String[] = [];
   let pendingData: Number[] = [];
   let rejectedData: Number[] = [];
+
+
+  const [value, setValue] = React.useState('Daily');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const changeValue= (event.target as HTMLInputElement).value;
+    setValue(changeValue);
+
+    console.log(changeValue);
+
+    console.log(labels);
+    console.log(approvedData);
+    console.log(pendingData);
+    console.log(rejectedData);
+
+    if (changeValue == 'Monthly'){
+
+      console.log('I am being executed');
+
+      if (monthlyTotals[0].approved !== undefined) {
+        approvedData = [];
+        labels = [];
+        pendingData = [];
+        rejectedData = [];
+        monthlyTotals.map((expense: any) => {
+          approvedData.push(parseInt(expense.approved));
+          pendingData.push(parseInt(expense.pending));
+          rejectedData.push(parseInt(expense.rejected));
+          labels.push(expense.Month.toString());
+        });
+      }
+      
+    }
+  };
+
 
   useEffect(() => {
     getSeniorExpenses();
@@ -50,11 +79,20 @@ function StatCardsAndMixedChart() {
   seniorExpenses.map((expense: any) => {
     const myDate = new Date(parseInt(expense.createdAt));
     expense['Date'] = dateFormat(myDate, 'dS mmmm');
+    expense['Month'] = dateFormat(myDate, 'mmmm yyyy');
+    expense['MonthInitial'] = dateFormat(myDate, 'm');
     return expense;
   });
 
+
+
   const dailyTotals = alasql(
     'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved, Date  FROM ? group by Date',
+    [seniorExpenses]
+  );
+
+  const monthlyTotals = alasql(
+    'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved, Month, MonthInitial  FROM ? group by Month,MonthInitial Order By MonthInitial ASC',
     [seniorExpenses]
   );
 
@@ -68,6 +106,7 @@ function StatCardsAndMixedChart() {
     });
   }
 
+ 
   return (
     <div>
       <Grid

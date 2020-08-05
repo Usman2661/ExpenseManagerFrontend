@@ -10,6 +10,8 @@ interface MixedChartProps {
 
 export default function MixedChart(props: MixedChartProps) {
   const { labels, approvedData, rejectedData, pendingData } = props;
+
+  console.log(labels);
   const data = {
     series: [
       {
