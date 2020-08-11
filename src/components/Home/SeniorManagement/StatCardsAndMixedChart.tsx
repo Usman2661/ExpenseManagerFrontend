@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
@@ -24,6 +24,14 @@ import '../../../css/StatCardsAndMixedChart.css';
 
 var dateFormat = require('dateformat');
 
+export interface MixedChartData {
+  approvedData: Number[];
+  labels: String[];
+  pendingData: Number[];
+  rejectedData: Number[];
+}
+
+
 function StatCardsAndMixedChart() {
   const expenseStore = useContext(ExpenseStore);
   const { seniorExpenses, getSeniorExpenses, info } = expenseStore;
@@ -31,50 +39,31 @@ function StatCardsAndMixedChart() {
   const userStore = useContext(UserStore);
   const { infoUser, getUsers  } = userStore;
 
-  let approvedData: Number[] = [];
-  let labels: String[] = [];
-  let pendingData: Number[] = [];
-  let rejectedData: Number[] = [];
+  // let approvedData: Number[] = [];
+  // let labels: String[] = [];
+  // let pendingData: Number[] = [];
+  // let rejectedData: Number[] = [];
+  
+  const [chartData, setChartData] = useState<MixedChartData>({
+    approvedData: [],
+    labels: [],
+    pendingData: [],
+    rejectedData: []
+  });
 
+  const { approvedData, labels, pendingData, rejectedData } = chartData;
 
   const [value, setValue] = React.useState('Daily');
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const changeValue= (event.target as HTMLInputElement).value;
-    setValue(changeValue);
-
-    console.log(changeValue);
-
-    console.log(labels);
-    console.log(approvedData);
-    console.log(pendingData);
-    console.log(rejectedData);
-
-    if (changeValue == 'Monthly'){
-
-      console.log('I am being executed');
-
-      if (monthlyTotals[0].approved !== undefined) {
-        approvedData = [];
-        labels = [];
-        pendingData = [];
-        rejectedData = [];
-        monthlyTotals.map((expense: any) => {
-          approvedData.push(parseInt(expense.approved));
-          pendingData.push(parseInt(expense.pending));
-          rejectedData.push(parseInt(expense.rejected));
-          labels.push(expense.Month.toString());
-        });
-      }
-      
-    }
-  };
+ 
 
 
   useEffect(() => {
     getSeniorExpenses();
     getUsers();
   }, []);
+
+
 
   seniorExpenses.map((expense: any) => {
     const myDate = new Date(parseInt(expense.createdAt));
@@ -97,14 +86,46 @@ function StatCardsAndMixedChart() {
   );
 
 
-  if (dailyTotals[0].Date !== undefined) {
-    dailyTotals.map((expense: any) => {
-      approvedData.push(parseInt(expense.approved));
-      pendingData.push(parseInt(expense.pending));
-      rejectedData.push(parseInt(expense.rejected));
-      labels.push(expense.Date.toString());
-    });
+  if (value =='Daily'){
+    if (dailyTotals[0].Date !== undefined && dailyTotals.length != labels.length) {
+      dailyTotals.map((expense: any) => {
+        approvedData.push(parseInt(expense.approved));
+        pendingData.push(parseInt(expense.pending));
+        rejectedData.push(parseInt(expense.rejected));
+        labels.push(expense.Date.toString());
+      });
+    }
   }
+
+  if (value == 'Monthly'){
+   
+    if (monthlyTotals[0].approved !== undefined && monthlyTotals.length != labels.length ) {
+      monthlyTotals.map((expense: any) => {
+        approvedData.push(parseInt(expense.approved));
+        pendingData.push(parseInt(expense.pending));
+        rejectedData.push(parseInt(expense.rejected));
+        labels.push(expense.Month.toString());
+      });
+    }
+    
+  }
+
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const changeValue= (event.target as HTMLInputElement).value;
+    setValue(changeValue);
+
+ 
+    setChartData({
+      ...chartData,
+      labels: [],
+      approvedData: [],
+      pendingData:[],
+      rejectedData: []
+    });
+   
+  };
+
+
 
  
   return (
