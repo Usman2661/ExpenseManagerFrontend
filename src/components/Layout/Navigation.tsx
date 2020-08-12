@@ -34,6 +34,8 @@ import {
   createStyles,
 } from '@material-ui/core/styles';
 import UserStore from '../../MobX/store/UserStore';
+import ExpenseStore from '../../MobX/store/ExpenseStore';
+
 
 const drawerWidth = 220;
 
@@ -101,7 +103,10 @@ function Navigation(props: Props) {
   const { userAuthData, setUserAuthData } = useContext(UserContext);
 
   const userStore = useContext(UserStore);
-  const { userProfile, userProfileLoaded, getUserProfile } = userStore;
+  const { userProfile, userProfileLoaded, getUserProfile , clearUserProfile } = userStore;
+
+  const expenseStore = useContext(ExpenseStore);
+  const { clearSeniorExpenses } = expenseStore;
 
   if (userAuthData.auth) {
     if (!userProfileLoaded) {
@@ -131,6 +136,9 @@ function Navigation(props: Props) {
     });
 
     handleClose();
+
+    await clearSeniorExpenses();
+    await clearUserProfile();
     history.push('/');
   };
 

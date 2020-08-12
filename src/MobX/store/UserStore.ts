@@ -126,6 +126,30 @@ class UserStore {
     }
   };
 
+  @action clearUserProfile = async () => {
+    try {
+     
+      this.userProfile = {
+        name: '',
+        email: '',
+        jobTitle: '',
+        department: '',
+      };
+
+     
+    } catch (error) {
+      console.error(error);
+
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'ClearProfileError',
+        AlertTypes.error
+      );
+      AlertStore.setAlert(alert);
+    }
+  };
+
   @action getManagerUsers = async () => {
     try {
       const graphQLClient = setHeaders();

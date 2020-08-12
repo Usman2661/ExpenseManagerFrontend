@@ -360,19 +360,7 @@ function ExpenseList() {
                           <Typography paragraph>
                             {expense.description}
                           </Typography>
-                          {expense?.ExpenseReceipts?.length || 0 > 0 ? (
-                            // <Carousel>
-                            //   {expense?.ExpenseReceipts?.map(
-                            //     (expenseReceipt: any) => (
-                            //       <CardMedia
-                            //         style={{ height: '140px' }}
-                            //         image={expenseReceipt.receipt}
-                            //       />
-                            //     )
-                            //   )}
-                            // </Carousel>
-                            <h1>Carousal Should have been here</h1>
-                          ) : null}
+                       
                         </CardContent>
                       </Collapse>
                     </Card>

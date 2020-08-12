@@ -11,7 +11,6 @@ import MixedChart from '../../Charts/MixedChart';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import ExpenseStore from '../../../MobX/store/ExpenseStore';
 import UserStore from '../../../MobX/store/UserStore';
-import { IExpense } from '../../../models/Expense';
 
 import PeopleIcon from '@material-ui/icons/People';
 import alasql from 'alasql';
@@ -21,8 +20,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import '../../../css/StatCardsAndMixedChart.css';
-
 var dateFormat = require('dateformat');
+
+var moment = require('moment'); // require
+moment().format();
 
 export interface MixedChartData {
   approvedData: Number[];
@@ -39,54 +40,76 @@ function StatCardsAndMixedChart() {
   const userStore = useContext(UserStore);
   const { infoUser, getUsers  } = userStore;
 
-  // let approvedData: Number[] = [];
-  // let labels: String[] = [];
-  // let pendingData: Number[] = [];
-  // let rejectedData: Number[] = [];
-  
+
   const [chartData, setChartData] = useState<MixedChartData>({
     approvedData: [],
     labels: [],
     pendingData: [],
-    rejectedData: []
+    rejectedData: [],
   });
 
-  const { approvedData, labels, pendingData, rejectedData } = chartData;
+  const { approvedData, labels, pendingData, rejectedData  } = chartData;
 
   const [value, setValue] = React.useState('Daily');
 
- 
-
 
   useEffect(() => {
-    getSeniorExpenses();
     getUsers();
+    getSeniorExpenses();
   }, []);
 
 
+    seniorExpenses.map((expense: any) => {
+      const myDate = new Date(parseInt(expense.createdAt));
+      const dateWeek =  moment(myDate, 'DD/MM/YYYY').startOf('isoWeek')._d;
+      const calculateWeekend =  new Date(dateFormat(dateWeek, 'yyyy-mm-dd'));
+      const weekend=new Date(calculateWeekend.getFullYear(),calculateWeekend.getMonth(),calculateWeekend.getDate()+6);
+      const lastDayofWeek = dateFormat(weekend, 'dS mmmm');
+      expense['Week'] =  dateFormat(dateWeek, 'dS') + ' - ' + lastDayofWeek;
+      expense['Week1'] =  dateFormat(myDate, 'W');
+      expense['Date'] = dateFormat(myDate, 'dS mmmm');
+      expense['Month'] = dateFormat(myDate, 'mmmm yyyy');
+      expense['MonthInitial'] = dateFormat(myDate, 'm');
+      return expense;
+    });
+  
 
-  seniorExpenses.map((expense: any) => {
-    const myDate = new Date(parseInt(expense.createdAt));
-    expense['Date'] = dateFormat(myDate, 'dS mmmm');
-    expense['Month'] = dateFormat(myDate, 'mmmm yyyy');
-    expense['MonthInitial'] = dateFormat(myDate, 'm');
-    return expense;
-  });
+     const dailyTotals = alasql(
+      'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved, Date  FROM ? group by Date',
+      [seniorExpenses]
+    );
+  
+      const monthlyTotals = alasql(
+        'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved, Month, MonthInitial  FROM ? group by Month,MonthInitial Order By MonthInitial ASC',
+        [seniorExpenses]
+      );
+    
+       const weeklyTotals = alasql(
+        'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved, Week, Week1  FROM ? group by Week,Week1 Order By Week1 ASC',
+        [seniorExpenses]
+      );
+    
+
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const changeValue= (event.target as HTMLInputElement).value;
+    setValue(changeValue);
+    
+    await setChartData({
+      ...chartData,
+      labels: [],
+      approvedData: [],
+      pendingData:[],
+      rejectedData: []
+    });
+
+    await handleFilterChange();
+   
+  };
 
 
+  const handleFilterChange = async () => {
 
-  const dailyTotals = alasql(
-    'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved, Date  FROM ? group by Date',
-    [seniorExpenses]
-  );
-
-  const monthlyTotals = alasql(
-    'SELECT SUM(case when status = "Pending" then amount else 0 end) as pending,SUM(case when status = "Rejected" then amount else 0 end) as rejected,SUM(case when status = "Approved" then amount else 0 end) as approved, Month, MonthInitial  FROM ? group by Month,MonthInitial Order By MonthInitial ASC',
-    [seniorExpenses]
-  );
-
-
-  if (value =='Daily'){
+     if (value =='Daily'){
     if (dailyTotals[0].Date !== undefined && dailyTotals.length != labels.length) {
       dailyTotals.map((expense: any) => {
         approvedData.push(parseInt(expense.approved));
@@ -97,8 +120,22 @@ function StatCardsAndMixedChart() {
     }
   }
 
+  if (value =='Weekly'){
+
+    if (weeklyTotals[0].Week !== undefined && weeklyTotals.length != labels.length) {
+      weeklyTotals.map((expense: any) => {
+        approvedData.push(parseInt(expense.approved));
+        pendingData.push(parseInt(expense.pending));
+        rejectedData.push(parseInt(expense.rejected));
+        labels.push(expense.Week.toString());
+      });
+    }
+  }
+
+
   if (value == 'Monthly'){
-   
+
+  
     if (monthlyTotals[0].approved !== undefined && monthlyTotals.length != labels.length ) {
       monthlyTotals.map((expense: any) => {
         approvedData.push(parseInt(expense.approved));
@@ -109,25 +146,12 @@ function StatCardsAndMixedChart() {
     }
     
   }
+  }
 
-  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const changeValue= (event.target as HTMLInputElement).value;
-    setValue(changeValue);
-
- 
-    setChartData({
-      ...chartData,
-      labels: [],
-      approvedData: [],
-      pendingData:[],
-      rejectedData: []
-    });
-   
-  };
+  handleFilterChange();
 
 
 
- 
   return (
     <div>
       <Grid

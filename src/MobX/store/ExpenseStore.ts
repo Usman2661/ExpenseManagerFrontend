@@ -76,12 +76,31 @@ class ExpenseStore {
       const data = await graphQLClient.request(SENIOR_EXPENSE);
       this.seniorExpenses = data.seniorExpenses;
       this.seniorExpensesLoaded = true;
+
+      return true;
     } catch (error) {
       console.error(error);
       const msg = error.message.split(':')[0];
       const alert = await getAlert(
         msg,
         'FetchSeniorExpenseError',
+        AlertTypes.error
+      );
+      AlertStore.setAlert(alert);
+    }
+  };
+
+  @action clearSeniorExpenses = async () => {
+    try {
+  
+      this.seniorExpenses = [];
+
+    } catch (error) {
+      console.error(error);
+      const msg = error.message.split(':')[0];
+      const alert = await getAlert(
+        msg,
+        'ClearSeniorExpenseError',
         AlertTypes.error
       );
       AlertStore.setAlert(alert);
