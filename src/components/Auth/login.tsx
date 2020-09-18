@@ -8,8 +8,11 @@ import Button from '@material-ui/core/Button';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { UserContext } from '../../userContext';
 import UserStore from '../../MobX/store/UserStore';
-import { CardMedia } from '@material-ui/core';
-import background from '../../assets/background.jpg'; // Tell webpack this JS file uses this image
+import { Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import background from '../../assets/13.jpg'; // Tell webpack this JS file uses this image
 import logo from '../../assets/logo.png'; // Tell webpack this JS file uses this image
 
 
@@ -19,6 +22,12 @@ export function Login(props: any) {
     email: '',
     password: '',
   });
+
+  const [state, setState] = React.useState({
+    checkedB: false,
+  });
+
+
 
   const { email, password } = formData;
 
@@ -33,6 +42,10 @@ export function Login(props: any) {
 
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleChange = (event: any) => {
+    setState({ ...state, [event.target.name]: event.target.checked });
   };
 
   const loginUser = async (e: any) => {
@@ -65,53 +78,51 @@ export function Login(props: any) {
 
   return (
  
-        <div className='loginForm'  style={{ height: '100%', position: 'absolute', left: '0px', width: '100%', overflow: 'hidden'}}>
+        <div className='loginForm'  style={{ height: '100%', position: 'fixed', width: '100%', overflow: 'hidden', marginTop:'-7px'}}>
           <Grid
-           style={{ height: '100%', position: 'absolute', left: '0px', width: '100%', overflow: 'hidden'}}
+           style={{ height: '100%', position: 'fixed', width: '100%', overflow: 'hidden'}}
             className='loginContainer'
             container
             direction='row'
           >
-            <Grid item xs={12} sm={8} md={6} lg={5}>
-              {/* <Paper className='login'>
-                <Card className='loginCard '>
-                  <CardContent> */}
-{/* 
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+         
                     <Grid
-                        className='loginForm'
+                        style={{ height: '100%', overflow: 'hidden'}}
+                        className='loginContent'
                         container
                         spacing={2}
-                        direction='row'
+                        direction='column'
                         justify='center'
                         alignItems='center'
                       >
-                      <Grid item xs={12} sm={8} md={6} lg={6}>
-
-                        </Grid> */}
-
-
-
-                  <div>
-                        {/* <img
-                src={logo}
-                alt="logo"
-                height='10%'
-                width='10%'
-                /> */}
-                  <h2 style={{ textAlign: 'center' }}> ExpenseManager </h2>
-                        </div>
-              
-                    <ValidatorForm className='loginForm' onSubmit={loginUser}>
+                      <Grid item xs={11} sm={8} md={10} lg={8}>
+                      <ValidatorForm className='loginForm' onSubmit={loginUser}>
                       <Grid
                        container    
                         direction='row'
                         justify='center'
                         alignItems='center'
                         spacing={2}
-                        style={{ paddingLeft:'25%', paddingRight:'25%'}}
+                        // style={{ paddingLeft:'25%', paddingRight:'25%', paddingTop:'25%'}}
                         >
+                        <Grid item xs={5} sm={5} md={5} lg={5}>
+                        <div style={{float:'right'}}>
+                        <img src={logo} height='50px' width='50px' style={{marginRight:'10px'}}/>
+                        </div>
+                        </Grid>
+                        <Grid item xs={7} sm={7} md={7} lg={7}>
+                        <div style={{marginLeft:'-20px'}}>
+                        <h2 style={{fontSize:'20px', fontWeight:'bolder', color:'#17202A'}} >
+                          ExpenseManager 
+                        </h2>
+                        </div>
+                        </Grid>
                         <Grid item xs={12} sm={12}>
                           <TextValidator
+
+                            inputProps={{style: {fontSize: 18,fontFamily:'Arial', letterSpacing:'0.5px'}}} // font size of input text
+                            InputLabelProps={{style: {fontSize: 18  }}} // font size of input label
                             id='email'
                             name='email'
                             label='Email'
@@ -130,6 +141,8 @@ export function Login(props: any) {
                         </Grid>
                         <Grid item xs={12} sm={12}>
                           <TextValidator
+                            inputProps={{style: {fontSize: 18,fontFamily:'Arial', letterSpacing:'0.5px'}}} // font size of input text
+                            InputLabelProps={{style: {fontSize: 18  }}} // font size of input label
                             id='password'
                             name='password'
                             label='Password'
@@ -147,42 +160,82 @@ export function Login(props: any) {
 
                         <Grid item xs={12} sm={12}>
                           <Button
+                          
                             variant='contained'
                             color='primary'
                             type='submit'
                             fullWidth
-                            style={{height:'60px'}}
-                            // onClick={loginUser}
+                            style={{height:'50px', fontSize:'18px', textTransform: 'none'}}
                           >
                             Login
                           </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={6}>
+                        <div>
+                        <FormControlLabel className='rememberMe'
+                        // style={{ fontSize:'17px !important', fontWeight:'bold' }}
+                      control={
+                        <Checkbox
+                          checked={state.checkedB}
+                          onChange={handleChange}
+                          name="checkedB"
+                          color="primary"
+                        />
+                         }
+                      label={    <Typography component="h3"  style={{ fontSize:'17px !important', fontWeight:'bolder' , color:'#424949' }}
+                      > Remember Me </Typography>
+                    }
+                      />
+                        </div>
+                        </Grid>
 
-
+                        <Grid item xs={6} sm={6}>
+                          <div style={{float: 'right'}}>
+                          <a href='' style={{ color:'primary', fontSize:'17px' , textDecoration:'none' , fontWeight:'bolder' }}>Forgot Password?</a>
+                          </div>
                         </Grid>
                       </Grid>
                     </ValidatorForm>
-           
-                  {/* </CardContent>
-                  <CardActions></CardActions>
-                </Card>
-              </Paper> */}
-            </Grid>
-            <Grid item xs={12} sm={8} md={6} lg={7}>
+          
+                      </Grid>
 
-            
-                <div className='backgroundImgContainer'   
-                style={{ height: '100%' }}          
+                      </Grid>
+
+
+
+  
+              
+            </Grid>
+
+
+      <Grid
+        component={Box}
+        className='backgroundImg'
+        item
+        xs={12} sm={12} md={6} lg={6} xl={6}
+                display={{ xs: "none",sm: 'none', lg: "block" , xl: "block", md: "block" }}
+      >
+       
+       
+       
+       <div className='backgroundImgContainer'   
+                style={{ height: '100%', overflow: 'hidden' }}          
                 >
                 <img
                 src={background}
                 alt="background"
                 height='100%'
                 width='100%'
+                style={{overflow:'hidden'}}
                 />
                 </div>
+      </Grid>
+
+            {/* <Grid item xs={1} sm={1} md={6} lg={6}>
+
                
 
-            </Grid>
+            </Grid> */}
           </Grid>
         </div>
   );
