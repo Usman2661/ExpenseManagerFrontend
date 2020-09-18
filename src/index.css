@@ -13,6 +13,10 @@ code {
     monospace;
 }
 
+html, body, #app, #app>div {
+  height: 100%
+}
+
 /* .MuiButtonBase-root {
   color: inherit;
   border: 0;
@@ -35,9 +39,9 @@ code {
 } */
 
 @media only screen and (min-width: 600px) {
-  .loginContainer {
+  /* .loginContainer {
     margin-top: 7%;
-  }
+  } */
   .registerContainer {
     margin-top: 2%;
   }

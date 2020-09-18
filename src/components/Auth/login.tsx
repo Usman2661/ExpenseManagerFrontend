@@ -8,6 +8,11 @@ import Button from '@material-ui/core/Button';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { UserContext } from '../../userContext';
 import UserStore from '../../MobX/store/UserStore';
+import { CardMedia } from '@material-ui/core';
+import background from '../../assets/background.jpg'; // Tell webpack this JS file uses this image
+import logo from '../../assets/logo.png'; // Tell webpack this JS file uses this image
+
+
 
 export function Login(props: any) {
   const [formData, setFormData] = useState({
@@ -59,27 +64,52 @@ export function Login(props: any) {
   };
 
   return (
-    <div>
-      <div>
-        <div className='loginForm'>
+ 
+        <div className='loginForm'  style={{ height: '100%', position: 'absolute', left: '0px', width: '100%', overflow: 'hidden'}}>
           <Grid
+           style={{ height: '100%', position: 'absolute', left: '0px', width: '100%', overflow: 'hidden'}}
             className='loginContainer'
             container
-            direction='column'
-            justify='center'
-            alignItems='center'
+            direction='row'
           >
-            <Grid item xs={12} sm={8} md={6} lg={4}>
-              <Paper className='login'>
+            <Grid item xs={12} sm={8} md={6} lg={5}>
+              {/* <Paper className='login'>
                 <Card className='loginCard '>
-                  <CardContent>
-                    {/* <LockIcon
-                      style={{ color: 'blue', fontSize: 70, float: 'right' }}
-                    /> */}
-                    <h2 style={{ textAlign: 'center' }}> Login </h2>
+                  <CardContent> */}
+{/* 
+                    <Grid
+                        className='loginForm'
+                        container
+                        spacing={2}
+                        direction='row'
+                        justify='center'
+                        alignItems='center'
+                      >
+                      <Grid item xs={12} sm={8} md={6} lg={6}>
 
+                        </Grid> */}
+
+
+
+                  <div>
+                        {/* <img
+                src={logo}
+                alt="logo"
+                height='10%'
+                width='10%'
+                /> */}
+                  <h2 style={{ textAlign: 'center' }}> ExpenseManager </h2>
+                        </div>
+              
                     <ValidatorForm className='loginForm' onSubmit={loginUser}>
-                      <Grid container spacing={2}>
+                      <Grid
+                       container    
+                        direction='row'
+                        justify='center'
+                        alignItems='center'
+                        spacing={2}
+                        style={{ paddingLeft:'25%', paddingRight:'25%'}}
+                        >
                         <Grid item xs={12} sm={12}>
                           <TextValidator
                             id='email'
@@ -121,21 +151,39 @@ export function Login(props: any) {
                             color='primary'
                             type='submit'
                             fullWidth
+                            style={{height:'60px'}}
                             // onClick={loginUser}
                           >
                             Login
                           </Button>
+
+
                         </Grid>
                       </Grid>
                     </ValidatorForm>
-                  </CardContent>
+           
+                  {/* </CardContent>
                   <CardActions></CardActions>
                 </Card>
-              </Paper>
+              </Paper> */}
+            </Grid>
+            <Grid item xs={12} sm={8} md={6} lg={7}>
+
+            
+                <div className='backgroundImgContainer'   
+                style={{ height: '100%' }}          
+                >
+                <img
+                src={background}
+                alt="background"
+                height='100%'
+                width='100%'
+                />
+                </div>
+               
+
             </Grid>
           </Grid>
         </div>
-      </div>
-    </div>
   );
 }
