@@ -23,7 +23,7 @@
     "@types/uuid": "^8.0.0",
     "alasql": "^0.6.2",
     "apexcharts": "^3.19.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "dateformat": "^3.0.3",
     "graphql": "^15.0.0",
     "graphql-request": "^2.0.0",
